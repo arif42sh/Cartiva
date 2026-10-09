@@ -6,9 +6,12 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    --color-brand-50: #ecfdf5;
-    --color-brand-100: #d1fae5;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --color-groupon-green: #53a318;
+    --color-groupon-hover: #468c13;
+    --color-groupon-dark: #0f5132;
+    --color-brand-50: #f0fdf4;
+    --color-brand-100: #dcfce7;
     --color-brand-500: #10b981;
     --color-brand-600: #059669;
     --color-brand-700: #047857;
