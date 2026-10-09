@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Cartiva – Deeper Discounts, Together | Inspired by Groupon')</title>
+    <title>@yield('title', 'Cartiva – Deeper Discounts, Together | Group Buying Platform')</title>
     <meta name="description" content="Discover incredible group buying discounts on tech, food, campus merchandise and lifestyle products with Cartiva.">
 
     <!-- Fonts -->
@@ -18,125 +18,178 @@
 <body class="min-h-full flex flex-col font-sans bg-[#f8f9fa] text-slate-800 selection:bg-[#53a318] selection:text-white" 
       x-data="{ mobileMenuOpen: false, notifOpen: false, userDropdownOpen: false }">
 
-    <!-- 1. Top Groupon-Style Promo Banner Ribbon -->
-    <div class="bg-[#1e293b] text-white text-xs font-semibold py-2 px-4 shadow-inner">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center space-x-2 text-[11px] sm:text-xs">
-                <span class="inline-flex items-center px-2 py-0.5 rounded font-black bg-[#53a318] text-white text-[10px] uppercase tracking-wider">
-                    DEAL OF THE DAY
+    <!-- 1. Top Live Community Activity Marquee Ticker -->
+    <div class="bg-[#111827] text-white text-xs font-semibold py-2 px-4 overflow-hidden border-b border-slate-800 shadow-inner">
+        <div class="max-w-[1600px] mx-auto flex items-center justify-between gap-4">
+            
+            <!-- Live Activity Marquee Ticker -->
+            <div class="flex-1 overflow-hidden relative flex items-center">
+                <span class="inline-flex items-center px-2 py-0.5 rounded font-black bg-[#53a318] text-white text-[10px] uppercase tracking-wider mr-3 flex-shrink-0 z-10 shadow-sm animate-pulse">
+                    ⚡ LIVE ACTIVITY
                 </span>
-                <span>🔥 Use code <strong class="text-amber-300 font-mono font-bold">CARTIVA20</strong> for an extra 20% off all group buys!</span>
+
+                <div class="overflow-hidden w-full whitespace-nowrap">
+                    <div class="animate-marquee flex items-center space-x-10 text-[11px] sm:text-xs text-slate-300">
+                        <span class="flex items-center space-x-1.5">
+                            <span class="text-amber-400 font-bold">Arif S. (Saidpur)</span>
+                            <span>just joined BAUST Hoodie group •</span>
+                            <span class="text-[#84cc16] font-extrabold">৳২৫০ saved!</span>
+                        </span>
+                        <span>•</span>
+                        <span class="flex items-center space-x-1.5">
+                            <span class="text-emerald-400 font-bold">SoundCore ANC Headphones</span>
+                            <span>deal is 80% filled •</span>
+                            <span class="text-rose-400 font-extrabold">Only 1 slot left!</span>
+                        </span>
+                        <span>•</span>
+                        <span class="flex items-center space-x-1.5">
+                            <span class="text-cyan-400 font-bold">Fuad H. (Dhaka)</span>
+                            <span>unlocked Tier 3 bulk price on Mechanical Keyboard •</span>
+                            <span class="text-amber-300 font-extrabold">Order Confirmed</span>
+                        </span>
+                        <span>•</span>
+                        <span class="flex items-center space-x-1.5">
+                            <span class="text-purple-400 font-bold">Promo Voucher:</span>
+                            <span class="bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded font-mono font-black text-[10px]">CARTIVA20</span>
+                            <span>for extra 20% discount on team checkout</span>
+                        </span>
+                        <span>•</span>
+                        <!-- Duplicate for infinite marquee loop -->
+                        <span class="flex items-center space-x-1.5">
+                            <span class="text-amber-400 font-bold">Arif S. (Saidpur)</span>
+                            <span>just joined BAUST Hoodie group •</span>
+                            <span class="text-[#84cc16] font-extrabold">৳২৫০ saved!</span>
+                        </span>
+                        <span>•</span>
+                        <span class="flex items-center space-x-1.5">
+                            <span class="text-emerald-400 font-bold">SoundCore ANC Headphones</span>
+                            <span>deal is 80% filled •</span>
+                            <span class="text-rose-400 font-extrabold">Only 1 slot left!</span>
+                        </span>
+                    </div>
+                </div>
             </div>
-            <div class="hidden md:flex items-center space-x-5 text-slate-300 text-xs">
-                <span class="flex items-center space-x-1 hover:text-white cursor-pointer">
-                    <svg class="w-3.5 h-3.5 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+
+            <!-- Right Guarantee Links -->
+            <div class="hidden lg:flex items-center space-x-5 text-slate-300 text-xs flex-shrink-0">
+                <span class="flex items-center space-x-1 text-emerald-400 font-bold">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                     <span>100% Refund Guarantee</span>
                 </span>
                 <span>|</span>
-                <a href="#cartiva-guarantee" class="hover:text-white">Cartiva Promise</a>
+                <a href="#how-it-works" class="hover:text-white transition-colors">How It Works</a>
                 <span>|</span>
-                <a href="{{ route('register') }}" class="text-[#53a318] font-bold hover:underline">Sell on Cartiva</a>
+                <a href="{{ route('register') }}" class="text-[#84cc16] font-bold hover:underline">Sell on Cartiva</a>
             </div>
+
         </div>
     </div>
 
-    <!-- 2. Main Groupon Header (Logo + Dual Search Bar + User Nav) -->
-    <header class="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20 gap-4">
+    <!-- 2. Main High-Density Header (Full Width & Professional) -->
+    <header class="sticky top-0 z-40 bg-white border-b border-gray-200/90 shadow-xs backdrop-blur-md">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+            <div class="flex items-center justify-between h-20 gap-4 lg:gap-8">
                 
-                <!-- Groupon-Style Logo -->
+                <!-- Brand Logo -->
                 <div class="flex items-center space-x-3 flex-shrink-0">
-                    <a href="{{ route('home') }}" class="flex items-center space-x-2 group">
-                        <div class="w-10 h-10 rounded-xl bg-[#53a318] flex items-center justify-center text-white font-black text-2xl shadow-sm group-hover:bg-[#468c13] transition-colors">
+                    <a href="{{ route('home') }}" class="flex items-center space-x-2.5 group">
+                        <div class="w-11 h-11 rounded-xl bg-[#53a318] flex items-center justify-center text-white font-black text-2xl shadow-sm group-hover:bg-[#468c13] group-hover:scale-105 transition-all">
                             C
                         </div>
                         <div class="leading-none">
-                            <span class="text-2xl sm:text-3xl font-black tracking-tighter text-[#53a318] uppercase">
-                                CARTIVA
-                            </span>
-                            <span class="block text-[9px] font-bold text-slate-500 tracking-wider uppercase mt-0.5">
-                                Group Buying Marketplace
+                            <div class="flex items-center space-x-1.5">
+                                <span class="text-2xl sm:text-3xl font-black tracking-tighter text-[#53a318] uppercase">
+                                    CARTIVA
+                                </span>
+                                <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-green-100 text-[#53a318] uppercase tracking-wider">
+                                    GROUP BUY
+                                </span>
+                            </div>
+                            <span class="block text-[9px] font-bold text-slate-500 tracking-wider uppercase mt-1">
+                                Shop Together, Save More
                             </span>
                         </div>
                     </a>
                 </div>
 
-                <!-- Groupon Signature Split Dual Search Bar: [What] | [Where] [Search Button] -->
-                <div class="hidden lg:flex flex-1 max-w-2xl mx-4">
-                    <form action="{{ route('home') }}" method="GET" class="w-full flex items-center bg-white border-2 border-[#53a318] rounded-lg overflow-hidden shadow-xs focus-within:ring-2 focus-within:ring-[#53a318]/30 transition-all">
+                <!-- Groupon Signature Split Dual Search Bar -->
+                <div class="hidden lg:flex flex-1 max-w-3xl mx-2">
+                    <form action="{{ route('home') }}" method="GET" class="w-full flex items-center bg-white border-2 border-[#53a318] rounded-xl overflow-hidden shadow-xs hover:border-[#468c13] focus-within:ring-4 focus-within:ring-[#53a318]/20 transition-all">
                         
-                        <!-- Left Field: What (Deal, Product or Group ID) -->
-                        <div class="flex-1 flex items-center px-3.5 py-2">
-                            <svg class="w-4 h-4 text-slate-400 mr-2.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <!-- Left Field: What -->
+                        <div class="flex-1 flex items-center px-4 py-2.5">
+                            <svg class="w-4 h-4 text-slate-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             <input type="text" name="q" value="{{ request('q') }}" 
                                    placeholder="Search deals, products, or Group Code (e.g. GRP-BAUST05)..." 
-                                   class="w-full text-xs text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none font-medium">
+                                   class="w-full text-xs text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none font-semibold">
                         </div>
 
                         <!-- Divider line -->
-                        <div class="h-6 w-px bg-slate-200"></div>
+                        <div class="h-7 w-px bg-slate-200"></div>
 
-                        <!-- Right Field: Where (Location) -->
-                        <div class="w-48 flex items-center px-3 py-2 bg-slate-50/70">
+                        <!-- Right Field: Where -->
+                        <div class="w-56 flex items-center px-3.5 py-2.5 bg-slate-50">
                             <svg class="w-4 h-4 text-slate-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            <select class="w-full text-xs text-slate-700 bg-transparent focus:outline-none font-medium cursor-pointer">
-                                <option>All Locations</option>
-                                <option>Saidpur / BAUST</option>
+                            <select class="w-full text-xs text-slate-700 bg-transparent focus:outline-none font-bold cursor-pointer">
+                                <option>All Locations (Bangladesh)</option>
+                                <option selected>Saidpur / BAUST Campus</option>
                                 <option>Dhaka Metro</option>
                                 <option>Chittagong</option>
                                 <option>Rajshahi</option>
                             </select>
                         </div>
 
-                        <!-- Green Search Submit Button -->
-                        <button type="submit" class="bg-[#53a318] hover:bg-[#468c13] text-white px-5 py-2.5 text-xs font-bold transition-colors flex items-center justify-center">
+                        <!-- Submit Button -->
+                        <button type="submit" class="bg-[#53a318] hover:bg-[#468c13] text-white px-6 py-3 text-xs font-black transition-colors flex items-center space-x-1.5 flex-shrink-0">
+                            <span>Search</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </button>
                     </form>
                 </div>
 
-                <!-- Top Right Navigation & User Controls -->
-                <div class="flex items-center space-x-2 sm:space-x-4">
+                <!-- User Controls & Dropdowns -->
+                <div class="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
                     
-                    <!-- Notification Bell -->
+                    <!-- Notification Bell Dropdown -->
                     <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open" @click.outside="open = false" 
-                                class="p-2 text-slate-600 hover:text-[#53a318] rounded-full hover:bg-slate-100 transition-colors relative"
-                                title="Deal Notifications">
+                                class="p-2.5 text-slate-600 hover:text-[#53a318] rounded-xl hover:bg-slate-100 transition-colors relative"
+                                title="Live Deal Notifications">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                            <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white animate-pulse"></span>
+                            <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white animate-pulse"></span>
                         </button>
 
-                        <div x-show="open" x-cloak class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-slate-100 py-3 z-50">
+                        <div x-show="open" x-cloak class="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-100 py-3 z-50">
                             <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
-                                <span class="text-xs font-black text-slate-800 uppercase">Live Deal Alerts</span>
-                                <span class="text-[10px] font-bold text-[#53a318] bg-green-50 px-2 py-0.5 rounded-full">2 New</span>
+                                <span class="text-xs font-black text-slate-800 uppercase tracking-wider">Live Deal Alerts</span>
+                                <span class="text-[10px] font-black text-[#53a318] bg-green-50 px-2 py-0.5 rounded-full">2 High Urgency</span>
                             </div>
-                            <div class="divide-y divide-slate-100 max-h-72 overflow-y-auto">
-                                <a href="{{ route('group-buy.show', 'GRP-BAUST05') }}" class="p-3 flex items-start space-x-2.5 hover:bg-slate-50 transition-colors block">
-                                    <span class="text-base">⚡</span>
+                            <div class="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+                                <a href="{{ route('group-buy.show', 'GRP-BAUST05') }}" class="p-3.5 flex items-start space-x-3 hover:bg-slate-50 transition-colors block">
+                                    <span class="text-lg flex-shrink-0">⚡</span>
                                     <div>
                                         <p class="text-xs font-bold text-slate-800">BAUST Hoodie Deal: Only 1 buyer left!</p>
-                                        <p class="text-[11px] text-slate-500 mt-0.5">Tier 3 (৳৭৫০) unlocks once 1 more user joins.</p>
+                                        <p class="text-[11px] text-slate-500 mt-0.5">Tier 3 (৳৭৫০) unlocks once 1 more student joins.</p>
+                                        <span class="text-[10px] text-[#53a318] font-mono font-bold mt-1 block">GRP-BAUST05 • 5 hours left</span>
                                     </div>
                                 </a>
-                                <a href="{{ route('group-buy.show', 'GRP-SOUND99') }}" class="p-3 flex items-start space-x-2.5 hover:bg-slate-50 transition-colors block">
-                                    <span class="text-base">⏱</span>
+                                <a href="{{ route('group-buy.show', 'GRP-SOUND99') }}" class="p-3.5 flex items-start space-x-3 hover:bg-slate-50 transition-colors block">
+                                    <span class="text-lg flex-shrink-0">⏱</span>
                                     <div>
                                         <p class="text-xs font-bold text-slate-800">SoundCore ANC Headphones Deal ending soon!</p>
                                         <p class="text-[11px] text-slate-500 mt-0.5">Only 3 hours remaining to lock in 30% discount.</p>
+                                        <span class="text-[10px] text-rose-600 font-mono font-bold mt-1 block">GRP-SOUND99 • 1 slot left</span>
                                     </div>
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- My Groups / Orders Shortcut -->
+                    <!-- My Stuff / Orders Shortcut -->
                     @auth
-                        <a href="{{ route('orders.index') }}" class="hidden sm:flex items-center space-x-1.5 text-xs font-bold text-slate-700 hover:text-[#53a318] transition-colors p-2">
-                            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                            <span class="hidden md:inline">My Stuff</span>
+                        <a href="{{ route('orders.index') }}" class="hidden sm:flex items-center space-x-1.5 text-xs font-bold text-slate-700 hover:text-[#53a318] transition-colors px-3 py-2 rounded-xl hover:bg-slate-100">
+                            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            <span>My Stuff</span>
                         </a>
                     @endauth
 
@@ -144,7 +197,7 @@
                     @auth
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" @click.outside="open = false" 
-                                    class="flex items-center space-x-2 py-1.5 px-3 rounded-lg border border-slate-200 hover:border-slate-300 text-xs font-bold text-slate-800 bg-white transition-all">
+                                    class="flex items-center space-x-2 py-2 px-3 rounded-xl border border-slate-200 hover:border-slate-300 text-xs font-bold text-slate-800 bg-white transition-all shadow-2xs">
                                 <div class="w-6 h-6 rounded-full bg-[#53a318] text-white flex items-center justify-center text-[11px] font-black">
                                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                                 </div>
@@ -152,7 +205,7 @@
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
 
-                            <div x-show="open" x-cloak class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-100 py-2 z-50">
+                            <div x-show="open" x-cloak class="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50">
                                 <div class="px-4 py-2 border-b border-slate-100">
                                     <p class="text-[11px] text-slate-400">Signed in as</p>
                                     <p class="text-xs font-bold text-slate-800 truncate">{{ auth()->user()->email }}</p>
@@ -196,7 +249,7 @@
                             <a href="{{ route('login') }}" class="px-3.5 py-2 text-xs font-bold text-slate-700 hover:text-[#53a318] transition-colors">
                                 Sign In
                             </a>
-                            <a href="{{ route('register') }}" class="px-4 py-2 text-xs font-bold rounded-lg bg-[#53a318] hover:bg-[#468c13] text-white shadow-xs transition-all">
+                            <a href="{{ route('register') }}" class="px-4 py-2 text-xs font-bold rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white shadow-xs transition-all">
                                 Sign Up
                             </a>
                         </div>
@@ -211,44 +264,45 @@
 
             </div>
 
-            <!-- 3. Groupon Signature Horizontal Category Sub-Navigation Bar -->
-            <div class="hidden md:flex items-center justify-between border-t border-slate-100 py-2.5 text-xs font-bold text-slate-600 overflow-x-auto scrollbar-none">
-                <div class="flex items-center space-x-7">
-                    <a href="{{ route('home') }}" class="text-[#53a318] hover:text-[#468c13] flex items-center space-x-1">
+            <!-- 3. Horizontal Category Sub-Navigation Bar (Edge to Edge) -->
+            <div class="hidden md:flex items-center justify-between border-t border-slate-100 py-2.5 text-xs font-bold text-slate-600 overflow-x-auto no-scrollbar">
+                <div class="flex items-center space-x-8">
+                    <a href="{{ route('home') }}" class="text-[#53a318] hover:text-[#468c13] flex items-center space-x-1 font-extrabold">
                         <span>Featured Deals</span>
                     </a>
-                    <a href="{{ route('home') }}#live-groups" class="hover:text-[#53a318] flex items-center space-x-1 text-rose-600">
+                    <a href="{{ route('home') }}#live-groups" class="hover:text-rose-600 flex items-center space-x-1.5 text-rose-600 font-extrabold">
                         <span>🔥 Ending Soon</span>
+                        <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
                     </a>
-                    <a href="{{ route('home') }}?category=tech-accessories" class="hover:text-[#53a318]">
+                    <a href="{{ route('home') }}?category=tech-accessories" class="hover:text-[#53a318] transition-colors">
                         Tech & Gadgets
                     </a>
-                    <a href="{{ route('home') }}?category=campus-merchandise" class="hover:text-[#53a318] flex items-center space-x-1">
+                    <a href="{{ route('home') }}?category=campus-merchandise" class="hover:text-[#53a318] flex items-center space-x-1 transition-colors">
                         <span>Campus Specials</span>
                         <span class="px-1.5 py-0.2 rounded-full text-[9px] bg-amber-100 text-amber-800 font-black">BAUST</span>
                     </a>
-                    <a href="{{ route('home') }}?category=dry-food-fmcg" class="hover:text-[#53a318]">
+                    <a href="{{ route('home') }}?category=dry-food-fmcg" class="hover:text-[#53a318] transition-colors">
                         Food & FMCG
                     </a>
-                    <a href="{{ route('home') }}?category=home-lifestyle" class="hover:text-[#53a318]">
+                    <a href="{{ route('home') }}?category=home-lifestyle" class="hover:text-[#53a318] transition-colors">
                         Home & Lifestyle
                     </a>
-                    <a href="{{ route('home') }}?category=fashion-wearables" class="hover:text-[#53a318]">
+                    <a href="{{ route('home') }}?category=fashion-wearables" class="hover:text-[#53a318] transition-colors">
                         Fashion & Wearables
                     </a>
                 </div>
 
-                <div class="flex items-center space-x-4 flex-shrink-0 pl-4">
-                    <a href="#how-it-works" class="text-slate-500 hover:text-[#53a318] text-[11px] font-semibold">
+                <div class="flex items-center space-x-5 flex-shrink-0 pl-4 text-[11px]">
+                    <a href="#how-it-works" class="text-slate-500 hover:text-[#53a318] font-semibold">
                         How Group Buying Works
                     </a>
-                    <a href="{{ route('register') }}" class="text-[#53a318] hover:underline text-[11px] font-bold">
+                    <a href="{{ route('register') }}" class="text-[#53a318] hover:underline font-bold">
                         Become a Merchant
                     </a>
                 </div>
             </div>
 
-            <!-- Mobile Search Bar & Menu Drawer -->
+            <!-- Mobile Drawer Menu -->
             <div x-show="mobileMenuOpen" x-cloak class="lg:hidden pb-4 pt-2 border-t border-slate-100">
                 <form action="{{ route('home') }}" method="GET" class="mb-3">
                     <input type="text" name="q" value="{{ request('q') }}" placeholder="Search deals or group code (e.g. GRP-BAUST05)..." class="w-full px-4 py-2.5 text-xs bg-slate-100 border border-slate-200 rounded-lg">
@@ -268,7 +322,7 @@
     </header>
 
     <!-- Global Flash Notification Alerts -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 mt-4 w-full">
         @if(session('success'))
             <div class="p-4 rounded-xl bg-green-50 border border-green-200 text-green-900 flex items-center justify-between shadow-xs mb-3">
                 <div class="flex items-center space-x-3">
@@ -288,14 +342,14 @@
         @endif
     </div>
 
-    <!-- Main Content Area -->
+    <!-- Main Content Area (Fluid Edge-to-Edge) -->
     <main class="flex-grow">
         @yield('content')
     </main>
 
-    <!-- 8. Groupon-Style Multi-Column Footer -->
+    <!-- 8. Groupon-Style Multi-Column Footer (Full Width) -->
     <footer class="mt-20 bg-white border-t border-slate-200 pt-16 pb-12 text-slate-600 text-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
             <div class="grid grid-cols-1 md:grid-cols-5 gap-8 pb-12 border-b border-slate-200">
                 
                 <!-- Col 1: Brand & App Download -->
