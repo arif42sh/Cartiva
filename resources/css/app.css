@@ -6,10 +6,11 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-sans: 'Plus Jakarta Sans', 'Hind Siliguri', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --color-groupon-green: #53a318;
     --color-groupon-hover: #468c13;
     --color-groupon-dark: #0f5132;
+    --color-cartiva-blue: #1040a5;
     --color-brand-50: #f0fdf4;
     --color-brand-100: #dcfce7;
     --color-brand-500: #10b981;
@@ -19,6 +20,19 @@
 
 [x-cloak] {
     display: none !important;
+}
+
+.glass-card {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.text-gradient-savings {
+    background: linear-gradient(135deg, #84cc16 0%, #10b981 50%, #06b6d4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* Custom Keyframe Animations for Professional Polish */

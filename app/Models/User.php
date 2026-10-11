@@ -23,6 +23,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'shop_name',
+        'business_category',
         'phone',
         'address',
         'avatar',

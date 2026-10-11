@@ -10,7 +10,7 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800,900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800,900|hind-siliguri:400,500,600,700&display=swap" rel="stylesheet" />
 
     <!-- Scripts and Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -25,11 +25,18 @@
             <!-- Live Activity Marquee Ticker -->
             <div class="flex-1 overflow-hidden relative flex items-center">
                 <span class="inline-flex items-center px-2 py-0.5 rounded font-black bg-[#53a318] text-white text-[10px] uppercase tracking-wider mr-3 flex-shrink-0 z-10 shadow-sm animate-pulse">
-                    ⚡ LIVE ACTIVITY
+                    ⚡ LIVE TICKER
                 </span>
 
                 <div class="overflow-hidden w-full whitespace-nowrap">
                     <div class="animate-marquee flex items-center space-x-10 text-[11px] sm:text-xs text-slate-300">
+                        <span class="flex items-center space-x-1.5 font-bold text-amber-300">
+                            <span>🔥 আজ মোট সাশ্রয়:</span>
+                            <span class="text-white font-black bg-amber-500/30 px-1.5 py-0.2 rounded">৳৬৪,২০০+</span>
+                            <span class="text-slate-400">•</span>
+                            <span class="text-emerald-400">৩৮টি গ্রুপ ডিল সফলভাবে আনলক হয়েছে!</span>
+                        </span>
+                        <span>•</span>
                         <span class="flex items-center space-x-1.5">
                             <span class="text-amber-400 font-bold">Arif S. (Saidpur)</span>
                             <span>just joined BAUST Hoodie group •</span>
@@ -53,19 +60,6 @@
                             <span class="bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded font-mono font-black text-[10px]">CARTIVA20</span>
                             <span>for extra 20% discount on team checkout</span>
                         </span>
-                        <span>•</span>
-                        <!-- Duplicate for infinite marquee loop -->
-                        <span class="flex items-center space-x-1.5">
-                            <span class="text-amber-400 font-bold">Arif S. (Saidpur)</span>
-                            <span>just joined BAUST Hoodie group •</span>
-                            <span class="text-[#84cc16] font-extrabold">৳২৫০ saved!</span>
-                        </span>
-                        <span>•</span>
-                        <span class="flex items-center space-x-1.5">
-                            <span class="text-emerald-400 font-bold">SoundCore ANC Headphones</span>
-                            <span>deal is 80% filled •</span>
-                            <span class="text-rose-400 font-extrabold">Only 1 slot left!</span>
-                        </span>
                     </div>
                 </div>
             </div>
@@ -86,69 +80,133 @@
     </div>
 
     <!-- 2. Main High-Density Header (Full Width & Professional) -->
-    <header class="sticky top-0 z-40 bg-white border-b border-gray-200/90 shadow-xs backdrop-blur-md">
+    <header class="sticky top-0 z-40 bg-white border-b border-gray-200/90 shadow-xs backdrop-blur-md"
+            x-data="{ 
+                searchOpen: false, 
+                searchQuery: '{{ request('q') }}',
+                categoriesDropdownOpen: false,
+                wishlistCount: 3,
+                cartCount: 1,
+                cartModalOpen: false,
+                wishlistModalOpen: false
+            }">
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
-            <div class="flex items-center justify-between h-20 gap-4 lg:gap-8">
+            <div class="flex items-center justify-between h-20 gap-3 sm:gap-6 lg:gap-8">
                 
-                <!-- Brand Logo -->
+                <!-- Brand Logo & Tagline -->
                 <div class="flex items-center space-x-3 flex-shrink-0">
                     <a href="{{ route('home') }}" class="flex items-center space-x-2.5 group">
-                        <div class="w-11 h-11 rounded-xl bg-[#53a318] flex items-center justify-center text-white font-black text-2xl shadow-sm group-hover:bg-[#468c13] group-hover:scale-105 transition-all">
-                            C
-                        </div>
-                        <div class="leading-none">
-                            <div class="flex items-center space-x-1.5">
-                                <span class="text-2xl sm:text-3xl font-black tracking-tighter text-[#53a318] uppercase">
-                                    CARTIVA
-                                </span>
-                                <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-green-100 text-[#53a318] uppercase tracking-wider">
-                                    GROUP BUY
-                                </span>
-                            </div>
-                            <span class="block text-[9px] font-bold text-slate-500 tracking-wider uppercase mt-1">
-                                Shop Together, Save More
+                        <img src="{{ asset('images/cartiva-logo.png') }}" 
+                             alt="Cartiva" 
+                             class="h-8 sm:h-9 w-auto max-w-[150px] sm:max-w-[180px] object-contain transition-transform group-hover:scale-105">
+                        <div class="hidden sm:block leading-none border-l border-slate-200 pl-2.5">
+                            <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-blue-50 text-blue-800 uppercase tracking-wider block w-max">
+                                GROUP BUY
+                            </span>
+                            <span class="block text-[9px] font-extrabold text-slate-400 tracking-wider uppercase mt-1">
+                                Buy Together, Pay Less
                             </span>
                         </div>
                     </a>
                 </div>
 
-                <!-- Groupon Signature Split Dual Search Bar -->
-                <div class="hidden lg:flex flex-1 max-w-3xl mx-2">
+                <!-- Smart Search Bar with Category Filter & Real-Time Pool Search -->
+                <div class="hidden lg:flex flex-1 max-w-3xl mx-2 relative">
                     <form action="{{ route('home') }}" method="GET" class="w-full flex items-center bg-white border-2 border-[#53a318] rounded-xl overflow-hidden shadow-xs hover:border-[#468c13] focus-within:ring-4 focus-within:ring-[#53a318]/20 transition-all">
                         
-                        <!-- Left Field: What -->
-                        <div class="flex-1 flex items-center px-4 py-2.5">
-                            <svg class="w-4 h-4 text-slate-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <input type="text" name="q" value="{{ request('q') }}" 
-                                   placeholder="Search deals, products, or Group Code (e.g. GRP-BAUST05)..." 
-                                   class="w-full text-xs text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none font-semibold">
+                        <!-- Category Filter Selector -->
+                        <div class="w-48 flex items-center px-3 py-2.5 bg-slate-50 border-r border-slate-200">
+                            <svg class="w-3.5 h-3.5 text-slate-400 mr-1.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                            <select name="category" class="w-full text-xs text-slate-700 bg-transparent focus:outline-none font-bold cursor-pointer">
+                                <option value="">All Categories</option>
+                                <option value="tech-accessories" {{ request('category') == 'tech-accessories' ? 'selected' : '' }}>🎧 Electronics</option>
+                                <option value="campus-merchandise" {{ request('category') == 'campus-merchandise' ? 'selected' : '' }}>🎓 Campus Specials</option>
+                                <option value="fashion-wearables" {{ request('category') == 'fashion-wearables' ? 'selected' : '' }}>👕 Fashion</option>
+                                <option value="dry-food-fmcg" {{ request('category') == 'dry-food-fmcg' ? 'selected' : '' }}>🥫 Grocery FMCG</option>
+                                <option value="kitchen-appliances" {{ request('category') == 'kitchen-appliances' ? 'selected' : '' }}>🍳 Kitchen</option>
+                                <option value="home-lifestyle" {{ request('category') == 'home-lifestyle' ? 'selected' : '' }}>🏠 Home & Living</option>
+                            </select>
                         </div>
 
-                        <!-- Divider line -->
-                        <div class="h-7 w-px bg-slate-200"></div>
-
-                        <!-- Right Field: Where -->
-                        <div class="w-56 flex items-center px-3.5 py-2.5 bg-slate-50">
-                            <svg class="w-4 h-4 text-slate-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            <select class="w-full text-xs text-slate-700 bg-transparent focus:outline-none font-bold cursor-pointer">
-                                <option>All Locations (Bangladesh)</option>
-                                <option selected>Saidpur / BAUST Campus</option>
-                                <option>Dhaka Metro</option>
-                                <option>Chittagong</option>
-                                <option>Rajshahi</option>
-                            </select>
+                        <!-- Left Field: What / Keyword / Group Code -->
+                        <div class="flex-1 flex items-center px-4 py-2.5 relative">
+                            <svg class="w-4 h-4 text-slate-400 mr-2.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <input type="text" name="q" x-model="searchQuery" 
+                                   @focus="searchOpen = true"
+                                   @click.outside="searchOpen = false"
+                                   placeholder="Search products or Group Code (e.g. GRP-BAUST05)..." 
+                                   class="w-full text-xs text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none font-semibold">
                         </div>
 
                         <!-- Submit Button -->
                         <button type="submit" class="bg-[#53a318] hover:bg-[#468c13] text-white px-6 py-3 text-xs font-black transition-colors flex items-center space-x-1.5 flex-shrink-0">
-                            <span>Search</span>
+                            <span>Search Deals</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </button>
                     </form>
+
+                    <!-- Search Suggestions / Autocomplete Dropdown -->
+                    <div x-show="searchOpen" x-cloak 
+                         class="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 z-50 divide-y divide-slate-100">
+                        <div>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-2">🔥 Trending Search Keywords</span>
+                            <div class="flex flex-wrap gap-1.5">
+                                <button type="button" @click="searchQuery = 'BAUST Hoodie'; $el.closest('form')?.submit()" 
+                                        class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
+                                    🎓 BAUST Hoodie
+                                </button>
+                                <button type="button" @click="searchQuery = 'SoundCore Ultra ANC'; $el.closest('form')?.submit()" 
+                                        class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
+                                    🎧 SoundCore ANC Headphones
+                                </button>
+                                <button type="button" @click="searchQuery = 'Mechanical Keyboard'; $el.closest('form')?.submit()" 
+                                        class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
+                                    ⌨️ Mechanical Keyboard
+                                </button>
+                                <button type="button" @click="searchQuery = 'Air Fryer'; $el.closest('form')?.submit()" 
+                                        class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
+                                    🍳 Digital Air Fryer
+                                </button>
+                                <button type="button" @click="searchQuery = 'Fast Charger'; $el.closest('form')?.submit()" 
+                                        class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
+                                    ⚡ 65W GaN Charger
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 mt-3">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-2">⚡ Direct Active Group Codes</span>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <a href="{{ route('group-buy.show', 'GRP-BAUST05') }}" class="p-2 rounded-xl bg-amber-50 border border-amber-200/60 hover:bg-amber-100 transition-all flex items-center justify-between">
+                                    <div>
+                                        <span class="font-mono font-black text-amber-900 block">GRP-BAUST05</span>
+                                        <span class="text-[10px] text-amber-700">BAUST Hoodie (4/5 joined)</span>
+                                    </div>
+                                    <span class="text-[10px] font-black bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded">1 Left</span>
+                                </a>
+                                <a href="{{ route('group-buy.show', 'GRP-SOUND99') }}" class="p-2 rounded-xl bg-emerald-50 border border-emerald-200/60 hover:bg-emerald-100 transition-all flex items-center justify-between">
+                                    <div>
+                                        <span class="font-mono font-black text-emerald-900 block">GRP-SOUND99</span>
+                                        <span class="text-[10px] text-emerald-700">SoundCore ANC (1/2 joined)</span>
+                                    </div>
+                                    <span class="text-[10px] font-black bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded">1 Left</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- User Controls & Dropdowns -->
-                <div class="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
+                <!-- User Controls & Dropdowns (My Groups, Wishlist, Cart, Notifications, Auth) -->
+                <div class="flex items-center space-x-1.5 sm:space-x-2.5 flex-shrink-0">
+                    
+                    <!-- My Groups (Active Buying Circles) -->
+                    <a href="{{ route('orders.index') }}" 
+                       class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-green-50 hover:bg-green-100 text-[#53a318] border border-green-200/80 text-xs font-black transition-all shadow-2xs"
+                       title="View My Active Groups & Buying Circles">
+                        <span class="w-2 h-2 rounded-full bg-[#53a318] animate-ping"></span>
+                        <span class="hidden sm:inline">My Groups</span>
+                        <span class="px-1.5 py-0.2 rounded-full bg-[#53a318] text-white text-[10px] font-black">2</span>
+                    </a>
                     
                     <!-- Notification Bell Dropdown -->
                     <div class="relative" x-data="{ open: false }">
@@ -185,13 +243,23 @@
                         </div>
                     </div>
 
-                    <!-- My Stuff / Orders Shortcut -->
-                    @auth
-                        <a href="{{ route('orders.index') }}" class="hidden sm:flex items-center space-x-1.5 text-xs font-bold text-slate-700 hover:text-[#53a318] transition-colors px-3 py-2 rounded-xl hover:bg-slate-100">
-                            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                            <span>My Stuff</span>
-                        </a>
-                    @endauth
+                    <!-- Wishlist Icon with Count -->
+                    <button @click="wishlistModalOpen = true" 
+                            class="p-2.5 text-slate-600 hover:text-rose-600 rounded-xl hover:bg-slate-100 transition-colors relative"
+                            title="My Wishlist">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        <span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
+                              x-text="wishlistCount">3</span>
+                    </button>
+
+                    <!-- Cart Icon with Count -->
+                    <button @click="cartModalOpen = true" 
+                            class="p-2.5 text-slate-600 hover:text-[#53a318] rounded-xl hover:bg-slate-100 transition-colors relative"
+                            title="My Shopping Cart">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        <span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#53a318] text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
+                              x-text="cartCount">1</span>
+                    </button>
 
                     <!-- User Account Dropdown / Sign In -->
                     @auth
@@ -264,40 +332,101 @@
 
             </div>
 
-            <!-- 3. Horizontal Category Sub-Navigation Bar (Edge to Edge) -->
-            <div class="hidden md:flex items-center justify-between border-t border-slate-100 py-2.5 text-xs font-bold text-slate-600 overflow-x-auto no-scrollbar">
-                <div class="flex items-center space-x-8">
+            <!-- 3. Category Navigation Menu (Section 1 Checklist) -->
+            <div class="hidden md:flex items-center justify-between border-t border-slate-100 py-2.5 text-xs font-bold text-slate-600">
+                <div class="flex items-center space-x-6 overflow-x-auto no-scrollbar">
+                    
+                    <!-- Categories Mega Dropdown -->
+                    <div class="relative" x-data="{ catOpen: false }">
+                        <button @click="catOpen = !catOpen" @click.outside="catOpen = false" 
+                                class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-[#53a318] hover:text-white text-slate-800 transition-all font-black text-xs">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                            <span>Categories</span>
+                            <svg class="w-3.5 h-3.5 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+
+                        <div x-show="catOpen" x-cloak 
+                             class="absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-100 p-3 z-50 divide-y divide-slate-100">
+                            <div class="grid grid-cols-1 gap-1 py-1">
+                                <a href="{{ route('home') }}?category=tech-accessories" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <span class="text-xl">🎧</span>
+                                    <div class="leading-tight">
+                                        <p class="font-bold text-slate-800 text-xs">Electronics & Gadgets</p>
+                                        <p class="text-[10px] text-slate-400">Headphones, chargers & audio</p>
+                                    </div>
+                                </a>
+                                <a href="{{ route('home') }}?category=campus-merchandise" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <span class="text-xl">🎓</span>
+                                    <div class="leading-tight">
+                                        <p class="font-bold text-slate-800 text-xs">Campus Specials (BAUST)</p>
+                                        <p class="text-[10px] text-slate-400">Winter fleece hoodies & kits</p>
+                                    </div>
+                                </a>
+                                <a href="{{ route('home') }}?category=fashion-wearables" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <span class="text-xl">👕</span>
+                                    <div class="leading-tight">
+                                        <p class="font-bold text-slate-800 text-xs">Fashion & Apparel</p>
+                                        <p class="text-[10px] text-slate-400">Smartwatches, outfits & jackets</p>
+                                    </div>
+                                </a>
+                                <a href="{{ route('home') }}?category=dry-food-fmcg" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <span class="text-xl">🥫</span>
+                                    <div class="leading-tight">
+                                        <p class="font-bold text-slate-800 text-xs">Grocery & Food FMCG</p>
+                                        <p class="text-[10px] text-slate-400">Dates, honey, tea & combos</p>
+                                    </div>
+                                </a>
+                                <a href="{{ route('home') }}?category=home-lifestyle" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <span class="text-xl">🏠</span>
+                                    <div class="leading-tight">
+                                        <p class="font-bold text-slate-800 text-xs">Home & Living</p>
+                                        <p class="text-[10px] text-slate-400">Lamps, coffee machines & decor</p>
+                                    </div>
+                                </a>
+                                <a href="{{ route('home') }}?category=kitchen-appliances" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <span class="text-xl">🍳</span>
+                                    <div class="leading-tight">
+                                        <p class="font-bold text-slate-800 text-xs">Kitchen & Appliances</p>
+                                        <p class="text-[10px] text-slate-400">Air fryers & blenders</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="pt-2 text-center">
+                                <a href="{{ route('home') }}#quick-categories" class="text-[11px] font-bold text-[#53a318] hover:underline">
+                                    View All 12 Categories &rarr;
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                     <a href="{{ route('home') }}" class="text-[#53a318] hover:text-[#468c13] flex items-center space-x-1 font-extrabold">
-                        <span>Featured Deals</span>
+                        <span>Home</span>
                     </a>
-                    <a href="{{ route('home') }}#live-groups" class="hover:text-rose-600 flex items-center space-x-1.5 text-rose-600 font-extrabold">
-                        <span>🔥 Ending Soon</span>
-                        <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                    <a href="{{ route('home') }}#browse-category" class="hover:text-[#53a318] transition-colors">
+                        All Products / Shop
                     </a>
-                    <a href="{{ route('home') }}?category=tech-accessories" class="hover:text-[#53a318] transition-colors">
-                        Tech & Gadgets
+                    <a href="{{ route('home') }}#today-deals" class="hover:text-[#53a318] transition-colors">
+                        Group Deals
                     </a>
-                    <a href="{{ route('home') }}?category=campus-merchandise" class="hover:text-[#53a318] flex items-center space-x-1 transition-colors">
-                        <span>Campus Specials</span>
-                        <span class="px-1.5 py-0.2 rounded-full text-[9px] bg-amber-100 text-amber-800 font-black">BAUST</span>
+                    <a href="{{ route('home') }}#almost-there" class="text-rose-600 hover:text-rose-700 flex items-center space-x-1 font-extrabold">
+                        <span>⚡ Almost Full Groups</span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
                     </a>
-                    <a href="{{ route('home') }}?category=dry-food-fmcg" class="hover:text-[#53a318] transition-colors">
-                        Food & FMCG
+                    <a href="{{ route('home') }}#flash-deals" class="hover:text-amber-600 transition-colors">
+                        Flash Deals 🔥
                     </a>
-                    <a href="{{ route('home') }}?category=home-lifestyle" class="hover:text-[#53a318] transition-colors">
-                        Home & Lifestyle
+                    <a href="{{ route('home') }}#how-it-works" class="hover:text-[#53a318] transition-colors">
+                        How It Works
                     </a>
-                    <a href="{{ route('home') }}?category=fashion-wearables" class="hover:text-[#53a318] transition-colors">
-                        Fashion & Wearables
+                    <a href="{{ route('home') }}#seller-promo" class="text-slate-500 hover:text-[#53a318] transition-colors">
+                        Become a Seller
                     </a>
                 </div>
 
-                <div class="flex items-center space-x-5 flex-shrink-0 pl-4 text-[11px]">
-                    <a href="#how-it-works" class="text-slate-500 hover:text-[#53a318] font-semibold">
-                        How Group Buying Works
-                    </a>
-                    <a href="{{ route('register') }}" class="text-[#53a318] hover:underline font-bold">
-                        Become a Merchant
+                <div class="flex items-center space-x-4 flex-shrink-0 pl-4 text-[11px]">
+                    <a href="#cartiva-guarantee" class="text-emerald-700 font-bold flex items-center space-x-1">
+                        <svg class="w-3.5 h-3.5 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        <span>100% Refund Guarantee</span>
                     </a>
                 </div>
             </div>
@@ -308,17 +437,83 @@
                     <input type="text" name="q" value="{{ request('q') }}" placeholder="Search deals or group code (e.g. GRP-BAUST05)..." class="w-full px-4 py-2.5 text-xs bg-slate-100 border border-slate-200 rounded-lg">
                 </form>
                 <div class="flex flex-col space-y-2 text-xs font-bold text-slate-700">
-                    <a href="{{ route('home') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100">Featured Deals</a>
-                    <a href="{{ route('home') }}#live-groups" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-rose-600">Ending Soon (Live Drops)</a>
-                    <a href="{{ route('home') }}?category=campus-merchandise" class="px-3 py-2 rounded-lg hover:bg-slate-100">Campus Merchandise</a>
-                    <a href="{{ route('home') }}?category=tech-accessories" class="px-3 py-2 rounded-lg hover:bg-slate-100">Tech & Gadgets</a>
+                    <a href="{{ route('home') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100">Home</a>
+                    <a href="{{ route('home') }}#today-deals" class="px-3 py-2 rounded-lg hover:bg-slate-100">Today's Best Group Deals</a>
+                    <a href="{{ route('home') }}#almost-there" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-rose-600">Almost Completed Groups</a>
+                    <a href="{{ route('home') }}#flash-deals" class="px-3 py-2 rounded-lg hover:bg-slate-100">Flash Deals</a>
+                    <a href="{{ route('home') }}#browse-category" class="px-3 py-2 rounded-lg hover:bg-slate-100">Browse by Category</a>
+                    <a href="{{ route('home') }}#how-it-works" class="px-3 py-2 rounded-lg hover:bg-slate-100">How Group Buying Works</a>
+                    <a href="{{ route('home') }}#seller-promo" class="px-3 py-2 rounded-lg hover:bg-slate-100">Become a Seller</a>
                     @auth
-                        <a href="{{ route('orders.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100">My Stuff & Orders</a>
+                        <a href="{{ route('orders.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-[#53a318]">My Orders & Groups</a>
                     @endauth
                 </div>
             </div>
 
         </div>
+
+        <!-- Wishlist Mini Modal -->
+        <div x-show="wishlistModalOpen" x-cloak 
+             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+            <div @click.outside="wishlistModalOpen = false" 
+                 class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xl">❤️</span>
+                        <h3 class="text-base font-black text-slate-900">My Saved Wishlist</h3>
+                    </div>
+                    <button @click="wishlistModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
+                </div>
+                <div class="space-y-3 text-xs max-h-72 overflow-y-auto">
+                    <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-slate-800">BAUST Fleece Winter Hoodie</p>
+                            <p class="text-emerald-700 font-bold">Group Price: ৳৭৫০ (Save ৳২৫০)</p>
+                        </div>
+                        <a href="{{ route('group-buy.show', 'GRP-BAUST05') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-slate-800">SoundCore ANC Headphones</p>
+                            <p class="text-emerald-700 font-bold">Group Price: ৳৩,১৫০ (Save ৳১,৩৫০)</p>
+                        </div>
+                        <a href="{{ route('group-buy.show', 'GRP-SOUND99') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
+                    </div>
+                </div>
+                <button @click="wishlistModalOpen = false" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Close</button>
+            </div>
+        </div>
+
+        <!-- Quick Cart Mini Modal -->
+        <div x-show="cartModalOpen" x-cloak 
+             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+            <div @click.outside="cartModalOpen = false" 
+                 class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xl">🛍️</span>
+                        <h3 class="text-base font-black text-slate-900">Your Cart & Active Reservations</h3>
+                    </div>
+                    <button @click="cartModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
+                </div>
+                <div class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-black text-slate-800">Keyforge K8 Pro Wireless RGB</span>
+                        <span class="font-black text-[#53a318]">৳২,৭০০</span>
+                    </div>
+                    <p class="text-[11px] text-slate-600">Reserved in Active Group. 10-Minute Checkout Lock Active.</p>
+                </div>
+                <div class="flex items-center justify-between text-xs font-bold pt-2">
+                    <span>Estimated Total:</span>
+                    <span class="text-base font-black text-[#53a318]">৳২,৭০০</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button @click="cartModalOpen = false" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Keep Shopping</button>
+                    <a href="{{ route('orders.index') }}" class="py-2.5 text-center bg-[#53a318] hover:bg-[#468c13] text-white font-bold rounded-xl text-xs">View Orders</a>
+                </div>
+            </div>
+        </div>
+
     </header>
 
     <!-- Global Flash Notification Alerts -->
@@ -347,81 +542,156 @@
         @yield('content')
     </main>
 
-    <!-- 8. Groupon-Style Multi-Column Footer (Full Width) -->
+    <!-- ========================================================
+         23. COMPLETE FOOTER SECTION (CHECKLIST COMPLIANT)
+         ======================================================== -->
     <footer class="mt-20 bg-white border-t border-slate-200 pt-16 pb-12 text-slate-600 text-xs">
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-8 pb-12 border-b border-slate-200">
+            
+            <!-- 5-Column Navigation Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 pb-12 border-b border-slate-200">
                 
-                <!-- Col 1: Brand & App Download -->
-                <div class="space-y-4 md:col-span-2">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-8 h-8 rounded-lg bg-[#53a318] flex items-center justify-center text-white font-black text-xl">
-                            C
-                        </div>
-                        <span class="text-2xl font-black tracking-tight text-[#53a318] uppercase">CARTIVA</span>
-                    </div>
-                    <p class="text-slate-500 leading-relaxed text-xs pr-6">
-                        Cartiva is the premier group-buying discovery marketplace. By pooling demand together, consumers unlock wholesale volume discounts without paying retail markup.
-                    </p>
-                    <div class="pt-2 space-y-2">
-                        <span class="text-[11px] font-bold text-slate-800 uppercase block">The Cartiva Guarantee:</span>
-                        <div class="flex items-center space-x-2 text-[#53a318] font-bold text-xs">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                            <span>100% Automatic Refund on Unfilled Groups</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Col 2: Customer Support -->
-                <div>
-                    <h4 class="font-bold text-slate-900 uppercase text-xs mb-3">Customer Support</h4>
+                <!-- Col 1: Company -->
+                <div class="space-y-3">
+                    <h4 class="font-black text-slate-900 uppercase text-xs tracking-wider">Company</h4>
                     <ul class="space-y-2 text-slate-500">
-                        <li><a href="#how-it-works" class="hover:text-[#53a318] transition-colors">How Group Buying Works</a></li>
-                        <li><a href="#cartiva-guarantee" class="hover:text-[#53a318] transition-colors">Refund & Return Policy</a></li>
-                        <li><a href="{{ route('orders.index') }}" class="hover:text-[#53a318] transition-colors">Track Orders</a></li>
-                        <li><a href="#" class="hover:text-[#53a318] transition-colors">FAQ & Help Center</a></li>
-                        <li><a href="#" class="hover:text-[#53a318] transition-colors">Dispute Resolution</a></li>
+                        <li><a href="#how-it-works" class="hover:text-[#53a318] transition-colors">About CARTIVA</a></li>
+                        <li><a href="#contact-section" class="hover:text-[#53a318] transition-colors">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-[#53a318] transition-colors">Careers & Internships</a></li>
+                        <li><a href="#" class="hover:text-[#53a318] transition-colors">Platform Blog & News</a></li>
+                        <li><a href="#" class="hover:text-[#53a318] transition-colors">Community Guidelines</a></li>
                     </ul>
                 </div>
 
-                <!-- Col 3: Work with Cartiva (Merchants) -->
-                <div>
-                    <h4 class="font-bold text-slate-900 uppercase text-xs mb-3">Sell on Cartiva</h4>
+                <!-- Col 2: Shop -->
+                <div class="space-y-3">
+                    <h4 class="font-black text-slate-900 uppercase text-xs tracking-wider">Shop</h4>
                     <ul class="space-y-2 text-slate-500">
-                        <li><a href="{{ route('register') }}" class="text-[#53a318] font-bold hover:underline">Merchant Registration</a></li>
-                        <li><a href="{{ route('login') }}" class="hover:text-[#53a318] transition-colors">Merchant Portal Login</a></li>
-                        <li><a href="#" class="hover:text-[#53a318] transition-colors">Bulk Clearance Solutions</a></li>
-                        <li><a href="#" class="hover:text-[#53a318] transition-colors">Courier & Logistics SLA</a></li>
-                        <li><a href="#" class="hover:text-[#53a318] transition-colors">Zero Ad-Waste Marketing</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-[#53a318] transition-colors">All Products</a></li>
+                        <li><a href="#today-deals" class="hover:text-[#53a318] transition-colors">Group Deals</a></li>
+                        <li><a href="#flash-deals" class="hover:text-[#53a318] transition-colors">Flash Deals</a></li>
+                        <li><a href="#quick-categories" class="hover:text-[#53a318] transition-colors">Categories</a></li>
+                        <li><a href="#new-arrivals" class="hover:text-[#53a318] transition-colors">New Arrivals</a></li>
                     </ul>
                 </div>
 
-                <!-- Col 4: Academic Project & Contact -->
-                <div>
-                    <h4 class="font-bold text-slate-900 uppercase text-xs mb-3">Project & Contact</h4>
-                    <p class="text-slate-500 text-xs mb-2">
-                        Course: <strong>CSE 3200</strong><br>
-                        Web Engineering Project<br>
-                        <strong>BAUST, Saidpur Cantonment</strong>
-                    </p>
-                    <p class="text-slate-500 text-xs">
-                        Email: <a href="mailto:support@cartiva.com" class="text-[#53a318]">support@cartiva.com</a><br>
-                        Helpline: +880 1711 000001
-                    </p>
+                <!-- Col 3: Customer Service -->
+                <div class="space-y-3">
+                    <h4 class="font-black text-slate-900 uppercase text-xs tracking-wider">Customer Service</h4>
+                    <ul class="space-y-2 text-slate-500">
+                        <li><a href="#faq" class="hover:text-[#53a318] transition-colors">Help Center & FAQs</a></li>
+                        <li><a href="#trust-security" class="hover:text-[#53a318] transition-colors">Shipping & Logistics Policy</a></li>
+                        <li><a href="#cartiva-guarantee" class="hover:text-[#53a318] transition-colors">Return & 100% Refund Policy</a></li>
+                        <li><a href="#cartiva-guarantee" class="hover:text-[#53a318] transition-colors">Defect Replacement Policy</a></li>
+                        <li><a href="{{ route('orders.index') }}" class="hover:text-[#53a318] transition-colors">Track Your Order</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Account & Group Buying -->
+                <div class="space-y-3">
+                    <h4 class="font-black text-slate-900 uppercase text-xs tracking-wider">Account & Groups</h4>
+                    <ul class="space-y-2 text-slate-500">
+                        @auth
+                            <li><a href="{{ route('orders.index') }}" class="hover:text-[#53a318] transition-colors">My Account & Profile</a></li>
+                            <li><a href="{{ route('orders.index') }}" class="hover:text-[#53a318] transition-colors">My Orders</a></li>
+                            <li><a href="{{ route('orders.index') }}" class="hover:text-[#53a318] transition-colors">My Active Groups</a></li>
+                        @else
+                            <li><a href="{{ route('login') }}" class="hover:text-[#53a318] transition-colors">Login to Account</a></li>
+                            <li><a href="{{ route('register') }}" class="hover:text-[#53a318] transition-colors">Register as Customer</a></li>
+                        @endauth
+                        <li><a href="#start-own-group" class="hover:text-[#53a318] transition-colors">Create a Buying Group</a></li>
+                        <li><a href="{{ route('register') }}" class="text-[#53a318] font-bold hover:underline">Become a Merchant</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 5: Legal & Social Links -->
+                <div class="space-y-3">
+                    <h4 class="font-black text-slate-900 uppercase text-xs tracking-wider">Legal & Social</h4>
+                    <ul class="space-y-2 text-slate-500">
+                        <li><a href="#" class="hover:text-[#53a318] transition-colors">Terms & Conditions</a></li>
+                        <li><a href="#" class="hover:text-[#53a318] transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-[#53a318] transition-colors">Merchant SLA & Agreement</a></li>
+                    </ul>
+                    <div class="pt-2">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-2">Connect With Us:</span>
+                        <div class="flex items-center space-x-3 text-slate-400">
+                            <a href="#" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-[#1877f2] hover:text-white flex items-center justify-center transition-colors" title="Facebook">
+                                <span class="font-bold text-xs">f</span>
+                            </a>
+                            <a href="#" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-[#e4405f] hover:text-white flex items-center justify-center transition-colors" title="Instagram">
+                                <span class="font-bold text-xs">in</span>
+                            </a>
+                            <a href="#" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-[#ff0000] hover:text-white flex items-center justify-center transition-colors" title="YouTube">
+                                <span class="font-bold text-xs">yt</span>
+                            </a>
+                            <a href="#" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-[#0a66c2] hover:text-white flex items-center justify-center transition-colors" title="LinkedIn">
+                                <span class="font-bold text-xs">li</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
             </div>
 
-            <!-- Bottom Copyright & Legal -->
-            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400">
-                <p>&copy; {{ date('Y') }} Cartiva Group Commerce Inc. Group 10, CSE, BAUST. All rights reserved.</p>
-                <div class="flex items-center space-x-6 mt-4 sm:mt-0 font-medium">
-                    <a href="#" class="hover:text-slate-600">Privacy Policy</a>
-                    <a href="#" class="hover:text-slate-600">Terms of Service</a>
-                    <a href="#" class="hover:text-slate-600">Merchant Agreement</a>
-                    <span class="text-[#53a318] font-bold">Bangladeshi Taka (৳)</span>
+            <!-- Middle Section: Brand Description & Payment Method Badges -->
+            <div class="py-8 border-b border-slate-200 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-6 space-y-3">
+                    <div class="flex items-center space-x-2.5">
+                        <img src="{{ asset('images/cartiva-logo.png') }}" alt="Cartiva" class="h-7 w-auto object-contain">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-800">BANGLADESH</span>
+                    </div>
+                    <p class="text-slate-500 text-xs leading-relaxed max-w-xl">
+                        Cartiva is Bangladesh's dedicated collective group-buying marketplace. By combining multiple individual orders into bulk volumes, we unlock factory wholesale prices with guaranteed 100% automated refunds on unfilled groups.
+                    </p>
+                </div>
+
+                <!-- Accepted Digital Payment Methods -->
+                <div class="lg:col-span-6 lg:text-right space-y-2">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
+                        Verified Secure Payment Gateways & Partners:
+                    </span>
+                    <div class="inline-flex flex-wrap items-center gap-2 lg:justify-end">
+                        <span class="px-3 py-1.5 rounded-lg bg-pink-50 border border-pink-200 text-pink-700 font-black text-xs">
+                            bKash
+                        </span>
+                        <span class="px-3 py-1.5 rounded-lg bg-orange-50 border border-orange-200 text-orange-700 font-black text-xs">
+                            Nagad
+                        </span>
+                        <span class="px-3 py-1.5 rounded-lg bg-purple-50 border border-purple-200 text-purple-700 font-black text-xs">
+                            Rocket
+                        </span>
+                        <span class="px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 font-black text-xs">
+                            Upay
+                        </span>
+                        <span class="px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 font-black text-xs">
+                            VISA
+                        </span>
+                        <span class="px-3 py-1.5 rounded-lg bg-red-50 border border-red-200 text-red-700 font-black text-xs">
+                            MasterCard
+                        </span>
+                    </div>
                 </div>
             </div>
+
+            <!-- Bottom Copyright & Academic Attribution -->
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+                <div>
+                    <p>&copy; {{ date('Y') }} Cartiva Group Commerce Inc. All rights reserved.</p>
+                    <p class="text-[11px] text-slate-500 mt-1">
+                        Academic Project for Course: <strong>CSE 3200 (Web Engineering Project)</strong> • <strong>BAUST, Saidpur Cantonment</strong>
+                    </p>
+                </div>
+                <div class="flex items-center space-x-5 font-semibold text-slate-500">
+                    <a href="#" class="hover:text-[#53a318]">Privacy</a>
+                    <span>•</span>
+                    <a href="#" class="hover:text-[#53a318]">Terms</a>
+                    <span>•</span>
+                    <a href="#" class="hover:text-[#53a318]">Security</a>
+                    <span>•</span>
+                    <span class="text-[#53a318] font-black">Currency: BDT (৳)</span>
+                </div>
+            </div>
+
         </div>
     </footer>
 

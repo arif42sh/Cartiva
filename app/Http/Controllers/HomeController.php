@@ -46,29 +46,67 @@ class HomeController extends Controller
 
         $products = $query->latest()->paginate(12)->withQueryString();
 
-        // Ending Soon & Hot Groups (ordered by closest deadline and high slot fill)
-        $activeGroups = GroupBuySession::with(['product', 'leader', 'members.user'])
+        // 1. Live Spotlight Deal (for High-Conversion Hero Section)
+        $spotlightGroup = GroupBuySession::with(['product.category', 'leader', 'members.user'])
+            ->where('status', 'active')
+            ->where('expires_at', '>', now())
+            ->whereColumn('current_members', '<', 'required_members')
+            ->orderByRaw('(current_members / required_members) DESC')
+            ->first();
+
+        // 2. Ending Soon & Rush Hour Pools (Urgency Section)
+        $urgentGroups = GroupBuySession::with(['product.category', 'leader', 'members.user'])
             ->where('status', 'active')
             ->where('expires_at', '>', now())
             ->whereColumn('current_members', '<', 'required_members')
             ->orderBy('expires_at', 'asc')
-            ->take(6)
-            ->get();
-
-        // Top trending deals (highest discount percentage)
-        $trendingDeals = Product::where('is_active', true)
-            ->orderByRaw('((single_price - group_price) / single_price) DESC')
             ->take(4)
             ->get();
+
+        // 3. Active Groups List (Core Deals Grid)
+        $activeGroups = GroupBuySession::with(['product.category', 'leader', 'members.user'])
+            ->where('status', 'active')
+            ->where('expires_at', '>', now())
+            ->whereColumn('current_members', '<', 'required_members')
+            ->latest()
+            ->take(8)
+            ->get();
+
+        if (!$spotlightGroup) {
+            $spotlightGroup = $activeGroups->first();
+        }
+
+        $almostCompletedGroups = $urgentGroups;
+        $todayDeals = Product::with(['category', 'seller', 'activeGroupSessions'])->where('is_active', true)->orderBy('sales_count', 'desc')->take(4)->get();
+        $flashDeals = Product::with(['category', 'seller', 'activeGroupSessions'])->where('is_active', true)->orderByRaw('((single_price - group_price) / single_price) DESC')->take(4)->get();
+        $popularGroupBuys = Product::with(['category', 'seller'])->where('is_active', true)->orderBy('sales_count', 'desc')->take(8)->get();
+        $newArrivals = Product::with(['category', 'seller'])->where('is_active', true)->latest()->take(8)->get();
+        $recommendedDeals = Product::with(['category', 'seller'])->where('is_active', true)->orderBy('rating', 'desc')->take(6)->get();
 
         // Real-Time Social Proof Stats
         $stats = [
             'completed_groups' => 1450 + GroupBuySession::where('status', 'completed')->count(),
             'total_saved' => 2850000 + (int) GroupBuySession::count() * 1250,
             'verified_sellers' => 120 + User::where('role', 'seller')->count(),
+            'active_buyers' => 5800 + User::count(),
+            'today_unlocked_deals' => 38,
+            'today_saved_bdt' => 64200,
         ];
 
-        return view('index', compact('categories', 'products', 'activeGroups', 'trendingDeals', 'stats'));
+        return view('index', compact(
+            'spotlightGroup',
+            'urgentGroups',
+            'categories', 
+            'products', 
+            'activeGroups', 
+            'almostCompletedGroups',
+            'todayDeals', 
+            'flashDeals', 
+            'popularGroupBuys', 
+            'newArrivals', 
+            'recommendedDeals', 
+            'stats'
+        ));
     }
 
     public function category(Category $category)
@@ -91,14 +129,37 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
-        $trendingDeals = collect();
+        $almostCompletedGroups = $activeGroups->take(4);
+        $todayDeals = $products->take(4);
+        $flashDeals = $products->take(4);
+        $popularGroupBuys = $products->take(8);
+        $newArrivals = $products->take(8);
+        $recommendedDeals = $products->take(6);
 
         $stats = [
             'completed_groups' => 1450 + GroupBuySession::where('status', 'completed')->count(),
             'total_saved' => 2850000,
             'verified_sellers' => 120 + User::where('role', 'seller')->count(),
+            'active_buyers' => 5800 + User::count(),
         ];
 
-        return view('index', compact('categories', 'products', 'activeGroups', 'trendingDeals', 'category', 'stats'));
+        $spotlightGroup = $activeGroups->first();
+        $urgentGroups = $almostCompletedGroups;
+
+        return view('index', compact(
+            'spotlightGroup',
+            'urgentGroups',
+            'categories', 
+            'products', 
+            'activeGroups', 
+            'almostCompletedGroups',
+            'todayDeals', 
+            'flashDeals', 
+            'popularGroupBuys', 
+            'newArrivals', 
+            'recommendedDeals', 
+            'category', 
+            'stats'
+        ));
     }
 }
