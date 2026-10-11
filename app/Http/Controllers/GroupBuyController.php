@@ -18,27 +18,30 @@ class GroupBuyController extends Controller
         $isExpired = $session->isExpired();
         $isCompleted = $session->isCompleted();
 
-        // Calculate seconds remaining for Alpine countdown timer
-        $secondsRemaining = max(0, now()->diffInSeconds($session->expires_at, false));
+        // Calculate seconds remaining for Alpine countdown timer (cast to int to avoid floating decimals)
+        $secondsRemaining = max(0, (int) round(now()->diffInSeconds($session->expires_at, false)));
 
         return view('group-buy.show', compact('session', 'userAlreadyJoined', 'isExpired', 'isCompleted', 'secondsRemaining'));
     }
 
-    public function start(Product $product)
+    public function start(Request $request, Product $product)
     {
         if (!Auth::check()) {
             return redirect()->route('login')->with('info', 'Please log in to start a Group Buy team.');
         }
 
-        // Redirect to checkout with order_type = group_buy and start_new = 1
+        $quantity = max(1, (int) $request->input('quantity', 1));
+
+        // Redirect to checkout with order_type = group_buy, start_new = 1, and quantity
         return redirect()->route('checkout', [
             'product_id' => $product->id,
             'type' => 'group_buy',
             'action' => 'start_new',
+            'quantity' => $quantity,
         ]);
     }
 
-    public function join(GroupBuySession $session)
+    public function join(Request $request, GroupBuySession $session)
     {
         if (!Auth::check()) {
             return redirect()->route('login')->with('info', 'Please log in to join this Team Buy.');
@@ -59,12 +62,15 @@ class GroupBuyController extends Controller
                 ->with('info', 'You are already a member of this team.');
         }
 
-        // Redirect to checkout with group session ID
+        $quantity = max(1, (int) $request->input('quantity', 1));
+
+        // Redirect to checkout with group session ID and quantity
         return redirect()->route('checkout', [
             'product_id' => $session->product_id,
             'type' => 'group_buy',
             'session_id' => $session->id,
             'action' => 'join_existing',
+            'quantity' => $quantity,
         ]);
     }
 }

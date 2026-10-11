@@ -10,7 +10,7 @@
         shareGroupTitle: '{{ $spotlightGroup ? addslashes($spotlightGroup->product->title) : 'Cartiva Premium Fleece Winter Hoodie' }}',
         rulesModalOpen: false,
         copiedToast: false,
-        activeFilterTab: 'fastest',
+        activeFilterTab: 'all',
         openFaq: null,
 
         copyShareLink(code) {
@@ -100,7 +100,7 @@
             <div class="lg:col-span-5">
                 @if($spotlightGroup)
                     <div class="relative bg-slate-900/90 backdrop-blur-xl rounded-2xl border-2 border-emerald-500/40 ring-2 ring-emerald-500/10 shadow-xl shadow-emerald-950/60 p-4 sm:p-5 space-y-3.5"
-                         x-data="groupCountdown({{ max(0, $spotlightGroup->expires_at->diffInSeconds(now())) }})"
+                         x-data="groupCountdown({{ max(0, (int) now()->diffInSeconds($spotlightGroup->expires_at, false)) }})"
                          x-init="start()">
                         
                         <!-- Top Header with Glowing Neon Pulse -->
@@ -176,21 +176,21 @@
                             </div>
 
                             <p class="text-[10px] text-amber-300 font-semibold">
-                                🔥 আর মাত্র <strong class="text-white font-black underline">{{ $remaining }} জন</strong> হলেই পাইকারি রেট ১০০% নিশ্চিত!
+                                🔥 Only <strong class="text-white font-black underline">{{ $remaining }} more buyer{{ $remaining > 1 ? 's' : '' }}</strong> needed to lock in wholesale price!
                             </p>
                         </div>
 
-                        <!-- Action Buttons: Join Pool & Start Pool -->
+                        <!-- Action Buttons: View Deal & Start Pool -->
                         <div class="grid grid-cols-2 gap-2 pt-1">
-                            <a href="{{ route('group-buy.show', $spotlightGroup->group_code) }}" 
+                            <a href="{{ route('products.show', $spotlightGroup->product->slug) }}" 
                                class="py-2.5 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-center text-xs transition-all shadow-md shadow-green-950/50 hover:scale-[1.02] flex items-center justify-center space-x-1">
-                                <span>Join Pool Now</span>
+                                <span>View Deal & Join</span>
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </a>
 
-                            <a href="{{ route('products.show', $spotlightGroup->product) }}" 
+                            <a href="{{ route('products.show', $spotlightGroup->product->slug) }}" 
                                class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-center text-xs transition-all border border-slate-700 hover:scale-[1.02]">
-                                Start New Pool
+                                Start New Team
                             </a>
                         </div>
 
@@ -199,14 +199,499 @@
                     <!-- Fallback Spotlight Card -->
                     <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 text-center space-y-3">
                         <span class="text-3xl block">⚡</span>
-                        <h3 class="text-base font-black text-white">Create the First Group Today!</h3>
-                        <p class="text-xs text-slate-400">ক্যাটালগ থেকে যেকোনো পণ্য পছন্দ করে নতুন পুল চালু করুন এবং বন্ধুদের ইনভাইট করুন।</p>
+                        <h3 class="text-base font-black text-white">Start the First Team Buy Today!</h3>
+                        <p class="text-xs text-slate-400">Choose any product from the catalog, start a team pool, and invite friends to save big.</p>
                         <a href="#active-deals" class="inline-block py-2 px-5 rounded-xl bg-[#53a318] text-white font-bold text-xs">Browse Products</a>
                     </div>
                 @endif
             </div>
 
         </div>
+    </section>
+
+
+    <!-- ========================================================
+         2.5 TOP CATEGORIES STRIP (ORIGINAL SOCIAL COMMERCE NAVIGATION)
+         ======================================================== -->
+    @php
+        $currentCat = request('category');
+        $topNavCategories = [
+            [
+                'name' => 'Laptops & PC',
+                'slug' => 'computers-accessories',
+                'bg' => 'bg-emerald-50 group-hover:bg-emerald-100',
+                'border' => 'border-emerald-200/70',
+                'svg' => '<svg class="w-7 h-7 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2" fill="#10b981" fill-opacity="0.15"/><path d="M2 20h20"/><path d="M10 16h4"/></svg>'
+            ],
+            [
+                'name' => 'Audio & Sound',
+                'slug' => 'smart-tech-audio',
+                'bg' => 'bg-cyan-50 group-hover:bg-cyan-100',
+                'border' => 'border-cyan-200/70',
+                'svg' => '<svg class="w-7 h-7 text-cyan-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" fill="#06b6d4" fill-opacity="0.15"/></svg>'
+            ],
+            [
+                'name' => 'Mobiles & Tabs',
+                'slug' => 'mobile-accessories',
+                'bg' => 'bg-blue-50 group-hover:bg-blue-100',
+                'border' => 'border-blue-200/70',
+                'svg' => '<svg class="w-7 h-7 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3" fill="#3b82f6" fill-opacity="0.15"/><path d="M12 18h.01"/><path d="M10 5h4"/></svg>'
+            ],
+            [
+                'name' => 'Smartwatches',
+                'slug' => 'wearables-watches',
+                'bg' => 'bg-purple-50 group-hover:bg-purple-100',
+                'border' => 'border-purple-200/70',
+                'svg' => '<svg class="w-7 h-7 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="6" width="14" height="12" rx="3" fill="#a855f7" fill-opacity="0.15"/><path d="M9 2h6l-.8 4H9.8L9 2z"/><path d="M9 22h6l-.8-4H9.8L9 22z"/><circle cx="12" cy="12" r="2"/></svg>'
+            ],
+            [
+                'name' => 'Gaming Gear',
+                'slug' => 'computing-gaming',
+                'bg' => 'bg-rose-50 group-hover:bg-rose-100',
+                'border' => 'border-rose-200/70',
+                'svg' => '<svg class="w-7 h-7 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4" fill="#f43f5e" fill-opacity="0.15"/><path d="M6 12h4m-2-2v4"/><circle cx="15" cy="11" r="1" fill="currentColor"/><circle cx="17" cy="13" r="1" fill="currentColor"/></svg>'
+            ],
+            [
+                'name' => 'Winter Apparel',
+                'slug' => 'winter-specials',
+                'bg' => 'bg-amber-50 group-hover:bg-amber-100',
+                'border' => 'border-amber-200/70',
+                'svg' => '<svg class="w-7 h-7 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.5a2 2 0 0 0 1.98 1.67H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10.86h1.16a2 2 0 0 0 1.98-1.67l.58-3.5a2 2 0 0 0-1.34-2.23z" fill="#f59e0b" fill-opacity="0.15"/><path d="M12 6v6"/></svg>'
+            ],
+            [
+                'name' => 'Kitchen Gear',
+                'slug' => 'kitchen-appliances',
+                'bg' => 'bg-orange-50 group-hover:bg-orange-100',
+                'border' => 'border-orange-200/70',
+                'svg' => '<svg class="w-7 h-7 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v6a4 4 0 0 0 8 0V2"/><path d="M10 12v10"/><path d="M18 2v20" fill="#f97316" fill-opacity="0.15"/></svg>'
+            ],
+            [
+                'name' => 'Home & Living',
+                'slug' => 'home-living',
+                'bg' => 'bg-indigo-50 group-hover:bg-indigo-100',
+                'border' => 'border-indigo-200/70',
+                'svg' => '<svg class="w-7 h-7 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="#6366f1" fill-opacity="0.15"/><path d="M9 22V12h6v10"/></svg>'
+            ],
+            [
+                'name' => 'Grocery & Food',
+                'slug' => 'dry-food-fmcg',
+                'bg' => 'bg-green-50 group-hover:bg-green-100',
+                'border' => 'border-green-200/70',
+                'svg' => '<svg class="w-7 h-7 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" fill="#22c55e" fill-opacity="0.15"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>'
+            ],
+            [
+                'name' => 'Bags & Travel',
+                'slug' => 'fashion-bags',
+                'bg' => 'bg-teal-50 group-hover:bg-teal-100',
+                'border' => 'border-teal-200/70',
+                'svg' => '<svg class="w-7 h-7 text-teal-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="15" rx="3" fill="#14b8a6" fill-opacity="0.15"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M4 11h16"/></svg>'
+            ],
+        ];
+    @endphp
+    <section class="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-5 space-y-4">
+        
+        <!-- Header Row -->
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div class="flex items-center space-x-2.5">
+                <span class="w-2.5 h-5 rounded-full bg-[#53a318]"></span>
+                <h2 class="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+                    Top Categories
+                </h2>
+                @if($currentCat)
+                    <div class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-[#53a318] text-[11px] font-bold">
+                        <span>Active: {{ ucwords(str_replace('-', ' ', $currentCat)) }}</span>
+                        <a href="{{ route('home') }}#active-deals" class="hover:text-emerald-950 font-black ml-0.5" title="Clear category filter">&times;</a>
+                    </div>
+                @endif
+            </div>
+            
+            <div class="flex items-center space-x-3 text-xs">
+                @if($currentCat)
+                    <a href="{{ route('home') }}#active-deals" class="font-bold text-slate-500 hover:text-rose-600 transition-colors">
+                        ✕ Clear Filter
+                    </a>
+                @endif
+                <a href="{{ route('home') }}" class="group font-bold text-[#53a318] hover:text-[#468c13] flex items-center space-x-1 transition-colors">
+                    <span>See all categories</span>
+                    <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- 10-Column Balanced Full-Width Grid (Big Icons • Full English Names • Zero Cutoffs • Active Highlighting) -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2 sm:gap-2.5 w-full">
+            @foreach($topNavCategories as $item)
+                @php
+                    $isItemActive = ($currentCat === $item['slug']) 
+                        || ($item['slug'] === 'smart-tech-audio' && $currentCat === 'tech-accessories')
+                        || ($item['slug'] === 'home-living' && $currentCat === 'home-lifestyle');
+                @endphp
+                <a href="{{ route('category.show', $item['slug']) }}" 
+                   class="flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl {{ $isItemActive ? 'bg-emerald-50/70 border-2 border-[#53a318] ring-2 ring-[#53a318]/20 shadow-sm' : 'bg-white hover:bg-slate-50/80 border border-slate-200/80 hover:border-[#53a318]' }} shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all duration-200 group text-center cursor-pointer relative">
+                    
+                    @if($isItemActive)
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#53a318]"></span>
+                    @endif
+
+                    <!-- Big Icon Box -->
+                    <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl {{ $item['bg'] }} border {{ $item['border'] }} flex items-center justify-center transition-all group-hover:scale-110 shadow-2xs">
+                        {!! $item['svg'] !!}
+                    </div>
+                    
+                    <!-- English Title (Fully Visible • Zero Truncation) -->
+                    <span class="text-[11px] sm:text-xs font-bold {{ $isItemActive ? 'text-[#53a318]' : 'text-slate-800' }} group-hover:text-[#53a318] transition-colors mt-2.5 text-center leading-tight whitespace-nowrap">
+                        {{ $item['name'] }}
+                    </span>
+                </a>
+            @endforeach
+        </div>
+
+    </section>
+
+
+    <!-- ========================================================
+         2.5 HOT DEALS / ALMOST FILLED POOLS (SLIDING CAROUSEL)
+         ======================================================== -->
+    @if(isset($urgentGroups) && $urgentGroups->count() > 0)
+    <section id="urgent-pools" class="space-y-4" x-data="{
+        scrollLeft() {
+            $refs.hotSlider.scrollBy({ left: -320, behavior: 'smooth' });
+        },
+        scrollRight() {
+            $refs.hotSlider.scrollBy({ left: 320, behavior: 'smooth' });
+        }
+    }">
+        <div class="flex items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
+            <div class="flex items-center space-x-2.5">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-600 shadow-2xs">
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>
+                </span>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                            Hot Deals — Almost Full Pools
+                        </h2>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700">Closing Soon</span>
+                    </div>
+                    <p class="text-xs text-slate-500">
+                        Lock in wholesale prices before time runs out — join with just 1 click
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 shrink-0">
+                <a href="{{ route('hot-deals.index') }}" target="_blank" rel="noopener noreferrer" 
+                   class="inline-flex items-center space-x-1.5 text-xs font-bold text-[#53a318] hover:text-[#418212] px-3.5 py-2 rounded-xl border border-slate-200 hover:border-[#53a318] bg-white transition-all shadow-2xs group">
+                    <span>See all hot deals</span>
+                    <svg class="w-3.5 h-3.5 text-[#53a318] group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>
+
+                <div class="hidden sm:flex items-center space-x-1">
+                    <button type="button" @click="scrollLeft()" aria-label="Previous Deals" 
+                            class="w-8 h-8 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 flex items-center justify-center shadow-2xs transition-all active:scale-95 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <button type="button" @click="scrollRight()" aria-label="Next Deals" 
+                            class="w-8 h-8 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 flex items-center justify-center shadow-2xs transition-all active:scale-95 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Horizontal Sliding Track (Left to Right) -->
+        <div x-ref="hotSlider" class="flex items-stretch gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-2 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0">
+            @foreach($urgentGroups as $group)
+                @php
+                    $discountPct = round((($group->product->single_price - $group->product->group_price) / $group->product->single_price) * 100);
+                    $needed = max(1, $group->required_members - $group->current_members);
+                    $pct = min(100, round(($group->current_members / $group->required_members) * 100));
+                    $rawCat = $group->product->category->name ?? 'General';
+                    $cleanCat = preg_match('/\((.*?)\)/', $rawCat, $m) ? $m[1] : $rawCat;
+                    $saveAmount = $group->product->single_price - $group->product->group_price;
+                    $remainingSecs = max(0, (int) now()->diffInSeconds($group->expires_at, false));
+                @endphp
+                <div class="w-[280px] sm:w-[305px] shrink-0 bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-xl hover:border-emerald-500/80 hover:-translate-y-1 transition-all duration-300 p-4 flex flex-col justify-between relative group"
+                     x-data="groupCountdown({{ $remainingSecs }})"
+                     x-init="start()">
+                    
+                    <div class="space-y-3">
+                        <!-- Top Urgency Pill & Monospace Timer -->
+                        <div class="flex items-center justify-between gap-1">
+                            @if($needed === 1)
+                                <span class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-200/80 text-[10px] font-black flex items-center space-x-1.5 shadow-2xs">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
+                                    <span>Only 1 slot left!</span>
+                                </span>
+                            @else
+                                <span class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200/80 text-[10px] font-bold flex items-center space-x-1 shadow-2xs">
+                                    <span>{{ $needed }} slots needed</span>
+                                </span>
+                            @endif
+
+                            <span class="inline-flex items-center space-x-1 font-mono text-[10px] font-bold text-slate-700 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200/80">
+                                <svg class="w-3 h-3 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span x-text="timeString"></span>
+                            </span>
+                        </div>
+
+                        <!-- Product Image -->
+                        <a href="{{ route('products.show', $group->product->slug) }}" class="block relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 group/img">
+                            <img src="{{ $group->product->image_url }}" alt="{{ $group->product->title }}" class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300">
+                            <span class="absolute top-2 left-2 px-2.5 py-0.5 rounded-lg text-[10px] font-black bg-rose-600 text-white shadow-2xs tracking-tight">
+                                -{{ $discountPct }}% OFF
+                            </span>
+                            <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-900/85 text-white backdrop-blur-xs shadow-2xs">
+                                {{ $group->group_code }}
+                            </span>
+                        </a>
+
+                        <!-- Product Title & Category -->
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block truncate">
+                                {{ $cleanCat }}
+                            </span>
+                            <h3 class="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 leading-snug group-hover:text-[#53a318] transition-colors min-h-[2.5rem]">
+                                <a href="{{ route('products.show', $group->product->slug) }}">
+                                    {{ $group->product->title }}
+                                </a>
+                            </h3>
+                            
+                            <!-- Pricing & Savings -->
+                            <div class="pt-1 flex items-baseline justify-between flex-wrap gap-1">
+                                <div class="flex items-baseline space-x-2">
+                                    <span class="text-base sm:text-lg font-black text-[#53a318]">৳{{ number_format($group->product->group_price) }}</span>
+                                    <span class="text-xs text-slate-400 line-through">৳{{ number_format($group->product->single_price) }}</span>
+                                </div>
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-[#53a318] border border-emerald-200/60">
+                                    Save ৳{{ number_format($saveAmount) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="space-y-1 pt-1">
+                            <div class="flex items-center justify-between text-[11px]">
+                                <span class="text-slate-600 font-semibold">{{ $group->current_members }} of {{ $group->required_members }} joined</span>
+                                <span class="text-[#53a318] font-black">{{ $pct }}%</span>
+                            </div>
+                            <div class="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-amber-400 to-[#53a318] rounded-full" style="width: {{ $pct }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Button: Go to Product Details to inspect & join -->
+                    <div class="pt-3">
+                        <a href="{{ route('products.show', $group->product->slug) }}" 
+                           class="w-full py-2.5 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-1.5 active:scale-[0.99]">
+                            <span>View Deal & Join</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+
+                </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+
+
+    <!-- ========================================================
+         2.6 DUAL FLASH DEAL CAMPAIGN BANNERS (HIGH CONVERSION SOCIAL COMMERCE)
+         ======================================================== -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        
+        <!-- Promo Banner 1: Smart Audio & Wireless ANC Gear -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-[#07192e] border border-blue-900/40 p-6 sm:p-7 text-white shadow-xl group hover:shadow-2xl hover:border-blue-700/50 transition-all duration-300">
+            <div class="absolute -top-16 -right-16 w-48 h-48 bg-cyan-500/15 rounded-full blur-2xl pointer-events-none group-hover:bg-cyan-500/25 transition-all"></div>
+            
+            <div class="relative z-10 flex flex-col justify-between h-full space-y-4">
+                <div class="space-y-2">
+                    <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-cyan-300 text-[10px] font-black uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+                        <span>🔥 TRENDING AUDIO POOL • SAVE UP TO 42%</span>
+                    </div>
+
+                    <h3 class="text-xl sm:text-2xl font-black tracking-tight leading-tight">
+                        Studio ANC Audio & Wireless Earbuds
+                    </h3>
+
+                    <p class="text-xs text-slate-300 leading-relaxed max-w-md">
+                        একসাথে ৩ জন সদস্য মিললেই ফ্ল্যাগশিপ সাউন্ড গ্যাজেটে আনলক হয় সরাসরি পাইকারি কারখানা রেট।
+                    </p>
+
+                    <!-- Feature Pills -->
+                    <div class="flex flex-wrap items-center gap-2 pt-1 text-[10px] font-bold text-slate-300">
+                        <span class="px-2 py-0.5 rounded-md bg-white/10 border border-white/10">35dB Active ANC</span>
+                        <span class="px-2 py-0.5 rounded-md bg-white/10 border border-white/10">60H Playback</span>
+                        <span class="px-2 py-0.5 rounded-md bg-white/10 border border-white/10 text-emerald-300">✓ 1-Year Warranty</span>
+                    </div>
+                </div>
+
+                <!-- Price + CTA -->
+                <div class="flex items-center justify-between pt-2 border-t border-white/10">
+                    <div>
+                        <span class="text-[10px] text-slate-400 font-bold uppercase block">Team Price From</span>
+                        <div class="flex items-baseline space-x-2">
+                            <span class="text-xl font-black text-cyan-300">৳১,৮৯০</span>
+                            <span class="text-xs text-slate-400 line-through">৳৩,২৫০</span>
+                        </div>
+                    </div>
+                    <a href="{{ route('category.show', 'smart-tech-audio') }}" 
+                       class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-black text-xs shadow-md shadow-blue-950/60 hover:scale-105 active:scale-95 transition-all flex items-center space-x-1.5">
+                        <span>Join Audio Pool</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promo Banner 2: Winter Fleece & Cozy Living Drop -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-[#0a2012] to-slate-900 border border-emerald-900/40 p-6 sm:p-7 text-white shadow-xl group hover:shadow-2xl hover:border-emerald-700/50 transition-all duration-300">
+            <div class="absolute -top-16 -right-16 w-48 h-48 bg-[#53a318]/15 rounded-full blur-2xl pointer-events-none group-hover:bg-[#53a318]/25 transition-all"></div>
+            
+            <div class="relative z-10 flex flex-col justify-between h-full space-y-4">
+                <div class="space-y-2">
+                    <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[10px] font-black uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#84cc16] animate-ping"></span>
+                        <span>❄️ WINTER SPECIAL DROP • DIRECT WHOLESALE TIER</span>
+                    </div>
+
+                    <h3 class="text-xl sm:text-2xl font-black tracking-tight leading-tight">
+                        Heavyweight Fleece Hoodies & Home Gear
+                    </h3>
+
+                    <p class="text-xs text-slate-300 leading-relaxed max-w-md">
+                        সরাসরি নিটিং কারখানা থেকে প্রিমিয়াম অর্গানিক ফ্লিস এবং ডেইলি হোম অ্যাপ্লায়েন্স অফার।
+                    </p>
+
+                    <!-- Feature Pills -->
+                    <div class="flex flex-wrap items-center gap-2 pt-1 text-[10px] font-bold text-slate-300">
+                        <span class="px-2 py-0.5 rounded-md bg-white/10 border border-white/10">340+ GSM Organic Fleece</span>
+                        <span class="px-2 py-0.5 rounded-md bg-white/10 border border-white/10">Zero Shrinkage</span>
+                        <span class="px-2 py-0.5 rounded-md bg-white/10 border border-white/10 text-emerald-300">✓ 100% Refundable</span>
+                    </div>
+                </div>
+
+                <!-- Price + CTA -->
+                <div class="flex items-center justify-between pt-2 border-t border-white/10">
+                    <div>
+                        <span class="text-[10px] text-slate-400 font-bold uppercase block">Team Price From</span>
+                        <div class="flex items-baseline space-x-2">
+                            <span class="text-xl font-black text-[#84cc16]">৳৮৫০</span>
+                            <span class="text-xs text-slate-400 line-through">৳১,৪৫০</span>
+                        </div>
+                    </div>
+                    <a href="{{ route('category.show', 'winter-specials') }}" 
+                       class="px-4 py-2.5 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs shadow-md shadow-green-950/60 hover:scale-105 active:scale-95 transition-all flex items-center space-x-1.5">
+                        <span>Explore Winter Pools</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================
+         2.7 AUTHORIZED BRAND PARTNERS & WHOLESALE SOURCING STRIP (RYANS-STYLE TRUST)
+         ======================================================== -->
+    <section class="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-5 sm:p-6 space-y-4">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div>
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-[#53a318]"></span>
+                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-500">AUTHENTIC WHOLESALE PARTNERS</span>
+                </div>
+                <h3 class="text-sm sm:text-base font-black text-slate-900 tracking-tight mt-0.5">
+                    Authorized Brand Partners & Wholesale Sourcing
+                </h3>
+            </div>
+            <p class="text-[11px] text-slate-500 sm:text-right">
+                ১০০% জেনুইন প্রোডাক্টস • সরাসরি অথোরাইজড ডিস্ট্রিবিউটর ও ফ্যাক্টরি হাব
+            </p>
+        </div>
+
+        <!-- Brand Cards Grid (8 Core Sourcing Brands) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5 sm:gap-3">
+            
+            <!-- Brand 1: Anker / SoundCore -->
+            <div class="p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/90 border border-slate-200/70 hover:border-blue-400 transition-all flex flex-col items-center text-center space-y-1.5 group cursor-default">
+                <span class="text-sm font-black text-slate-800 tracking-tight group-hover:text-blue-600 transition-colors">ANKER</span>
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Sound & Power</span>
+                <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">18M Warranty</span>
+            </div>
+
+            <!-- Brand 2: Sony -->
+            <div class="p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/90 border border-slate-200/70 hover:border-slate-800 transition-all flex flex-col items-center text-center space-y-1.5 group cursor-default">
+                <span class="text-sm font-black text-slate-800 tracking-tight group-hover:text-slate-950 transition-colors">SONY</span>
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Audio & Optics</span>
+                <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-slate-200 text-slate-800">Auth Dealer</span>
+            </div>
+
+            <!-- Brand 3: Xiaomi -->
+            <div class="p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/90 border border-slate-200/70 hover:border-orange-400 transition-all flex flex-col items-center text-center space-y-1.5 group cursor-default">
+                <span class="text-sm font-black text-slate-800 tracking-tight group-hover:text-orange-600 transition-colors">XIAOMI</span>
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Smart Living</span>
+                <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-orange-100 text-orange-700">Global Hub</span>
+            </div>
+
+            <!-- Brand 4: Baseus -->
+            <div class="p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/90 border border-slate-200/70 hover:border-amber-400 transition-all flex flex-col items-center text-center space-y-1.5 group cursor-default">
+                <span class="text-sm font-black text-slate-800 tracking-tight group-hover:text-amber-600 transition-colors">BASEUS</span>
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Fast Chargers</span>
+                <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Direct Pool</span>
+            </div>
+
+            <!-- Brand 5: Logitech -->
+            <div class="p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/90 border border-slate-200/70 hover:border-cyan-400 transition-all flex flex-col items-center text-center space-y-1.5 group cursor-default">
+                <span class="text-sm font-black text-slate-800 tracking-tight group-hover:text-cyan-600 transition-colors">LOGITECH</span>
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Productivity</span>
+                <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-800">Official Tech</span>
+            </div>
+
+            <!-- Brand 6: Philips -->
+            <div class="p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/90 border border-slate-200/70 hover:border-blue-400 transition-all flex flex-col items-center text-center space-y-1.5 group cursor-default">
+                <span class="text-sm font-black text-slate-800 tracking-tight group-hover:text-blue-700 transition-colors">PHILIPS</span>
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Home Appliance</span>
+                <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">2-Year Cover</span>
+            </div>
+
+            <!-- Brand 7: Keychron -->
+            <div class="p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/90 border border-slate-200/70 hover:border-rose-400 transition-all flex flex-col items-center text-center space-y-1.5 group cursor-default">
+                <span class="text-sm font-black text-slate-800 tracking-tight group-hover:text-rose-600 transition-colors">KEYCHRON</span>
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Mechanical PC</span>
+                <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-rose-100 text-rose-700">Official Dist</span>
+            </div>
+
+            <!-- Brand 8: Remax -->
+            <div class="p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/90 border border-slate-200/70 hover:border-emerald-400 transition-all flex flex-col items-center text-center space-y-1.5 group cursor-default">
+                <span class="text-sm font-black text-slate-800 tracking-tight group-hover:text-emerald-600 transition-colors">REMAX</span>
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Mobile Gadgets</span>
+                <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-100 text-[#53a318]">Direct Import</span>
+            </div>
+
+        </div>
+
+        <!-- Micro-Assurance Footnote -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-[11px] font-bold text-slate-500">
+            <div class="flex items-center space-x-1.5">
+                <span class="text-[#53a318]">🛡️</span>
+                <span>১০০% অথেনটিক ব্র্যান্ড ওয়ারেন্টি</span>
+            </div>
+            <div class="flex items-center space-x-1.5">
+                <span class="text-cyan-600">⚡</span>
+                <span>বাল্ক অর্ডারে সরাসরি পাইকারি আমদানি রেট</span>
+            </div>
+            <div class="flex items-center space-x-1.5">
+                <span class="text-amber-500">🔒</span>
+                <span>গ্রুপ অপূর্ণ থাকলে ১০০% ইনস্ট্যান্ট রিফান্ড</span>
+            </div>
+        </div>
+
     </section>
 
 
@@ -289,113 +774,7 @@
     </section>
 
 
-    <!-- ========================================================
-         4. "ENDING SOON / RUSH HOUR" POOLS (HIGH URGENCY ZONE)
-         Theme: Amber/Coral Urgency Borders & Monospace Countdown
-         ======================================================== -->
-    <section id="urgent-pools" class="space-y-6">
-        
-        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200/80 pb-4">
-            <div>
-                <div class="flex items-center space-x-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
-                    <span class="text-[11px] font-black uppercase tracking-wider text-rose-600">HIGH CONVERSION URGENCY ZONE</span>
-                </div>
-                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
-                    ⚡ Ending Soon / Rush Hour Pools
-                </h2>
-                <p class="text-xs text-slate-500 mt-1">
-                    যে গ্রুপগুলোর সময় শেষ হতে মাত্র কয়েক ঘণ্টা বাকি — আর অল্প কয়েকজন হলেই সর্বোচ্চ ডিসকাউন্ট নিশ্চিত!
-                </p>
-            </div>
-            <a href="#active-deals" class="text-xs font-bold text-[#53a318] hover:underline flex items-center space-x-1">
-                <span>View All Active Pools &rarr;</span>
-            </a>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            @forelse($urgentGroups as $group)
-                @php
-                    $discountPct = round((($group->product->single_price - $group->product->group_price) / $group->product->single_price) * 100);
-                    $needed = max(1, $group->required_members - $group->current_members);
-                    $pct = min(100, round(($group->current_members / $group->required_members) * 100));
-                @endphp
-                <div class="bg-white rounded-3xl border-2 border-amber-300/80 shadow-md hover:shadow-2xl hover:border-amber-400 hover:-translate-y-1.5 transition-all duration-300 p-5 flex flex-col justify-between space-y-4 relative"
-                     x-data="groupCountdown({{ max(0, $group->expires_at->diffInSeconds(now())) }})"
-                     x-init="start()">
-                    
-                    <!-- Top Urgency Pill -->
-                    <div class="flex items-center justify-between">
-                        <span class="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[10px] font-black uppercase tracking-wider flex items-center space-x-1">
-                            <span>⏱ ENDING SOON</span>
-                        </span>
-                        <span class="font-mono text-xs font-black text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200/60" x-text="timeString"></span>
-                    </div>
-
-                    <!-- Product Image & Badge -->
-                    <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-100 group">
-                        <img src="{{ $group->product->image_url }}" alt="{{ $group->product->title }}" class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500">
-                        <span class="absolute top-2 left-2 px-2.5 py-1 rounded-xl text-[10px] font-black bg-rose-600 text-white shadow-xs">
-                            -{{ $discountPct }}% OFF
-                        </span>
-                        <span class="absolute bottom-2 right-2 px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-slate-900/85 text-white backdrop-blur-xs">
-                            {{ $group->group_code }}
-                        </span>
-                    </div>
-
-                    <!-- Title & Pricing -->
-                    <div class="space-y-1">
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
-                            {{ $group->product->category->name ?? 'General' }}
-                        </span>
-                        <h4 class="text-xs sm:text-sm font-black text-slate-900 line-clamp-2 leading-snug">
-                            {{ $group->product->title }}
-                        </h4>
-                        
-                        <div class="flex items-baseline space-x-2 pt-1">
-                            <span class="text-base sm:text-lg font-black text-[#53a318]">৳{{ number_format($group->product->group_price) }}</span>
-                            <span class="text-xs text-slate-400 line-through">৳{{ number_format($group->product->single_price) }}</span>
-                        </div>
-                    </div>
-
-                    <!-- Threshold Warning Alert Box -->
-                    <div class="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px] font-bold shadow-2xs">
-                        ⚠️ আর মাত্র <strong class="text-rose-600 font-black">{{ $needed }} জন</strong> হলেই {{ $discountPct }}% ছাড় আনলক হবে!
-                    </div>
-
-                    <!-- Progress Bar -->
-                    <div class="space-y-1">
-                        <div class="flex items-center justify-between text-[11px] font-bold">
-                            <span class="text-slate-600">{{ $group->current_members }}/{{ $group->required_members }} জন সদস্য</span>
-                            <span class="text-emerald-700">{{ $pct }}% Filled</span>
-                        </div>
-                        <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
-                            <div class="h-full bg-gradient-to-r from-amber-400 to-[#53a318] rounded-full" style="width: {{ $pct }}%"></div>
-                        </div>
-                    </div>
-
-                    <!-- Dual Action Buttons -->
-                    <div class="grid grid-cols-2 gap-2 pt-2">
-                        <a href="{{ route('group-buy.show', $group->group_code) }}" 
-                           class="py-2.5 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs flex items-center justify-center space-x-1">
-                            <span>Join Pool</span>
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </a>
-
-                        <button type="button" @click="openShare('{{ $group->group_code }}', '{{ addslashes($group->product->title) }}')" 
-                                class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs text-center transition-colors">
-                            Share Link
-                        </button>
-                    </div>
-
-                </div>
-            @empty
-                <div class="col-span-full p-8 text-center bg-white rounded-3xl border border-slate-200 text-slate-500">
-                    বর্তমানে কোনো আর্জেন্ট পুল নেই। নিচে একটি নতুন গ্রুপ শুরু করুন!
-                </div>
-            @endforelse
-        </div>
-    </section>
 
 
     <!-- ========================================================
@@ -417,35 +796,73 @@
             
             <!-- Quick Filter Bar -->
             <div class="flex items-center space-x-2 text-xs font-bold overflow-x-auto no-scrollbar">
+                <button type="button" @click="activeFilterTab = 'all'" 
+                        :class="activeFilterTab === 'all' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                        class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0">
+                    <span>🌟 All Deals</span>
+                </button>
                 <button type="button" @click="activeFilterTab = 'fastest'" 
                         :class="activeFilterTab === 'fastest' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
-                        class="px-4 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0">
+                        class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0">
                     <span>⚡ Fastest Filling</span>
                 </button>
                 <button type="button" @click="activeFilterTab = 'max_discount'" 
                         :class="activeFilterTab === 'max_discount' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
-                        class="px-4 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0">
+                        class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0">
                     <span>🔥 Maximum Discount</span>
                 </button>
                 <button type="button" @click="activeFilterTab = 'winter'" 
                         :class="activeFilterTab === 'winter' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
-                        class="px-4 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0">
+                        class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0">
                     <span>🧥 Winter Specials</span>
                 </button>
             </div>
         </div>
 
+        @if(request('category'))
+            @php
+                $activeCatItem = collect($topNavCategories)->firstWhere('slug', request('category'));
+                $activeCatLabel = $activeCatItem ? $activeCatItem['name'] : ucwords(str_replace('-', ' ', request('category')));
+            @endphp
+            <div class="p-3.5 sm:p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+                <div class="flex items-center space-x-3">
+                    <span class="w-8 h-8 rounded-xl bg-[#53a318] text-white flex items-center justify-center font-black text-xs shadow-2xs">
+                        🏷️
+                    </span>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-black text-slate-900">Filtered by: <span class="text-[#53a318]">{{ $activeCatLabel }}</span></span>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-[#53a318]">Active Filter</span>
+                        </div>
+                        <span class="text-[11px] text-slate-500 block">Showing {{ $products->total() }} matching group buy {{ Str::plural('deal', $products->total()) }}</span>
+                    </div>
+                </div>
+
+                <a href="{{ route('home') }}#active-deals" 
+                   class="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-rose-600 border border-slate-200 hover:border-rose-300 font-bold text-xs transition-colors shadow-2xs flex items-center space-x-1.5">
+                    <span>✕ Clear Category Filter</span>
+                </a>
+            </div>
+        @endif
+
         <!-- The Rich Product / Buying Pool Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            @foreach($products as $product)
+            @forelse($products as $product)
                 @php
                     $discountPct = round((($product->single_price - $product->group_price) / $product->single_price) * 100);
                     $nextTierPrice = round($product->group_price * 0.90);
                     $simulatedFilled = min(92, max(45, round((($product->sales_count * 7) % 50 + 25))));
                     $simulatedBuyers = max(2, round(($product->sales_count % 15) + 3));
                     $targetBuyers = $simulatedBuyers + rand(1, 4);
+                    $isFastest = $simulatedFilled >= 60;
+                    $isMaxDiscount = $discountPct >= 20;
+                    $isWinter = ($product->category && str_contains($product->category->slug, 'winter')) || str_contains(strtolower($product->title), 'winter') || str_contains(strtolower($product->title), 'fleece');
                 @endphp
-                <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
+                <div x-show="activeFilterTab === 'all' || (activeFilterTab === 'fastest' && {{ $isFastest ? 'true' : 'false' }}) || (activeFilterTab === 'max_discount' && {{ $isMaxDiscount ? 'true' : 'false' }}) || (activeFilterTab === 'winter' && {{ $isWinter ? 'true' : 'false' }})"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     class="bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
                     
                     <div>
                         <!-- Product Image & Badges -->
@@ -533,48 +950,21 @@
                     </div>
 
                 </div>
-            @endforeach
+            @empty
+                <div class="col-span-full py-16 px-6 text-center bg-white rounded-3xl border border-slate-200/90 text-slate-500 space-y-3 shadow-xs">
+                    <span class="text-4xl block">🔍</span>
+                    <h3 class="text-base font-black text-slate-800">No active products found in this category</h3>
+                    <p class="text-xs text-slate-400 max-w-sm mx-auto">বর্তমানে এই বিভাগে কোনো সক্রিয় পুল নেই। অন্যান্য ক্যাটাগরি ব্রাউজ করুন অথবা সরাসরি সকল পণ্য দেখুন।</p>
+                    <a href="{{ route('home') }}#active-deals" class="inline-block py-2.5 px-6 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-bold text-xs transition-colors shadow-xs">
+                        View All Active Deals &rarr;
+                    </a>
+                </div>
+            @endforelse
         </div>
 
         <!-- Catalog Pagination -->
         <div class="pt-4 flex justify-center">
             {{ $products->links() }}
-        </div>
-
-    </section>
-
-
-    <!-- ========================================================
-         6. CATEGORY EXPLORER & QUICK FILTER TABS
-         Theme: Modern Icon Cards with Rounded Containers
-         ======================================================== -->
-    <section id="category-explorer" class="space-y-6">
-        
-        <div class="text-center max-w-xl mx-auto space-y-1">
-            <span class="text-[11px] font-black uppercase tracking-wider text-[#53a318]">BROWSE DEPARTMENTS</span>
-            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                ক্যাটাগরি এক্সপ্লোরার (Category Explorer)
-            </h2>
-            <p class="text-xs text-slate-500">আপনার পছন্দের বিভাগে সহজে গ্রুপ বাই ডিল খুঁজুন</p>
-        </div>
-
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            @foreach($categories as $cat)
-                <a href="{{ route('home') }}?category={{ $cat->slug }}" 
-                   class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs hover:shadow-lg hover:border-[#53a318] hover:-translate-y-1 transition-all text-center space-y-2 group">
-                    <div class="w-12 h-12 mx-auto rounded-2xl bg-slate-50 group-hover:bg-green-50 flex items-center justify-center text-2xl transition-all group-hover:scale-110 shadow-2xs">
-                        {{ $cat->icon ?? '📦' }}
-                    </div>
-                    <div>
-                        <h4 class="text-xs font-black text-slate-800 group-hover:text-[#53a318] transition-colors truncate">
-                            {{ $cat->name }}
-                        </h4>
-                        <span class="text-[10px] text-slate-400 font-bold">
-                            {{ $cat->products_count ?? 12 }}+ Deals
-                        </span>
-                    </div>
-                </a>
-            @endforeach
         </div>
 
     </section>
@@ -625,7 +1015,7 @@
                     Register as a Seller / Merchant &rarr;
                 </a>
                 <p class="text-[11px] text-slate-400 lg:text-right">
-                    যাচাইকৃত ট্রেড লাইসেন্স বা স্টুডেন্ট স্টার্টআপ এপ্রুভাল প্রয়োজন।
+                    যাচাইকৃত ট্রেড লাইসেন্স বা ভেরিফাইড বিজনেস এপ্রুভাল প্রয়োজন।
                 </p>
             </div>
 

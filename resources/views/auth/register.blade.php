@@ -241,9 +241,10 @@
                             <input type="checkbox" name="terms" x-model="agreedTerms" required 
                                    class="mt-0.5 rounded text-[#53a318] focus:ring-[#53a318] w-3.5 h-3.5">
                             <span>
-                                I agree to Cartiva's <a href="#" class="font-bold text-[#53a318] hover:underline">Terms of Service</a>, 
-                                <a href="#" class="font-bold text-[#53a318] hover:underline">Privacy Policy</a>, 
-                                and <a href="#" class="font-bold text-[#53a318] hover:underline">100% Refund Rules</a>.
+                                I agree to Cartiva's <a href="#" class="font-bold text-[#53a318] hover:underline">Terms of Service</a>
+                                and
+                                <a href="#" class="font-bold text-[#53a318] hover:underline">Privacy Policy.</a>
+
                             </span>
                         </label>
                     </div>
@@ -251,7 +252,7 @@
                     <!-- Primary Submit Button -->
                     <button type="submit" 
                             class="w-full py-2.5 px-4 rounded-xl font-black text-xs bg-[#53a318] hover:bg-[#468c13] text-white shadow-md shadow-green-900/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center space-x-2">
-                        <span x-text="role === 'seller' ? 'Apply as Merchant / Seller &rarr;' : 'Create Account & Start Saving &rarr;'"></span>
+                        <span x-text="role === 'seller' ? 'Apply as Merchant / Seller' : 'Create Account'"></span>
                     </button>
                 </form>
 

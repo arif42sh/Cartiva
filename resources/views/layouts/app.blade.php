@@ -31,16 +31,16 @@
                 <div class="overflow-hidden w-full whitespace-nowrap">
                     <div class="animate-marquee flex items-center space-x-10 text-[11px] sm:text-xs text-slate-300">
                         <span class="flex items-center space-x-1.5 font-bold text-amber-300">
-                            <span>🔥 আজ মোট সাশ্রয়:</span>
-                            <span class="text-white font-black bg-amber-500/30 px-1.5 py-0.2 rounded">৳৬৪,২০০+</span>
+                            <span>🔥 Today's Total Savings:</span>
+                            <span class="text-white font-black bg-amber-500/30 px-1.5 py-0.2 rounded">৳64,200+</span>
                             <span class="text-slate-400">•</span>
-                            <span class="text-emerald-400">৩৮টি গ্রুপ ডিল সফলভাবে আনলক হয়েছে!</span>
+                            <span class="text-emerald-400">38 Group Deals Successfully Unlocked!</span>
                         </span>
                         <span>•</span>
                         <span class="flex items-center space-x-1.5">
                             <span class="text-amber-400 font-bold">Arif S. (Saidpur)</span>
-                            <span>just joined Premium Winter Hoodie group •</span>
-                            <span class="text-[#84cc16] font-extrabold">৳২৫০ saved!</span>
+                            <span>just joined Premium Winter Hoodie team •</span>
+                            <span class="text-[#84cc16] font-extrabold">৳250 saved!</span>
                         </span>
                         <span>•</span>
                         <span class="flex items-center space-x-1.5">
@@ -227,7 +227,7 @@
                                     <span class="text-lg flex-shrink-0">⚡</span>
                                     <div>
                                         <p class="text-xs font-bold text-slate-800">Winter Hoodie Deal: Only 1 buyer left!</p>
-                                        <p class="text-[11px] text-slate-500 mt-0.5">Tier 3 (৳৭৫০) unlocks once 1 more buyer joins.</p>
+                                        <p class="text-[11px] text-slate-500 mt-0.5">Tier 3 (৳750) unlocks once 1 more buyer joins.</p>
                                         <span class="text-[10px] text-[#53a318] font-mono font-bold mt-1 block">GRP-HOODIE05 • 5 hours left</span>
                                     </div>
                                 </a>
@@ -349,52 +349,52 @@
                         <div x-show="catOpen" x-cloak 
                              class="absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-100 p-3 z-50 divide-y divide-slate-100">
                             <div class="grid grid-cols-1 gap-1 py-1">
-                                <a href="{{ route('home') }}?category=tech-accessories" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+                                <a href="{{ route('category.show', 'smart-tech-audio') }}" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
                                     <span class="text-xl">🎧</span>
                                     <div class="leading-tight">
-                                        <p class="font-bold text-slate-800 text-xs">Electronics & Gadgets</p>
-                                        <p class="text-[10px] text-slate-400">Headphones, chargers & audio</p>
+                                        <p class="font-bold text-slate-800 text-xs">Audio & Sound</p>
+                                        <p class="text-[10px] text-slate-400">ANC headphones, earbuds & sound</p>
                                     </div>
                                 </a>
-                                <a href="{{ route('home') }}?category=winter-specials" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+                                <a href="{{ route('category.show', 'winter-specials') }}" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
                                     <span class="text-xl">🧥</span>
                                     <div class="leading-tight">
                                         <p class="font-bold text-slate-800 text-xs">Winter Apparel & Hoodies</p>
                                         <p class="text-[10px] text-slate-400">Premium fleece hoodies & jackets</p>
                                     </div>
                                 </a>
-                                <a href="{{ route('home') }}?category=fashion-wearables" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <span class="text-xl">👕</span>
+                                <a href="{{ route('category.show', 'wearables-watches') }}" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <span class="text-xl">⌚</span>
                                     <div class="leading-tight">
-                                        <p class="font-bold text-slate-800 text-xs">Fashion & Apparel</p>
-                                        <p class="text-[10px] text-slate-400">Smartwatches, outfits & jackets</p>
+                                        <p class="font-bold text-slate-800 text-xs">Wearables & Smartwatches</p>
+                                        <p class="text-[10px] text-slate-400">AMOLED smartwatches & fitness</p>
                                     </div>
                                 </a>
-                                <a href="{{ route('home') }}?category=dry-food-fmcg" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+                                <a href="{{ route('category.show', 'dry-food-fmcg') }}" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
                                     <span class="text-xl">🥫</span>
                                     <div class="leading-tight">
-                                        <p class="font-bold text-slate-800 text-xs">Grocery & Food FMCG</p>
-                                        <p class="text-[10px] text-slate-400">Dates, honey, tea & combos</p>
+                                        <p class="font-bold text-slate-800 text-xs">Grocery & Food</p>
+                                        <p class="text-[10px] text-slate-400">Dates, honey, tea & wholesale food</p>
                                     </div>
                                 </a>
-                                <a href="{{ route('home') }}?category=home-lifestyle" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+                                <a href="{{ route('category.show', 'home-living') }}" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
                                     <span class="text-xl">🏠</span>
                                     <div class="leading-tight">
                                         <p class="font-bold text-slate-800 text-xs">Home & Living</p>
                                         <p class="text-[10px] text-slate-400">Lamps, coffee machines & decor</p>
                                     </div>
                                 </a>
-                                <a href="{{ route('home') }}?category=kitchen-appliances" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+                                <a href="{{ route('category.show', 'kitchen-appliances') }}" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
                                     <span class="text-xl">🍳</span>
                                     <div class="leading-tight">
                                         <p class="font-bold text-slate-800 text-xs">Kitchen & Appliances</p>
-                                        <p class="text-[10px] text-slate-400">Air fryers & blenders</p>
+                                        <p class="text-[10px] text-slate-400">Air fryers & espresso makers</p>
                                     </div>
                                 </a>
                             </div>
                             <div class="pt-2 text-center">
-                                <a href="{{ route('home') }}#quick-categories" class="text-[11px] font-bold text-[#53a318] hover:underline">
-                                    View All 12 Categories &rarr;
+                                <a href="{{ route('home') }}#active-deals" class="text-[11px] font-bold text-[#53a318] hover:underline">
+                                    Browse All Categories &rarr;
                                 </a>
                             </div>
                         </div>
@@ -403,23 +403,20 @@
                     <a href="{{ route('home') }}" class="text-[#53a318] hover:text-[#468c13] flex items-center space-x-1 font-extrabold">
                         <span>Home</span>
                     </a>
-                    <a href="{{ route('home') }}#browse-category" class="hover:text-[#53a318] transition-colors">
-                        All Products / Shop
+                    <a href="{{ route('home') }}#active-deals" class="hover:text-[#53a318] transition-colors">
+                        Active Deals Grid
                     </a>
-                    <a href="{{ route('home') }}#today-deals" class="hover:text-[#53a318] transition-colors">
-                        Group Deals
-                    </a>
-                    <a href="{{ route('home') }}#almost-there" class="text-rose-600 hover:text-rose-700 flex items-center space-x-1 font-extrabold">
-                        <span>⚡ Almost Full Groups</span>
+                    <a href="{{ route('home') }}#urgent-pools" class="text-rose-600 hover:text-rose-700 flex items-center space-x-1 font-extrabold">
+                        <span>⚡ Rush Hour Pools</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
                     </a>
-                    <a href="{{ route('home') }}#flash-deals" class="hover:text-amber-600 transition-colors">
-                        Flash Deals 🔥
+                    <a href="{{ route('category.show', 'smart-tech-audio') }}" class="hover:text-amber-600 transition-colors">
+                        Audio Deals 🔥
                     </a>
                     <a href="{{ route('home') }}#how-it-works" class="hover:text-[#53a318] transition-colors">
                         How It Works
                     </a>
-                    <a href="{{ route('home') }}#seller-promo" class="text-slate-500 hover:text-[#53a318] transition-colors">
+                    <a href="{{ route('home') }}#seller-acquisition" class="text-slate-500 hover:text-[#53a318] transition-colors">
                         Become a Seller
                     </a>
                 </div>
@@ -440,12 +437,15 @@
                 </form>
                 <div class="flex flex-col space-y-2 text-xs font-bold text-slate-700">
                     <a href="{{ route('home') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100">Home</a>
-                    <a href="{{ route('home') }}#today-deals" class="px-3 py-2 rounded-lg hover:bg-slate-100">Today's Best Group Deals</a>
-                    <a href="{{ route('home') }}#almost-there" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-rose-600">Almost Completed Groups</a>
-                    <a href="{{ route('home') }}#flash-deals" class="px-3 py-2 rounded-lg hover:bg-slate-100">Flash Deals</a>
-                    <a href="{{ route('home') }}#browse-category" class="px-3 py-2 rounded-lg hover:bg-slate-100">Browse by Category</a>
-                    <a href="{{ route('home') }}#how-it-works" class="px-3 py-2 rounded-lg hover:bg-slate-100">How Group Buying Works</a>
-                    <a href="{{ route('home') }}#seller-promo" class="px-3 py-2 rounded-lg hover:bg-slate-100">Become a Seller</a>
+                    <a href="{{ route('home') }}#urgent-pools" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-rose-600 flex items-center justify-between">
+                        <span>⚡ Rush Hour / Ending Soon</span>
+                        <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                    </a>
+                    <a href="{{ route('home') }}#active-deals" class="px-3 py-2 rounded-lg hover:bg-slate-100">🛍️ Live Buying Deals Grid</a>
+                    <a href="{{ route('category.show', 'smart-tech-audio') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100">🎧 Audio & Sound Category</a>
+                    <a href="{{ route('category.show', 'winter-specials') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100">🧥 Winter Specials Category</a>
+                    <a href="{{ route('home') }}#how-it-works" class="px-3 py-2 rounded-lg hover:bg-slate-100">📖 How Group Buying Works</a>
+                    <a href="{{ route('home') }}#seller-acquisition" class="px-3 py-2 rounded-lg hover:bg-slate-100">💼 Sell on Cartiva</a>
                     @auth
                         <a href="{{ route('orders.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-[#53a318]">My Orders & Groups</a>
                     @endauth
@@ -470,14 +470,14 @@
                     <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
                         <div>
                             <p class="font-bold text-slate-800">Premium Fleece Winter Hoodie</p>
-                            <p class="text-emerald-700 font-bold">Group Price: ৳৭৫০ (Save ৳২৫০)</p>
+                            <p class="text-emerald-700 font-bold">Group Price: ৳750 (Save ৳250)</p>
                         </div>
                         <a href="{{ route('group-buy.show', 'GRP-HOODIE05') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
                     </div>
                     <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
                         <div>
                             <p class="font-bold text-slate-800">SoundCore ANC Headphones</p>
-                            <p class="text-emerald-700 font-bold">Group Price: ৳৩,১৫০ (Save ৳১,৩৫০)</p>
+                            <p class="text-emerald-700 font-bold">Group Price: ৳3,150 (Save ৳1,350)</p>
                         </div>
                         <a href="{{ route('group-buy.show', 'GRP-SOUND99') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
                     </div>
@@ -501,13 +501,13 @@
                 <div class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs space-y-2">
                     <div class="flex items-center justify-between">
                         <span class="font-black text-slate-800">Keyforge K8 Pro Wireless RGB</span>
-                        <span class="font-black text-[#53a318]">৳২,৭০০</span>
+                        <span class="font-black text-[#53a318]">৳2,700</span>
                     </div>
                     <p class="text-[11px] text-slate-600">Reserved in Active Group. 10-Minute Checkout Lock Active.</p>
                 </div>
                 <div class="flex items-center justify-between text-xs font-bold pt-2">
                     <span>Estimated Total:</span>
-                    <span class="text-base font-black text-[#53a318]">৳২,৭০০</span>
+                    <span class="text-base font-black text-[#53a318]">৳2,700</span>
                 </div>
                 <div class="grid grid-cols-2 gap-2 pt-2">
                     <button @click="cartModalOpen = false" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Keep Shopping</button>

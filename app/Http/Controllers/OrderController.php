@@ -33,7 +33,7 @@ class OrderController extends Controller
         }
 
         $unitPrice = ($orderType === 'group_buy') ? $product->group_price : $product->single_price;
-        $quantity = 1;
+        $quantity = max(1, min((int) $request->input('quantity', 1), max(1, $product->stock)));
         $subtotal = $unitPrice * $quantity;
         $shipping = 0.00; // Free shipping promo
         $total = $subtotal + $shipping;
@@ -49,6 +49,7 @@ class OrderController extends Controller
             'product_id' => 'required|exists:products,id',
             'order_type' => 'required|in:single,group_buy',
             'action' => 'required|string',
+            'quantity' => 'nullable|integer|min:1',
             'session_id' => 'nullable|exists:group_buy_sessions,id',
             'shipping_name' => 'required|string|max:255',
             'shipping_phone' => 'required|string|max:20',
@@ -62,7 +63,7 @@ class OrderController extends Controller
         $action = $request->action;
 
         $unitPrice = ($orderType === 'group_buy') ? $product->group_price : $product->single_price;
-        $quantity = 1;
+        $quantity = max(1, min((int) $request->input('quantity', 1), max(1, $product->stock)));
         $total = $unitPrice * $quantity;
 
         $createdSession = null;
