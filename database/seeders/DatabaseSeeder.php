@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
         $seller = User::updateOrCreate(
             ['email' => 'seller@cartiva.com'],
             [
-                'name' => 'Apex Tech & Campus Lifestyle Store',
+                'name' => 'Apex Tech & Lifestyle Hub',
                 'password' => Hash::make('password123'),
                 'role' => 'seller',
                 'phone' => '+880 1811 000002',
@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'role' => 'customer',
                 'phone' => '+880 1911 000003',
-                'address' => 'BAUST Campus, Saidpur Cantonment',
+                'address' => 'Saidpur Commercial Area, Nilphamari',
             ]
         );
 
@@ -84,10 +84,10 @@ class DatabaseSeeder extends Seeder
                 'description' => 'স্মার্ট গ্যাজেটস, নয়েজ ক্যান্সেলিং হেডফোন, কিবোর্ড ও পাওয়ার ব্যাংক',
             ],
             [
-                'name' => 'ক্যাম্পাস স্পেশাল (Campus Specials)',
-                'slug' => 'campus-merchandise',
-                'icon' => '🎓',
-                'description' => 'অফিসিয়াল BAUST ভার্সিটি হুডি, ওয়াটারপ্রুফ ব্যাগ ও স্টাডি কিট',
+                'name' => 'উইন্টার ও লাইফস্টাইল (Winter & Lifestyle)',
+                'slug' => 'winter-specials',
+                'icon' => '🧥',
+                'description' => 'প্রিমিয়াম উইন্টার হুডি, ওয়াটারপ্রুফ ট্রাভেল ব্যাগ ও কমফোর্ট এক্সেসরিজ',
             ],
             [
                 'name' => 'গ্রোসারি ও খাদ্যদ্রব্য (Grocery & Food)',
@@ -173,10 +173,10 @@ class DatabaseSeeder extends Seeder
                 'sales_count' => 148,
             ],
             [
-                'title' => 'BAUST Campus Winter Heavyweight Fleece Hoodie (Official Merch)',
-                'slug' => 'baust-campus-heavyweight-hoodie',
-                'category_slug' => 'campus-merchandise',
-                'description' => '৪৫০ জিএসএম প্রিমিয়াম কটন ফ্লিস ফ্যাব্রিক, ড্রপ শোল্ডার ওভারসাইজড কমফোর্ট ফিট, প্রিমিয়াম এমব্রয়ডারি লোগো। ক্লাসের বন্ধুদের সাথে গ্রুপ করে কিনলে সর্বোচ্চ ছাড়!',
+                'title' => 'Cartiva Heavyweight Premium Fleece Winter Hoodie',
+                'slug' => 'premium-fleece-winter-hoodie',
+                'category_slug' => 'winter-specials',
+                'description' => '৪৫০ জিএসএম প্রিমিয়াম কটন ফ্লিস ফ্যাব্রিক, ড্রপ শোল্ডার ওভারসাইজড কমফোর্ট ফিট, প্রিমিয়াম ফিনিশ। বন্ধুদের সাথে গ্রুপ করে কিনলে সর্বোচ্চ ছাড়!',
                 'image_url' => 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80',
                 'single_price' => 1000.00,
                 'group_price' => 750.00,
@@ -231,8 +231,8 @@ class DatabaseSeeder extends Seeder
             [
                 'title' => 'Nomad Explorer Waterproof Tech Backpack with USB Charging Port',
                 'slug' => 'nomad-explorer-waterproof-backpack',
-                'category_slug' => 'campus-merchandise',
-                'description' => 'ওয়াটারপ্রুফ কর্ডুরা নাইলন, ১৬ ইঞ্চি প্যাডেড ল্যাপটপ চেম্বার, অ্যান্টি-থেফ্ট ব্যাক পকেট এবং ইর্গোনমিক ভেন্টিলেটেড ব্যাক প্যানেল। ক্যাম্পাস ও ট্রাভেলের জন্য পারফেক্ট।',
+                'category_slug' => 'winter-specials',
+                'description' => 'ওয়াটারপ্রুফ কর্ডুরা নাইলন, ১৬ ইঞ্চি প্যাডেড ল্যাপটপ চেম্বার, অ্যান্টি-থেফ্ট ব্যাক পকেট এবং ইর্গোনমিক ভেন্টিলেটেড ব্যাক প্যানেল। অফিস ও ট্রাভেলের জন্য পারফেক্ট।',
                 'image_url' => 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80',
                 'single_price' => 2200.00,
                 'group_price' => 1550.00,
@@ -398,9 +398,9 @@ class DatabaseSeeder extends Seeder
             ['is_leader' => true, 'joined_at' => now()->subHours(2)]
         );
 
-        // Session 2: BAUST Fleece Hoodie - 4 of 5 joined (Only 1 slot remaining for Tier 3 750 taka unlock!)
+        // Session 2: Fleece Hoodie - 4 of 5 joined (Only 1 slot remaining for Tier 3 750 taka unlock!)
         $session2 = GroupBuySession::updateOrCreate(
-            ['group_code' => 'GRP-BAUST05'],
+            ['group_code' => 'GRP-HOODIE05'],
             [
                 'product_id' => $createdProducts[1]->id,
                 'leader_user_id' => $customer2->id,

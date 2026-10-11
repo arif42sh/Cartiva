@@ -2,14 +2,12 @@
 
 @section('title', 'Cartiva — Group Buying Platform | Buy Together, Pay Less')
 
-@section('content')
-
-<!-- Global Container for Group Buying Platform with Dynamic Theme -->
-<div class="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-6 space-y-16"
+@section('content')<!-- Global Container for Group Buying Platform with Dynamic Theme -->
+<div class="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-4 sm:py-5 space-y-10 sm:space-y-12"
      x-data="{
         shareModalOpen: false,
-        shareGroupCode: '{{ $spotlightGroup ? $spotlightGroup->group_code : 'GRP-BAUST05' }}',
-        shareGroupTitle: '{{ $spotlightGroup ? addslashes($spotlightGroup->product->title) : 'BAUST Winter Fleece Hoodie' }}',
+        shareGroupCode: '{{ $spotlightGroup ? $spotlightGroup->group_code : 'GRP-HOODIE05' }}',
+        shareGroupTitle: '{{ $spotlightGroup ? addslashes($spotlightGroup->product->title) : 'Cartiva Premium Fleece Winter Hoodie' }}',
         rulesModalOpen: false,
         copiedToast: false,
         activeFilterTab: 'fastest',
@@ -30,28 +28,27 @@
 
     <!-- ========================================================
          2. HIGH-CONVERSION HERO SECTION (VALUE PROP + SPOTLIGHT DEAL)
-         Theme: Dark Command Center with Glowing Blue & Emerald Orbs
+         Theme: Dark Command Center with Glowing Blue & Emerald Orbs (Compact Viewport Fit)
          ======================================================== -->
-    <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-[#0a1a2e] to-[#071f0c] border border-slate-800 shadow-2xl text-white p-6 sm:p-10 lg:p-14">
+    <section class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-[#0a1a2e] to-[#071f0c] border border-slate-800 shadow-xl text-white p-5 sm:p-7 lg:p-8">
         
-        <!-- Ambient Radial Glows (Cartiva Royal Blue & Emerald) -->
-        <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-[#53a318]/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <!-- Ambient Radial Glows -->
+        <div class="absolute -top-24 -left-24 w-72 h-72 bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-[#53a318]/15 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             
             <!-- Left Column: Bold Value Proposition -->
-            <div class="lg:col-span-7 space-y-6">
+            <div class="lg:col-span-7 space-y-3.5 sm:space-y-4">
                 
                 <!-- Live Event Badge -->
-                <div class="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-cyan-300 text-[11px] font-black uppercase tracking-wider shadow-inner">
-                    <span class="w-2 h-2 rounded-full bg-[#84cc16] animate-ping"></span>
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-cyan-300 text-[10px] font-black uppercase tracking-wider shadow-inner">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#84cc16] animate-ping"></span>
                     <span>GROUP COMMERCE REVOLUTION • BUY TOGETHER & SAVE</span>
                 </div>
 
-                <!-- Bold Headline with Gradient Text -->
-                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.15]">
+                <!-- Balanced Headline with Gradient Text -->
+                <h1 class="text-2xl sm:text-3xl lg:text-[34px] xl:text-4xl font-extrabold tracking-tight leading-snug">
                     "একা কিনলে সাধারণ দাম,<br>
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#84cc16] via-emerald-400 to-cyan-300">
                         দল বাঁধলে পাইকারি দাম!"
@@ -59,41 +56,41 @@
                 </h1>
 
                 <!-- Explanatory Subtext -->
-                <p class="text-sm sm:text-base text-slate-300 max-w-xl font-medium leading-relaxed">
-                    অনলাইনে খুচরা মূল্যে অতিরিক্ত টাকা দেওয়ার দিন শেষ! আপনার সহপাঠী বা বন্ধুদের সাথে দল গঠন করে আনলক করুন সরাসরি কারখানা ও পাইকারি রেট। নির্দিষ্ট সময়ের মধ্যে গ্রুপ পূরণ না হলে পাবেন <strong class="text-white underline decoration-[#84cc16] underline-offset-4 font-bold">১০০% স্বয়ংক্রিয় রিফান্ড</strong>।
+                <p class="text-xs sm:text-sm text-slate-300 max-w-lg font-normal leading-relaxed line-clamp-2 sm:line-clamp-none">
+                    অনলাইনে খুচরা মূল্যে অতিরিক্ত টাকা দেওয়ার দিন শেষ! বন্ধুদের সাথে দল গঠন করে আনলক করুন সরাসরি কারখানা ও পাইকারি রেট। নির্দিষ্ট সময়ের মধ্যে গ্রুপ পূরণ না হলে পাবেন <strong class="text-white underline decoration-[#84cc16] underline-offset-2 font-bold">১০০% রিফান্ড</strong>।
                 </p>
 
                 <!-- Dual Action CTAs -->
-                <div class="flex flex-wrap items-center gap-3 pt-2">
-                    <a href="#urgent-pools" class="px-6 py-3.5 rounded-2xl text-xs sm:text-sm font-black bg-[#53a318] hover:bg-[#468c13] text-white shadow-xl shadow-green-950/50 hover:scale-105 active:scale-95 transition-all flex items-center space-x-2">
+                <div class="flex flex-wrap items-center gap-2.5 pt-1">
+                    <a href="#urgent-pools" class="px-5 py-2.5 rounded-xl text-xs font-black bg-[#53a318] hover:bg-[#468c13] text-white shadow-lg shadow-green-950/40 hover:scale-[1.02] active:scale-95 transition-all flex items-center space-x-2">
                         <span>⚡ Join Active Pool Now</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                     
-                    <a href="#active-deals" class="px-5 py-3.5 rounded-2xl text-xs sm:text-sm font-bold bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10 transition-all hover:scale-105">
-                        Explore Buying Pools &rarr;
+                    <a href="#active-deals" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10 transition-all hover:scale-[1.02]">
+                        Explore Pools &rarr;
                     </a>
 
                     <!-- Voucher Token -->
-                    <div class="flex items-center space-x-2 px-3 py-2 rounded-xl bg-black/50 border border-white/10 text-xs font-mono shadow-inner">
-                        <span class="text-amber-300 font-bold">VOUCHER:</span>
-                        <span class="bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded text-[11px]">CARTIVA20</span>
+                    <div class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-black/50 border border-white/10 text-xs font-mono shadow-inner">
+                        <span class="text-amber-300 font-bold text-[11px]">CODE:</span>
+                        <span class="bg-amber-400 text-slate-950 font-black px-1.5 py-0.2 rounded text-[10px]">CARTIVA20</span>
                     </div>
                 </div>
 
-                <!-- Trust Micro-Pills (Glass Style) -->
-                <div class="grid grid-cols-3 gap-3 pt-4 border-t border-white/10 text-xs">
-                    <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                        <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">মোট সাশ্রয়</span>
-                        <span class="text-base sm:text-lg font-black text-[#84cc16]">৳{{ number_format($stats['total_saved'] ?? 2850000) }}+</span>
+                <!-- Trust Micro-Pills (Compact) -->
+                <div class="grid grid-cols-3 gap-2.5 pt-2 border-t border-white/10 text-xs">
+                    <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                        <span class="text-slate-400 block text-[9px] uppercase font-bold tracking-wider">মোট সাশ্রয়</span>
+                        <span class="text-sm sm:text-base font-black text-[#84cc16]">৳{{ number_format($stats['total_saved'] ?? 2850000) }}+</span>
                     </div>
-                    <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                        <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">সফল গ্রুপ বাই</span>
-                        <span class="text-base sm:text-lg font-black text-amber-300">{{ number_format($stats['completed_groups'] ?? 1450) }}+</span>
+                    <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                        <span class="text-slate-400 block text-[9px] uppercase font-bold tracking-wider">সফল ডিল</span>
+                        <span class="text-sm sm:text-base font-black text-amber-300">{{ number_format($stats['completed_groups'] ?? 1450) }}+</span>
                     </div>
-                    <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                        <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">নিরাপত্তা</span>
-                        <span class="text-base sm:text-lg font-black text-emerald-400">১০০% রিফান্ড</span>
+                    <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                        <span class="text-slate-400 block text-[9px] uppercase font-bold tracking-wider">নিরাপত্তা</span>
+                        <span class="text-sm sm:text-base font-black text-emerald-400">১০০% রিফান্ড</span>
                     </div>
                 </div>
 
@@ -102,57 +99,57 @@
             <!-- Right Column: Live Spotlight Deal (Featured Running Pool) -->
             <div class="lg:col-span-5">
                 @if($spotlightGroup)
-                    <div class="relative bg-slate-900/90 backdrop-blur-xl rounded-3xl border-2 border-emerald-500/40 ring-4 ring-emerald-500/10 shadow-2xl shadow-emerald-950/60 p-6 sm:p-7 space-y-5"
+                    <div class="relative bg-slate-900/90 backdrop-blur-xl rounded-2xl border-2 border-emerald-500/40 ring-2 ring-emerald-500/10 shadow-xl shadow-emerald-950/60 p-4 sm:p-5 space-y-3.5"
                          x-data="groupCountdown({{ max(0, $spotlightGroup->expires_at->diffInSeconds(now())) }})"
                          x-init="start()">
                         
                         <!-- Top Header with Glowing Neon Pulse -->
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
                             <div class="flex items-center space-x-2">
-                                <span class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></span>
-                                <span class="text-[11px] font-black uppercase tracking-wider text-rose-400">
-                                    LIVE SPOTLIGHT DEAL • TRENDING POOL
+                                <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+                                <span class="text-[10px] font-black uppercase tracking-wider text-rose-400">
+                                    LIVE SPOTLIGHT DEAL • TRENDING
                                 </span>
                             </div>
-                            <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-[#84cc16] font-mono text-xs font-black border border-emerald-500/30">
+                            <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-[#84cc16] font-mono text-[11px] font-black border border-emerald-500/30">
                                 {{ $spotlightGroup->group_code }}
                             </span>
                         </div>
 
                         <!-- Product Thumbnail & Info -->
-                        <div class="flex items-center space-x-4">
-                            <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700 shadow-md">
+                        <div class="flex items-center space-x-3.5">
+                            <div class="relative w-20 h-20 sm:w-22 sm:h-22 rounded-xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700 shadow-md">
                                 <img src="{{ $spotlightGroup->product->image_url }}" alt="{{ $spotlightGroup->product->title }}" class="w-full h-full object-cover">
                                 <span class="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[9px] font-black bg-rose-600 text-white shadow-xs">
                                     -{{ round((($spotlightGroup->product->single_price - $spotlightGroup->product->group_price)/$spotlightGroup->product->single_price)*100) }}%
                                 </span>
                             </div>
-                            <div class="flex-1 min-w-0 space-y-1">
-                                <span class="text-[10px] font-black uppercase tracking-wider text-cyan-300 block truncate">
-                                    {{ $spotlightGroup->product->category->name ?? 'Campus Special' }}
+                            <div class="flex-1 min-w-0 space-y-0.5">
+                                <span class="text-[9px] font-black uppercase tracking-wider text-cyan-300 block truncate">
+                                    {{ $spotlightGroup->product->category->name ?? 'Winter Specials' }}
                                 </span>
-                                <h3 class="text-sm sm:text-base font-black text-white line-clamp-2 leading-snug">
+                                <h3 class="text-xs sm:text-sm font-black text-white line-clamp-2 leading-snug">
                                     {{ $spotlightGroup->product->title }}
                                 </h3>
-                                <p class="text-[11px] text-slate-400">
+                                <p class="text-[10px] text-slate-400">
                                     বিক্রেতা: <span class="text-slate-200 font-bold">{{ $spotlightGroup->product->seller->name ?? 'Verified Merchant' }}</span>
                                 </p>
                             </div>
                         </div>
 
                         <!-- Pricing Visual: Regular vs Current Pool Price -->
-                        <div class="p-4 rounded-2xl bg-black/50 border border-slate-800 space-y-2">
+                        <div class="p-3 rounded-xl bg-black/50 border border-slate-800 space-y-1.5">
                             <div class="flex items-baseline justify-between">
                                 <div>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Regular Single Price:</span>
-                                    <span class="text-sm line-through text-slate-500 font-bold">৳{{ number_format($spotlightGroup->product->single_price) }}</span>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Regular Price:</span>
+                                    <span class="text-xs line-through text-slate-500 font-bold">৳{{ number_format($spotlightGroup->product->single_price) }}</span>
                                 </div>
                                 <div class="text-right">
-                                    <span class="text-[10px] font-bold text-[#84cc16] uppercase tracking-wider block">Current Pool Price:</span>
-                                    <span class="text-2xl sm:text-3xl font-black text-[#84cc16]">৳{{ number_format($spotlightGroup->product->group_price) }}</span>
+                                    <span class="text-[9px] font-bold text-[#84cc16] uppercase tracking-wider block">Group Pool Price:</span>
+                                    <span class="text-xl sm:text-2xl font-black text-[#84cc16]">৳{{ number_format($spotlightGroup->product->group_price) }}</span>
                                 </div>
                             </div>
-                            <div class="text-[11px] text-amber-300 font-bold bg-amber-500/10 px-2.5 py-1.5 rounded-lg flex items-center justify-between border border-amber-500/20">
+                            <div class="text-[10px] text-amber-300 font-bold bg-amber-500/10 px-2 py-1 rounded-md flex items-center justify-between border border-amber-500/20">
                                 <span>সাশ্রয়: ৳{{ number_format($spotlightGroup->product->single_price - $spotlightGroup->product->group_price) }} (২৫% OFF)</span>
                                 <span class="font-mono text-cyan-300 font-black">⏱ <span x-text="timeString"></span> বাকি</span>
                             </div>
@@ -163,55 +160,36 @@
                             $fillPct = min(100, round(($spotlightGroup->current_members / $spotlightGroup->required_members) * 100));
                             $remaining = max(1, $spotlightGroup->required_members - $spotlightGroup->current_members);
                         @endphp
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between text-xs font-bold">
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between text-[11px] font-bold">
                                 <span class="text-slate-300 flex items-center space-x-1.5">
                                     <span>👥 Pool Progress:</span>
-                                    <span class="text-[#84cc16] font-black">{{ $spotlightGroup->current_members }}/{{ $spotlightGroup->required_members }} buyers joined</span>
+                                    <span class="text-[#84cc16] font-black">{{ $spotlightGroup->current_members }}/{{ $spotlightGroup->required_members }} joined</span>
                                 </span>
                                 <span class="text-amber-400 font-black">{{ $fillPct }}% Filled</span>
                             </div>
                             
                             <!-- Dynamic Bar with Animated Glow -->
-                            <div class="w-full h-3 rounded-full bg-slate-800 overflow-hidden p-0.5 border border-slate-700">
+                            <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden p-0.5 border border-slate-700">
                                 <div class="h-full rounded-full bg-gradient-to-r from-emerald-500 via-[#53a318] to-cyan-400 shadow-md transition-all duration-500 animate-pulse"
                                      style="width: {{ $fillPct }}%;"></div>
                             </div>
 
-                            <p class="text-[11px] text-amber-300 font-semibold">
-                                🔥 আর মাত্র <strong class="text-white font-black underline">{{ $remaining }} জন</strong> সদস্য হলেই পাইকারি রেট ১০০% নিশ্চিত!
+                            <p class="text-[10px] text-amber-300 font-semibold">
+                                🔥 আর মাত্র <strong class="text-white font-black underline">{{ $remaining }} জন</strong> হলেই পাইকারি রেট ১০০% নিশ্চিত!
                             </p>
                         </div>
 
-                        <!-- Member Avatars Social Proof -->
-                        <div class="flex items-center justify-between pt-1 border-t border-slate-800 text-xs">
-                            <div class="flex items-center space-x-2">
-                                <div class="flex -space-x-2 overflow-hidden">
-                                    <div class="inline-block h-7 w-7 rounded-full ring-2 ring-slate-900 bg-amber-500 text-slate-950 font-black text-[10px] flex items-center justify-center shadow-xs">AS</div>
-                                    <div class="inline-block h-7 w-7 rounded-full ring-2 ring-slate-900 bg-emerald-500 text-white font-black text-[10px] flex items-center justify-center shadow-xs">FH</div>
-                                    <div class="inline-block h-7 w-7 rounded-full ring-2 ring-slate-900 bg-cyan-500 text-slate-950 font-black text-[10px] flex items-center justify-center shadow-xs">TR</div>
-                                    <div class="inline-block h-7 w-7 rounded-full ring-2 ring-slate-900 bg-purple-500 text-white font-black text-[10px] flex items-center justify-center shadow-xs">+1</div>
-                                </div>
-                                <span class="text-[11px] text-slate-400">৪ জন সদস্য সক্রিয় আছেন</span>
-                            </div>
-
-                            <button type="button" @click="openShare('{{ $spotlightGroup->group_code }}', '{{ addslashes($spotlightGroup->product->title) }}')" 
-                                    class="text-xs text-slate-300 hover:text-white font-bold flex items-center space-x-1 transition-colors">
-                                <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-                                <span>Share Link</span>
-                            </button>
-                        </div>
-
                         <!-- Action Buttons: Join Pool & Start Pool -->
-                        <div class="grid grid-cols-2 gap-2.5 pt-2">
+                        <div class="grid grid-cols-2 gap-2 pt-1">
                             <a href="{{ route('group-buy.show', $spotlightGroup->group_code) }}" 
-                               class="py-3 px-4 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-center text-xs transition-all shadow-lg shadow-green-950/50 hover:scale-[1.02] flex items-center justify-center space-x-1.5">
+                               class="py-2.5 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-center text-xs transition-all shadow-md shadow-green-950/50 hover:scale-[1.02] flex items-center justify-center space-x-1">
                                 <span>Join Pool Now</span>
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </a>
 
                             <a href="{{ route('products.show', $spotlightGroup->product) }}" 
-                               class="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-center text-xs transition-all border border-slate-700 hover:scale-[1.02]">
+                               class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-center text-xs transition-all border border-slate-700 hover:scale-[1.02]">
                                 Start New Pool
                             </a>
                         </div>
@@ -219,11 +197,11 @@
                     </div>
                 @else
                     <!-- Fallback Spotlight Card -->
-                    <div class="bg-slate-900 rounded-3xl p-8 border border-slate-800 text-center space-y-4">
-                        <span class="text-4xl block">⚡</span>
-                        <h3 class="text-lg font-black text-white">Create the First Group Today!</h3>
+                    <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 text-center space-y-3">
+                        <span class="text-3xl block">⚡</span>
+                        <h3 class="text-base font-black text-white">Create the First Group Today!</h3>
                         <p class="text-xs text-slate-400">ক্যাটালগ থেকে যেকোনো পণ্য পছন্দ করে নতুন পুল চালু করুন এবং বন্ধুদের ইনভাইট করুন।</p>
-                        <a href="#active-deals" class="inline-block py-2.5 px-6 rounded-xl bg-[#53a318] text-white font-bold text-xs">Browse Products</a>
+                        <a href="#active-deals" class="inline-block py-2 px-5 rounded-xl bg-[#53a318] text-white font-bold text-xs">Browse Products</a>
                     </div>
                 @endif
             </div>
@@ -449,10 +427,10 @@
                         class="px-4 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0">
                     <span>🔥 Maximum Discount</span>
                 </button>
-                <button type="button" @click="activeFilterTab = 'campus'" 
-                        :class="activeFilterTab === 'campus' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                <button type="button" @click="activeFilterTab = 'winter'" 
+                        :class="activeFilterTab === 'winter' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
                         class="px-4 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0">
-                    <span>🎓 Campus Specials</span>
+                    <span>🧥 Winter Specials</span>
                 </button>
             </div>
         </div>

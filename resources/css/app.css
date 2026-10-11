@@ -108,3 +108,60 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+/* Floating Glassmorphism Badges Animations */
+@keyframes floatSlow {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-8px) rotate(0.6deg);
+    }
+}
+
+@keyframes floatReverse {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+        transform: translateY(7px) rotate(-0.5deg);
+    }
+}
+
+@keyframes floatGentle {
+    0%, 100% {
+        transform: translateY(0px) scale(1);
+    }
+    50% {
+        transform: translateY(-5px) scale(1.02);
+    }
+}
+
+.animate-float-slow {
+    animation: floatSlow 4.5s infinite ease-in-out;
+}
+
+.animate-float-reverse {
+    animation: floatReverse 5s infinite ease-in-out;
+}
+
+.animate-float-gentle {
+    animation: floatGentle 3.8s infinite ease-in-out;
+}
+
+.glass-badge {
+    background: rgba(15, 23, 42, 0.78);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.45), 0 4px 12px -2px rgba(0, 0, 0, 0.3);
+}
+
+.glass-badge-light {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 14px 34px -6px rgba(0, 0, 0, 0.28);
+}
+

@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'Cartiva – Deeper Discounts, Together | Group Buying Platform')</title>
-    <meta name="description" content="Discover incredible group buying discounts on tech, food, campus merchandise and lifestyle products with Cartiva.">
+    <meta name="description" content="Discover incredible group buying discounts on tech, food, fashion and lifestyle products with Cartiva.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -19,7 +19,7 @@
       x-data="{ mobileMenuOpen: false, notifOpen: false, userDropdownOpen: false }">
 
     <!-- 1. Top Live Community Activity Marquee Ticker -->
-    <div class="bg-[#111827] text-white text-xs font-semibold py-2 px-4 overflow-hidden border-b border-slate-800 shadow-inner">
+    <div class="bg-[#111827] text-white text-xs font-semibold py-1 px-4 overflow-hidden border-b border-slate-800 shadow-inner">
         <div class="max-w-[1600px] mx-auto flex items-center justify-between gap-4">
             
             <!-- Live Activity Marquee Ticker -->
@@ -39,7 +39,7 @@
                         <span>•</span>
                         <span class="flex items-center space-x-1.5">
                             <span class="text-amber-400 font-bold">Arif S. (Saidpur)</span>
-                            <span>just joined BAUST Hoodie group •</span>
+                            <span>just joined Premium Winter Hoodie group •</span>
                             <span class="text-[#84cc16] font-extrabold">৳২৫০ saved!</span>
                         </span>
                         <span>•</span>
@@ -91,14 +91,14 @@
                 wishlistModalOpen: false
             }">
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
-            <div class="flex items-center justify-between h-20 gap-3 sm:gap-6 lg:gap-8">
+            <div class="flex items-center justify-between h-16 sm:h-[68px] gap-3 sm:gap-6 lg:gap-8">
                 
                 <!-- Brand Logo & Tagline -->
                 <div class="flex items-center space-x-3 flex-shrink-0">
                     <a href="{{ route('home') }}" class="flex items-center space-x-2.5 group">
                         <img src="{{ asset('images/cartiva-logo.png') }}" 
                              alt="Cartiva" 
-                             class="h-8 sm:h-9 w-auto max-w-[150px] sm:max-w-[180px] object-contain transition-transform group-hover:scale-105">
+                             class="h-7 sm:h-8 w-auto max-w-[140px] sm:max-w-[170px] object-contain transition-transform group-hover:scale-105">
                         <div class="hidden sm:block leading-none border-l border-slate-200 pl-2.5">
                             <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-blue-50 text-blue-800 uppercase tracking-wider block w-max">
                                 GROUP BUY
@@ -120,7 +120,7 @@
                             <select name="category" class="w-full text-xs text-slate-700 bg-transparent focus:outline-none font-bold cursor-pointer">
                                 <option value="">All Categories</option>
                                 <option value="tech-accessories" {{ request('category') == 'tech-accessories' ? 'selected' : '' }}>🎧 Electronics</option>
-                                <option value="campus-merchandise" {{ request('category') == 'campus-merchandise' ? 'selected' : '' }}>🎓 Campus Specials</option>
+                                <option value="winter-specials" {{ request('category') == 'winter-specials' ? 'selected' : '' }}>🧥 Winter Specials</option>
                                 <option value="fashion-wearables" {{ request('category') == 'fashion-wearables' ? 'selected' : '' }}>👕 Fashion</option>
                                 <option value="dry-food-fmcg" {{ request('category') == 'dry-food-fmcg' ? 'selected' : '' }}>🥫 Grocery FMCG</option>
                                 <option value="kitchen-appliances" {{ request('category') == 'kitchen-appliances' ? 'selected' : '' }}>🍳 Kitchen</option>
@@ -134,7 +134,7 @@
                             <input type="text" name="q" x-model="searchQuery" 
                                    @focus="searchOpen = true"
                                    @click.outside="searchOpen = false"
-                                   placeholder="Search products or Group Code (e.g. GRP-BAUST05)..." 
+                                   placeholder="Search products or Group Code (e.g. GRP-HOODIE05)..." 
                                    class="w-full text-xs text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none font-semibold">
                         </div>
 
@@ -151,9 +151,9 @@
                         <div>
                             <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-2">🔥 Trending Search Keywords</span>
                             <div class="flex flex-wrap gap-1.5">
-                                <button type="button" @click="searchQuery = 'BAUST Hoodie'; $el.closest('form')?.submit()" 
+                                <button type="button" @click="searchQuery = 'Fleece Hoodie'; $el.closest('form')?.submit()" 
                                         class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
-                                    🎓 BAUST Hoodie
+                                    🧥 Winter Fleece Hoodie
                                 </button>
                                 <button type="button" @click="searchQuery = 'SoundCore Ultra ANC'; $el.closest('form')?.submit()" 
                                         class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
@@ -177,10 +177,10 @@
                         <div class="pt-3 mt-3">
                             <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-2">⚡ Direct Active Group Codes</span>
                             <div class="grid grid-cols-2 gap-2 text-xs">
-                                <a href="{{ route('group-buy.show', 'GRP-BAUST05') }}" class="p-2 rounded-xl bg-amber-50 border border-amber-200/60 hover:bg-amber-100 transition-all flex items-center justify-between">
+                                <a href="{{ route('group-buy.show', 'GRP-HOODIE05') }}" class="p-2 rounded-xl bg-amber-50 border border-amber-200/60 hover:bg-amber-100 transition-all flex items-center justify-between">
                                     <div>
-                                        <span class="font-mono font-black text-amber-900 block">GRP-BAUST05</span>
-                                        <span class="text-[10px] text-amber-700">BAUST Hoodie (4/5 joined)</span>
+                                        <span class="font-mono font-black text-amber-900 block">GRP-HOODIE05</span>
+                                        <span class="text-[10px] text-amber-700">Fleece Hoodie (4/5 joined)</span>
                                     </div>
                                     <span class="text-[10px] font-black bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded">1 Left</span>
                                 </a>
@@ -223,12 +223,12 @@
                                 <span class="text-[10px] font-black text-[#53a318] bg-green-50 px-2 py-0.5 rounded-full">2 High Urgency</span>
                             </div>
                             <div class="divide-y divide-slate-100 max-h-80 overflow-y-auto">
-                                <a href="{{ route('group-buy.show', 'GRP-BAUST05') }}" class="p-3.5 flex items-start space-x-3 hover:bg-slate-50 transition-colors block">
+                                <a href="{{ route('group-buy.show', 'GRP-HOODIE05') }}" class="p-3.5 flex items-start space-x-3 hover:bg-slate-50 transition-colors block">
                                     <span class="text-lg flex-shrink-0">⚡</span>
                                     <div>
-                                        <p class="text-xs font-bold text-slate-800">BAUST Hoodie Deal: Only 1 buyer left!</p>
-                                        <p class="text-[11px] text-slate-500 mt-0.5">Tier 3 (৳৭৫০) unlocks once 1 more student joins.</p>
-                                        <span class="text-[10px] text-[#53a318] font-mono font-bold mt-1 block">GRP-BAUST05 • 5 hours left</span>
+                                        <p class="text-xs font-bold text-slate-800">Winter Hoodie Deal: Only 1 buyer left!</p>
+                                        <p class="text-[11px] text-slate-500 mt-0.5">Tier 3 (৳৭৫০) unlocks once 1 more buyer joins.</p>
+                                        <span class="text-[10px] text-[#53a318] font-mono font-bold mt-1 block">GRP-HOODIE05 • 5 hours left</span>
                                     </div>
                                 </a>
                                 <a href="{{ route('group-buy.show', 'GRP-SOUND99') }}" class="p-3.5 flex items-start space-x-3 hover:bg-slate-50 transition-colors block">
@@ -333,7 +333,8 @@
             </div>
 
             <!-- 3. Category Navigation Menu (Section 1 Checklist) -->
-            <div class="hidden md:flex items-center justify-between border-t border-slate-100 py-2.5 text-xs font-bold text-slate-600">
+            @if(!request()->routeIs('login', 'register'))
+            <div class="hidden md:flex items-center justify-between border-t border-slate-100 py-1.5 text-xs font-bold text-slate-600">
                 <div class="flex items-center space-x-6 overflow-x-auto no-scrollbar">
                     
                     <!-- Categories Mega Dropdown -->
@@ -355,11 +356,11 @@
                                         <p class="text-[10px] text-slate-400">Headphones, chargers & audio</p>
                                     </div>
                                 </a>
-                                <a href="{{ route('home') }}?category=campus-merchandise" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <span class="text-xl">🎓</span>
+                                <a href="{{ route('home') }}?category=winter-specials" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <span class="text-xl">🧥</span>
                                     <div class="leading-tight">
-                                        <p class="font-bold text-slate-800 text-xs">Campus Specials (BAUST)</p>
-                                        <p class="text-[10px] text-slate-400">Winter fleece hoodies & kits</p>
+                                        <p class="font-bold text-slate-800 text-xs">Winter Apparel & Hoodies</p>
+                                        <p class="text-[10px] text-slate-400">Premium fleece hoodies & jackets</p>
                                     </div>
                                 </a>
                                 <a href="{{ route('home') }}?category=fashion-wearables" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
@@ -430,11 +431,12 @@
                     </a>
                 </div>
             </div>
+            @endif
 
             <!-- Mobile Drawer Menu -->
             <div x-show="mobileMenuOpen" x-cloak class="lg:hidden pb-4 pt-2 border-t border-slate-100">
                 <form action="{{ route('home') }}" method="GET" class="mb-3">
-                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Search deals or group code (e.g. GRP-BAUST05)..." class="w-full px-4 py-2.5 text-xs bg-slate-100 border border-slate-200 rounded-lg">
+                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Search deals or group code (e.g. GRP-HOODIE05)..." class="w-full px-4 py-2.5 text-xs bg-slate-100 border border-slate-200 rounded-lg">
                 </form>
                 <div class="flex flex-col space-y-2 text-xs font-bold text-slate-700">
                     <a href="{{ route('home') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100">Home</a>
@@ -467,10 +469,10 @@
                 <div class="space-y-3 text-xs max-h-72 overflow-y-auto">
                     <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
                         <div>
-                            <p class="font-bold text-slate-800">BAUST Fleece Winter Hoodie</p>
+                            <p class="font-bold text-slate-800">Premium Fleece Winter Hoodie</p>
                             <p class="text-emerald-700 font-bold">Group Price: ৳৭৫০ (Save ৳২৫০)</p>
                         </div>
-                        <a href="{{ route('group-buy.show', 'GRP-BAUST05') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
+                        <a href="{{ route('group-buy.show', 'GRP-HOODIE05') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
                     </div>
                     <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
                         <div>
@@ -673,12 +675,12 @@
                 </div>
             </div>
 
-            <!-- Bottom Copyright & Academic Attribution -->
+            <!-- Bottom Copyright & Branding -->
             <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
                 <div>
                     <p>&copy; {{ date('Y') }} Cartiva Group Commerce Inc. All rights reserved.</p>
                     <p class="text-[11px] text-slate-500 mt-1">
-                        Academic Project for Course: <strong>CSE 3200 (Web Engineering Project)</strong> • <strong>BAUST, Saidpur Cantonment</strong>
+                        Cartiva Social Commerce Platform • Verified Group Deals & Safe Escrow Protection
                     </p>
                 </div>
                 <div class="flex items-center space-x-5 font-semibold text-slate-500">
