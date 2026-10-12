@@ -139,7 +139,7 @@
                     <div x-show="searchOpen" x-cloak 
                          class="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 z-50 divide-y divide-slate-100">
                         <div>
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-2">🔥 Trending Search Keywords</span>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-2">Trending Search Keywords</span>
                             <div class="flex flex-wrap gap-1.5">
                                 <button type="button" @click="searchQuery = 'Fleece Hoodie'; $el.closest('form')?.submit()" 
                                         class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
