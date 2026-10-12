@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
     /**
-     * Show the user profile overview dashboard.
+     * Show the comprehensive user profile dashboard.
      */
     public function index()
     {
@@ -19,27 +20,25 @@ class ProfileController extends Controller
         $orders = $user->orders()
             ->with(['items.product', 'groupSession.product'])
             ->latest()
-            ->take(6)
+            ->take(8)
             ->get();
 
         $activeGroups = $user->groupMemberships()
             ->with(['session.product', 'session.members.user'])
             ->latest()
-            ->take(6)
+            ->take(8)
             ->get();
 
-        // Calculate total group savings estimate
+        // Calculate actual or estimated group savings
         $totalSpent = $user->orders()->where('order_status', '!=', 'cancelled')->sum('total_amount');
-        $estimatedSavings = $user->orders()
-            ->where('order_type', 'group_buy')
-            ->where('order_status', '!=', 'cancelled')
-            ->sum('total_amount') * 0.25;
+        $groupOrders = $user->orders()->where('order_type', 'group_buy')->where('order_status', '!=', 'cancelled')->get();
+        $estimatedSavings = $groupOrders->sum('total_amount') * 0.25;
 
         return view('profile.index', compact('user', 'orders', 'activeGroups', 'totalSpent', 'estimatedSavings'));
     }
 
     /**
-     * Update basic user profile information.
+     * Update user profile information including Avatar photo and address.
      */
     public function update(Request $request)
     {
@@ -47,13 +46,58 @@ class ProfileController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:20'],
+            'phone' => ['nullable', 'string', 'max:25'],
             'address' => ['nullable', 'string', 'max:500'],
+            'shop_name' => ['nullable', 'string', 'max:255'],
+            'business_category' => ['nullable', 'string', 'max:100'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:4096'],
+        ], [
+            'name.required' => 'Please enter your name.',
+            'avatar.image' => 'Avatar must be a valid image file.',
+            'avatar.max' => 'Avatar cannot exceed 4MB.',
         ]);
 
-        $user->update($validated);
+        // Handle Avatar File Upload
+        if ($request->hasFile('avatar')) {
+            // Delete previous avatar file if stored locally
+            if ($user->avatar && str_starts_with($user->avatar, '/storage/avatars/')) {
+                $oldPath = str_replace('/storage/', '', $user->avatar);
+                Storage::disk('public')->delete($oldPath);
+            }
 
-        return back()->with('success', 'প্রোফাইল তথ্য সফলভাবে আপডেট হয়েছে!');
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = '/storage/' . $path;
+        } elseif ($request->boolean('remove_avatar')) {
+            if ($user->avatar && str_starts_with($user->avatar, '/storage/avatars/')) {
+                $oldPath = str_replace('/storage/', '', $user->avatar);
+                Storage::disk('public')->delete($oldPath);
+            }
+            $user->avatar = null;
+        }
+
+        $user->name = $validated['name'];
+        $user->phone = $validated['phone'] ?? null;
+        $user->address = $validated['address'] ?? null;
+
+        if ($user->isSeller() || $request->filled('shop_name')) {
+            $user->shop_name = $validated['shop_name'] ?? $user->shop_name;
+            $user->business_category = $validated['business_category'] ?? $user->business_category;
+        }
+
+        $user->save();
+
+        $section = $request->input('section');
+        if ($section === 'address') {
+            $message = 'Location updated';
+        } elseif ($section === 'merchant') {
+            $message = 'Store details updated';
+        } elseif ($request->hasFile('avatar')) {
+            $message = 'Profile photo updated';
+        } else {
+            $message = 'Profile updated';
+        }
+
+        return back()->with('success', $message);
     }
 
     /**
@@ -64,12 +108,17 @@ class ProfileController extends Controller
         $request->validate([
             'current_password' => ['required', 'current_password'],
             'password' => ['required', 'confirmed', Password::defaults()],
+        ], [
+            'current_password.required' => 'Current password is required.',
+            'current_password.current_password' => 'Current password does not match.',
+            'password.required' => 'New password is required.',
+            'password.confirmed' => 'New password confirmation does not match.',
         ]);
 
         Auth::user()->update([
             'password' => Hash::make($request->password),
         ]);
 
-        return back()->with('success', 'পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!');
+        return back()->with('success', 'Password updated');
     }
 }
