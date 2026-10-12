@@ -224,13 +224,30 @@ class HomeController extends Controller
 
     public function hotDeals(Request $request)
     {
-        $categories = Category::withCount('products')->get();
+        $categories = Category::withCount(['products' => function ($q) {
+            $q->where('is_active', true);
+        }])->get();
 
         $query = GroupBuySession::with(['product.category', 'leader', 'members.user'])
             ->where('status', 'active')
             ->where('expires_at', '>', now())
             ->whereColumn('current_members', '<', 'required_members');
 
+        // 1. Category Filter
+        $selectedCategory = $request->input('category');
+        if ($request->filled('category') && $selectedCategory !== 'all') {
+            $query->whereHas('product.category', function ($q) use ($selectedCategory) {
+                if (in_array($selectedCategory, ['smart-tech-audio', 'tech-accessories'])) {
+                    $q->whereIn('slug', ['smart-tech-audio', 'tech-accessories']);
+                } elseif (in_array($selectedCategory, ['home-living', 'home-lifestyle'])) {
+                    $q->whereIn('slug', ['home-living', 'home-lifestyle']);
+                } else {
+                    $q->where('slug', $selectedCategory);
+                }
+            });
+        }
+
+        // 2. Pool Urgency / Status Filter
         $filter = $request->input('filter', 'all');
         if ($filter === '1_slot') {
             $query->whereRaw('(required_members - current_members) = 1');
@@ -238,23 +255,84 @@ class HomeController extends Controller
             $query->where('expires_at', '<=', now()->addHours(12));
         }
 
+        // 3. Price Filter (Preset or Custom Min/Max)
+        $pricePreset = $request->input('price_range');
+        $minPrice = $request->input('min_price');
+        $maxPrice = $request->input('max_price');
+
+        if ($pricePreset) {
+            if ($pricePreset === 'under_1000') {
+                $query->whereHas('product', fn($q) => $q->where('group_price', '<', 1000));
+            } elseif ($pricePreset === '1000_3000') {
+                $query->whereHas('product', fn($q) => $q->whereBetween('group_price', [1000, 3000]));
+            } elseif ($pricePreset === '3000_7000') {
+                $query->whereHas('product', fn($q) => $q->whereBetween('group_price', [3000, 7000]));
+            } elseif ($pricePreset === 'above_7000') {
+                $query->whereHas('product', fn($q) => $q->where('group_price', '>', 7000));
+            }
+        } else {
+            if ($request->filled('min_price')) {
+                $query->whereHas('product', fn($q) => $q->where('group_price', '>=', (float) $minPrice));
+            }
+            if ($request->filled('max_price')) {
+                $query->whereHas('product', fn($q) => $q->where('group_price', '<=', (float) $maxPrice));
+            }
+        }
+
+        // 4. Minimum Discount Filter
+        $minDiscount = $request->input('min_discount');
+        if ($request->filled('min_discount')) {
+            $discVal = (int) $minDiscount;
+            $query->whereHas('product', function ($q) use ($discVal) {
+                $q->whereRaw('ROUND(((single_price - group_price) / single_price) * 100) >= ?', [$discVal]);
+            });
+        }
+
+        // 5. Search Query
+        if ($request->filled('q')) {
+            $keyword = $request->input('q');
+            $query->whereHas('product', function ($q) use ($keyword) {
+                $q->where('title', 'like', "%{$keyword}%")
+                  ->orWhere('description', 'like', "%{$keyword}%");
+            });
+        }
+
+        // 6. Sorting
         $sort = $request->input('sort', 'urgency');
         if ($sort === 'discount') {
-            $query->join('products', 'group_buy_sessions.product_id', '=', 'products.id')
-                  ->orderByRaw('((products.single_price - products.group_price) / products.single_price) DESC')
+            $query->join('products as p_sort', 'group_buy_sessions.product_id', '=', 'p_sort.id')
+                  ->orderByRaw('((p_sort.single_price - p_sort.group_price) / p_sort.single_price) DESC')
                   ->select('group_buy_sessions.*');
         } elseif ($sort === 'price_low') {
-            $query->join('products', 'group_buy_sessions.product_id', '=', 'products.id')
-                  ->orderBy('products.group_price', 'asc')
+            $query->join('products as p_sort', 'group_buy_sessions.product_id', '=', 'p_sort.id')
+                  ->orderBy('p_sort.group_price', 'asc')
                   ->select('group_buy_sessions.*');
+        } elseif ($sort === 'price_high') {
+            $query->join('products as p_sort', 'group_buy_sessions.product_id', '=', 'p_sort.id')
+                  ->orderBy('p_sort.group_price', 'desc')
+                  ->select('group_buy_sessions.*');
+        } elseif ($sort === 'most_filled') {
+            $query->orderByRaw('(current_members / required_members) DESC');
+        } elseif ($sort === 'latest') {
+            $query->latest();
         } else {
             // Default: highest percent filled first, then soonest expiry
             $query->orderByRaw('(current_members / required_members) DESC')
                   ->orderBy('expires_at', 'asc');
         }
 
-        $hotGroups = $query->paginate(12)->withQueryString();
+        $hotGroups = $query->paginate(15)->withQueryString();
 
-        return view('hot-deals', compact('hotGroups', 'categories', 'filter', 'sort'));
+        return view('hot-deals', compact(
+            'hotGroups', 
+            'categories', 
+            'filter', 
+            'sort', 
+            'selectedCategory', 
+            'pricePreset', 
+            'minPrice', 
+            'maxPrice', 
+            'minDiscount'
+        ));
     }
 }
