@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-[#f8f9fa] text-slate-800 antialiased">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-[#f8f9fa] text-slate-800 antialiased font-sans">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,9 +8,12 @@
     <title>@yield('title', 'Cartiva – Deeper Discounts, Together | Group Buying Platform')</title>
     <meta name="description" content="Discover incredible group buying discounts on tech, food, fashion and lifestyle products with Cartiva.">
 
-    <!-- Fonts (Inter for World-Class UI & Hind Siliguri for Crisp Bengali) -->
+    <!-- Fonts: Inter (Global Modern UI) & Hind Siliguri (Bengali fallback) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800,900|hind-siliguri:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=inter:100,200,300,400,500,600,700,800,900|hind-siliguri:400,500,600,700&display=swap" rel="stylesheet" />
 
     <!-- Scripts and Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -746,9 +749,7 @@
                              alt="Cartiva" 
                              class="h-8 w-auto object-contain"
                              onerror="this.src='{{ asset('images/cartiva-logo.png') }}'; this.classList.add('brightness-0', 'invert');">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                            BANGLADESH
-                        </span>
+                        
                     </div>
 
                     <p class="text-slate-400 text-xs leading-relaxed max-w-sm">
@@ -861,14 +862,7 @@
 
             <!-- Middle Section: Verified Payment Methods on Slick White Glowing Cards -->
             <div class="py-8 border-b border-slate-800/80 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <div>
-                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-300 block mb-1">
-                        Verified Secure Payment Gateways & Partners:
-                    </span>
-                    <p class="text-[11px] text-slate-500">
-                        100% End-to-End Escrow Protection • Instant refund if group buying minimum is unreached.
-                    </p>
-                </div>
+               
 
                 <!-- Slick White Glowing Payment Cards with Official Vector Logos -->
                 <div class="flex flex-wrap items-center gap-3">
@@ -944,9 +938,7 @@
             <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
                 <div>
                     <p class="font-medium text-slate-400">&copy; {{ date('Y') }} Cartiva Group Commerce Inc. All Rights Reserved.</p>
-                    <p class="text-[11px] text-slate-500 mt-1">
-                        Cartiva Social Commerce Platform • Verified Group Deals & Safe Escrow Protection
-                    </p>
+                    
                 </div>
                 <div class="flex items-center space-x-4 font-medium text-slate-400">
                     <a href="#" class="hover:text-white transition-colors">Privacy</a>
@@ -955,7 +947,7 @@
                     <span>•</span>
                     <a href="#" class="hover:text-white transition-colors">Security</a>
                     <span>•</span>
-                    <span class="text-[#53a318] font-bold">Currency: BDT (৳)</span>
+                    
                     <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
                             class="ml-3 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 hover:bg-white/15 text-slate-300 hover:text-white transition-all flex items-center space-x-1" 
                             title="Scroll to Top">
