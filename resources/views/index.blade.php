@@ -350,57 +350,71 @@
 
 
     <!-- ========================================================
-         2.5 HOT DEALS / ALMOST FILLED POOLS (SLIDING CAROUSEL)
+         2.5 HOT DEALS / ALMOST FILLED POOLS (ANIMATED TRANSITION CAROUSEL)
          ======================================================== -->
     @if(isset($urgentGroups) && $urgentGroups->count() > 0)
-    <section id="urgent-pools" class="space-y-4" x-data="{
-        scrollLeft() {
-            $refs.hotSlider.scrollBy({ left: -320, behavior: 'smooth' });
-        },
-        scrollRight() {
-            $refs.hotSlider.scrollBy({ left: 320, behavior: 'smooth' });
-        }
-    }">
-        <div class="flex items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
-            <div class="flex items-center space-x-2.5">
-                <span class="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-600 shadow-2xs">
-                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>
+    <section id="urgent-pools" class="space-y-4" x-data="hotDealsSlider()" x-init="init()">
+        
+        <!-- Section Header with Real-Time Badges & Animated Controls -->
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
+            <div class="flex items-center space-x-3">
+                <span class="relative flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-500 text-white shadow-md shadow-rose-500/25">
+                    <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>
+                    <span class="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-rose-500 border-2 border-white animate-ping"></span>
                 </span>
                 <div>
-                    <div class="flex items-center space-x-2">
-                        <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">
-                            Hot Deals — Almost Full Pools
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight flex items-center gap-1.5">
+                            <span>🔥 হট ডিল — শেষ মুহূর্তের টিম</span>
+                            <span class="text-xs font-bold text-slate-400 font-sans hidden sm:inline">(Ending Soon & Almost Full)</span>
                         </h2>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700">Closing Soon</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-100 text-rose-700 border border-rose-200/80 shadow-2xs">
+                            ⚡ টিম প্রায় পূর্ণ
+                        </span>
                     </div>
                     <p class="text-xs text-slate-500">
-                        Lock in wholesale prices before time runs out — join with just 1 click
+                        সময় ও স্লট শেষ হওয়ার আগেই শেষ সদস্য হিসেবে যোগ দিয়ে সর্বোচ্চ পাইকারি ছাড় নিশ্চিত করুন
                     </p>
                 </div>
             </div>
 
+            <!-- Carousel Controls: Auto-slide Indicator & Manual Arrows -->
             <div class="flex items-center space-x-2 shrink-0">
-                <a href="{{ route('hot-deals.index') }}" target="_blank" rel="noopener noreferrer" 
+                <!-- Auto-Scroll Status / Toggle Button -->
+                <button type="button" @click="toggleAutoPlay()" 
+                        :class="autoPlay ? 'bg-emerald-50 text-[#53a318] border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'"
+                        class="hidden md:inline-flex items-center space-x-1.5 text-[11px] font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer shadow-2xs"
+                        :title="autoPlay ? 'Click to pause automatic sliding' : 'Click to resume automatic sliding'">
+                    <span class="w-2 h-2 rounded-full" :class="autoPlay ? 'bg-[#53a318] animate-ping' : 'bg-slate-400'"></span>
+                    <span x-text="autoPlay ? 'Auto-Slide On' : 'Paused'"></span>
+                </button>
+
+                <!-- See All Hot Deals Link -->
+                <a href="{{ route('hot-deals.index') }}" 
                    class="inline-flex items-center space-x-1.5 text-xs font-bold text-[#53a318] hover:text-[#418212] px-3.5 py-2 rounded-xl border border-slate-200 hover:border-[#53a318] bg-white transition-all shadow-2xs group">
-                    <span>See all hot deals</span>
-                    <svg class="w-3.5 h-3.5 text-[#53a318] group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    <span>সবগুলো ডিল</span>
+                    <svg class="w-3.5 h-3.5 text-[#53a318] group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </a>
 
-                <div class="hidden sm:flex items-center space-x-1">
-                    <button type="button" @click="scrollLeft()" aria-label="Previous Deals" 
-                            class="w-8 h-8 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 flex items-center justify-center shadow-2xs transition-all active:scale-95 cursor-pointer">
+                <!-- Left / Right Manual Navigation Arrows -->
+                <div class="flex items-center space-x-1">
+                    <button type="button" @click="scrollPrev()" aria-label="Previous Deals" 
+                            class="w-9 h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-[#53a318] hover:border-[#53a318] flex items-center justify-center shadow-2xs transition-all active:scale-90 cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
                     </button>
-                    <button type="button" @click="scrollRight()" aria-label="Next Deals" 
-                            class="w-8 h-8 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 flex items-center justify-center shadow-2xs transition-all active:scale-95 cursor-pointer">
+                    <button type="button" @click="scrollNext()" aria-label="Next Deals" 
+                            class="w-9 h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-[#53a318] hover:border-[#53a318] flex items-center justify-center shadow-2xs transition-all active:scale-90 cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Horizontal Sliding Track (Left to Right) -->
-        <div x-ref="hotSlider" class="flex items-stretch gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-2 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0">
+        <!-- Horizontal Animated Transition Track (Smooth Left-to-Right Flow with Hover-Pause) -->
+        <div x-ref="hotSlider" 
+             @mouseenter="isHovered = true" 
+             @mouseleave="isHovered = false"
+             class="flex items-stretch gap-4 sm:gap-5 overflow-x-auto no-scrollbar scroll-smooth pb-3 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0 select-none">
             @foreach($urgentGroups as $group)
                 @php
                     $discountPct = round((($group->product->single_price - $group->product->group_price) / $group->product->single_price) * 100);
@@ -410,82 +424,109 @@
                     $cleanCat = preg_match('/\((.*?)\)/', $rawCat, $m) ? $m[1] : $rawCat;
                     $saveAmount = $group->product->single_price - $group->product->group_price;
                     $remainingSecs = max(0, (int) now()->diffInSeconds($group->expires_at, false));
+                    $joinedMembers = $group->members->take(4);
                 @endphp
-                <div class="w-[280px] sm:w-[305px] shrink-0 bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-xl hover:border-emerald-500/80 hover:-translate-y-1 transition-all duration-300 p-4 flex flex-col justify-between relative group"
+                <div class="hot-deal-card flex-none bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg hover:border-[#53a318] hover:-translate-y-1 transition-all duration-300 p-3.5 flex flex-col justify-between relative group overflow-hidden"
+                     style="width: 265px; min-width: 265px; max-width: 265px;"
                      x-data="groupCountdown({{ $remainingSecs }})"
                      x-init="start()">
                     
-                    <div class="space-y-3">
-                        <!-- Top Urgency Pill & Monospace Timer -->
-                        <div class="flex items-center justify-between gap-1">
+                    <div class="space-y-2.5 relative z-10">
+                        <!-- Top Urgency Pill & Monospace Digital Timer -->
+                        <div class="flex items-center justify-between gap-1.5">
                             @if($needed === 1)
-                                <span class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-200/80 text-[10px] font-black flex items-center space-x-1.5 shadow-2xs">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
-                                    <span>Only 1 slot left!</span>
+                                <span class="px-2 py-0.5 rounded-lg bg-rose-600 text-white text-[10px] font-black flex items-center space-x-1 shadow-2xs">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                                    <span>🔥 ১টি স্লট বাকি!</span>
                                 </span>
                             @else
-                                <span class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200/80 text-[10px] font-bold flex items-center space-x-1 shadow-2xs">
-                                    <span>{{ $needed }} slots needed</span>
+                                <span class="px-2 py-0.5 rounded-lg bg-amber-500 text-white text-[10px] font-black flex items-center space-x-1 shadow-2xs">
+                                    <span>⚡ {{ $needed }}টি স্লট বাকি</span>
                                 </span>
                             @endif
 
-                            <span class="inline-flex items-center space-x-1 font-mono text-[10px] font-bold text-slate-700 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200/80">
+                            <span class="inline-flex items-center space-x-1 font-mono text-[10px] font-black text-rose-700 bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-200/80">
                                 <svg class="w-3 h-3 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 <span x-text="timeString"></span>
                             </span>
                         </div>
 
-                        <!-- Product Image -->
-                        <a href="{{ route('products.show', $group->product->slug) }}" class="block relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 group/img">
+                        <!-- Product Thumbnail with Fixed Compact Height -->
+                        <a href="{{ route('products.show', $group->product->slug) }}" class="block relative w-full h-36 rounded-xl overflow-hidden bg-slate-100 group/img shadow-inner">
                             <img src="{{ $group->product->image_url }}" alt="{{ $group->product->title }}" class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300">
-                            <span class="absolute top-2 left-2 px-2.5 py-0.5 rounded-lg text-[10px] font-black bg-rose-600 text-white shadow-2xs tracking-tight">
-                                -{{ $discountPct }}% OFF
+                            
+                            <!-- Discount Badge -->
+                            <span class="absolute top-2 left-2 px-2 py-0.5 rounded-lg text-[9px] font-black bg-rose-600 text-white shadow-2xs tracking-tight">
+                                -{{ $discountPct }}%
                             </span>
-                            <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-900/85 text-white backdrop-blur-xs shadow-2xs">
+
+                            <!-- Room Code Pill -->
+                            <span class="absolute bottom-2 right-2 px-1.5 py-0.5 rounded text-[8px] font-mono font-bold bg-slate-950/80 text-emerald-300 backdrop-blur-xs">
                                 {{ $group->group_code }}
+                            </span>
+
+                            <!-- Low Stock Alert Badge -->
+                            <span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded text-[8px] font-bold bg-amber-400 text-slate-950 shadow-2xs">
+                                স্টক সীমিত
                             </span>
                         </a>
 
                         <!-- Product Title & Category -->
-                        <div class="space-y-1">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block truncate">
+                        <div class="space-y-0.5">
+                            <span class="text-[9px] font-bold uppercase tracking-wider text-[#53a318] block truncate">
                                 {{ $cleanCat }}
                             </span>
-                            <h3 class="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 leading-snug group-hover:text-[#53a318] transition-colors min-h-[2.5rem]">
+
+                            <h3 class="text-xs font-bold text-slate-900 line-clamp-2 leading-snug group-hover:text-[#53a318] transition-colors min-h-[2rem]">
                                 <a href="{{ route('products.show', $group->product->slug) }}">
                                     {{ $group->product->title }}
                                 </a>
                             </h3>
                             
-                            <!-- Pricing & Savings -->
+                            <!-- Pricing & Savings Comparison -->
                             <div class="pt-1 flex items-baseline justify-between flex-wrap gap-1">
-                                <div class="flex items-baseline space-x-2">
-                                    <span class="text-base sm:text-lg font-black text-[#53a318]">৳{{ number_format($group->product->group_price) }}</span>
-                                    <span class="text-xs text-slate-400 line-through">৳{{ number_format($group->product->single_price) }}</span>
+                                <div class="flex items-baseline space-x-1.5">
+                                    <span class="text-base font-black text-[#53a318]">৳{{ number_format($group->product->group_price) }}</span>
+                                    <span class="text-[11px] text-slate-400 line-through">৳{{ number_format($group->product->single_price) }}</span>
                                 </div>
-                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-[#53a318] border border-emerald-200/60">
-                                    Save ৳{{ number_format($saveAmount) }}
+                                <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-emerald-50 text-[#53a318] border border-emerald-200/80">
+                                    সাশ্রয় ৳{{ number_format($saveAmount) }}
                                 </span>
                             </div>
                         </div>
 
-                        <!-- Progress Bar -->
-                        <div class="space-y-1 pt-1">
-                            <div class="flex items-center justify-between text-[11px]">
-                                <span class="text-slate-600 font-semibold">{{ $group->current_members }} of {{ $group->required_members }} joined</span>
-                                <span class="text-[#53a318] font-black">{{ $pct }}%</span>
+                        <!-- Social Proof: Avatar Stack of Members + Missing Slot -->
+                        <div class="pt-1 border-t border-slate-100 flex items-center justify-between text-[10px]">
+                            <div class="flex items-center -space-x-1 overflow-hidden">
+                                @foreach($joinedMembers as $member)
+                                    <div class="w-5 h-5 rounded-full bg-slate-800 text-white border border-white flex items-center justify-center text-[8px] font-bold" 
+                                         title="{{ $member->user->name ?? 'Customer' }}">
+                                        {{ strtoupper(substr($member->user->name ?? 'U', 0, 1)) }}
+                                    </div>
+                                @endforeach
+                                <!-- Empty Pulsing Slot -->
+                                <div class="w-5 h-5 rounded-full border border-dashed border-rose-400 bg-rose-50 text-rose-600 flex items-center justify-center text-[8px] font-black animate-pulse" 
+                                     title="শেষ স্লটটিতে যোগ দিন!">
+                                    +১
+                                </div>
                             </div>
-                            <div class="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
-                                <div class="h-full bg-gradient-to-r from-amber-400 to-[#53a318] rounded-full" style="width: {{ $pct }}%"></div>
-                            </div>
+                            <span class="text-[10px] font-bold text-slate-500">
+                                {{ $group->current_members }}/{{ $group->required_members }} যুক্ত
+                            </span>
+                        </div>
+
+                        <!-- Gradient Animated Progress Bar -->
+                        <div class="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-amber-400 to-[#53a318] rounded-full" 
+                                 style="width: {{ $pct }}%"></div>
                         </div>
                     </div>
 
-                    <!-- Action Button: Go to Product Details to inspect & join -->
-                    <div class="pt-3">
-                        <a href="{{ route('products.show', $group->product->slug) }}" 
-                           class="w-full py-2.5 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-1.5 active:scale-[0.99]">
-                            <span>View Deal & Join</span>
+                    <!-- Action CTAs: Direct 1-Click Join -->
+                    <div class="pt-2.5 relative z-10">
+                        <a href="{{ route('group-buy.show', $group->group_code) }}" 
+                           class="w-full py-2 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-1.5 active:scale-95">
+                            <span>⚡ স্লটে জয়েন করুন</span>
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </a>
                     </div>
@@ -500,7 +541,7 @@
     <!-- ========================================================
          2.6 DUAL FLASH DEAL CAMPAIGN BANNERS (HIGH CONVERSION SOCIAL COMMERCE)
          ======================================================== -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+    <div id="flash-deals" class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 scroll-mt-24">
         
         <!-- Promo Banner 1: Smart Audio & Wireless ANC Gear -->
         <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-[#07192e] border border-blue-900/40 p-6 sm:p-7 text-white shadow-xl group hover:shadow-2xl hover:border-blue-700/50 transition-all duration-300">
@@ -1209,6 +1250,68 @@
 <!-- Alpine Live Countdown Helper Component -->
 <script>
     document.addEventListener('alpine:init', () => {
+        Alpine.data('hotDealsSlider', () => ({
+            autoPlay: true,
+            interval: null,
+            isHovered: false,
+
+            init() {
+                this.startAutoScroll();
+            },
+
+            startAutoScroll() {
+                this.stopAutoScroll();
+                this.interval = setInterval(() => {
+                    if (!this.isHovered && this.autoPlay) {
+                        this.scrollNext();
+                    }
+                }, 3500);
+            },
+
+            stopAutoScroll() {
+                if (this.interval) {
+                    clearInterval(this.interval);
+                    this.interval = null;
+                }
+            },
+
+            scrollNext() {
+                const slider = this.$refs.hotSlider;
+                if (!slider) return;
+                const card = slider.querySelector('.hot-deal-card');
+                const step = card ? (card.offsetWidth + 16) : 320;
+                const maxScroll = slider.scrollWidth - slider.clientWidth;
+
+                if (slider.scrollLeft >= maxScroll - 15) {
+                    slider.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    slider.scrollBy({ left: step, behavior: 'smooth' });
+                }
+            },
+
+            scrollPrev() {
+                const slider = this.$refs.hotSlider;
+                if (!slider) return;
+                const card = slider.querySelector('.hot-deal-card');
+                const step = card ? (card.offsetWidth + 16) : 320;
+
+                if (slider.scrollLeft <= 15) {
+                    slider.scrollTo({ left: slider.scrollWidth, behavior: 'smooth' });
+                } else {
+                    slider.scrollBy({ left: -step, behavior: 'smooth' });
+                }
+            },
+
+            toggleAutoPlay() {
+                this.autoPlay = !this.autoPlay;
+                if (this.autoPlay) {
+                    this.startAutoScroll();
+                } else {
+                    this.stopAutoScroll();
+                }
+            }
+        }));
+
         Alpine.data('groupCountdown', (initialSeconds) => ({
             secondsLeft: initialSeconds,
             timeString: '00:00:00',

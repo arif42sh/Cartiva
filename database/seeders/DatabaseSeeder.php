@@ -450,7 +450,7 @@ class DatabaseSeeder extends Seeder
             ['is_leader' => false, 'joined_at' => now()->subHours(1)]
         );
 
-        // Session 4: Keyforge Keyboard - 1 of 2 joined
+        // Session 4: Keyforge Keyboard - 1 of 2 joined (1 slot left)
         $session4 = GroupBuySession::updateOrCreate(
             ['group_code' => 'GRP-KEYK8P'],
             [
@@ -459,7 +459,7 @@ class DatabaseSeeder extends Seeder
                 'required_members' => 2,
                 'current_members' => 1,
                 'status' => 'active',
-                'expires_at' => now()->addHours(14)->addMinutes(50)->addSeconds(00),
+                'expires_at' => now()->addHours(6)->addMinutes(50)->addSeconds(10),
             ]
         );
 
@@ -467,5 +467,93 @@ class DatabaseSeeder extends Seeder
             ['group_buy_session_id' => $session4->id, 'user_id' => $customer1->id],
             ['is_leader' => true, 'joined_at' => now()->subHours(1)]
         );
+
+        // Session 5: Horizon Ultra Titan Smartwatch - 2 of 3 joined (1 slot left!)
+        if (isset($createdProducts[7])) {
+            $session5 = GroupBuySession::updateOrCreate(
+                ['group_code' => 'GRP-TITAN7'],
+                [
+                    'product_id' => $createdProducts[7]->id,
+                    'leader_user_id' => $customer2->id,
+                    'required_members' => 3,
+                    'current_members' => 2,
+                    'status' => 'active',
+                    'expires_at' => now()->addHours(2)->addMinutes(15)->addSeconds(45), // 2h 15m left!
+                ]
+            );
+
+            GroupBuyMember::updateOrCreate(
+                ['group_buy_session_id' => $session5->id, 'user_id' => $customer2->id],
+                ['is_leader' => true, 'joined_at' => now()->subHours(3)]
+            );
+            GroupBuyMember::updateOrCreate(
+                ['group_buy_session_id' => $session5->id, 'user_id' => $customer3->id],
+                ['is_leader' => false, 'joined_at' => now()->subHours(1)]
+            );
+        }
+
+        // Session 6: Anker 65W GaN Fast Charger - 2 of 3 joined (1 slot left!)
+        if (isset($createdProducts[8])) {
+            $session6 = GroupBuySession::updateOrCreate(
+                ['group_code' => 'GRP-ANK65'],
+                [
+                    'product_id' => $createdProducts[8]->id,
+                    'leader_user_id' => $customer3->id,
+                    'required_members' => 3,
+                    'current_members' => 2,
+                    'status' => 'active',
+                    'expires_at' => now()->addHours(4)->addMinutes(40)->addSeconds(30), // 4h 40m left!
+                ]
+            );
+
+            GroupBuyMember::updateOrCreate(
+                ['group_buy_session_id' => $session6->id, 'user_id' => $customer3->id],
+                ['is_leader' => true, 'joined_at' => now()->subHours(2)]
+            );
+            GroupBuyMember::updateOrCreate(
+                ['group_buy_session_id' => $session6->id, 'user_id' => $admin->id],
+                ['is_leader' => false, 'joined_at' => now()->subMinutes(45)]
+            );
+        }
+
+        // Session 7: Philips Air Fryer - 1 of 2 joined (1 slot left!)
+        if (isset($createdProducts[11])) {
+            $session7 = GroupBuySession::updateOrCreate(
+                ['group_code' => 'GRP-FRY08'],
+                [
+                    'product_id' => $createdProducts[11]->id,
+                    'leader_user_id' => $customer1->id,
+                    'required_members' => 2,
+                    'current_members' => 1,
+                    'status' => 'active',
+                    'expires_at' => now()->addHours(1)->addMinutes(25)->addSeconds(50), // 1h 25m left! Super urgent!
+                ]
+            );
+
+            GroupBuyMember::updateOrCreate(
+                ['group_buy_session_id' => $session7->id, 'user_id' => $customer1->id],
+                ['is_leader' => true, 'joined_at' => now()->subMinutes(30)]
+            );
+        }
+
+        // Session 8: Logitech MX Master 3S - 1 of 2 joined (1 slot left!)
+        if (isset($createdProducts[9])) {
+            $session8 = GroupBuySession::updateOrCreate(
+                ['group_code' => 'GRP-MX3S01'],
+                [
+                    'product_id' => $createdProducts[9]->id,
+                    'leader_user_id' => $customer2->id,
+                    'required_members' => 2,
+                    'current_members' => 1,
+                    'status' => 'active',
+                    'expires_at' => now()->addHours(7)->addMinutes(55)->addSeconds(20),
+                ]
+            );
+
+            GroupBuyMember::updateOrCreate(
+                ['group_buy_session_id' => $session8->id, 'user_id' => $customer2->id],
+                ['is_leader' => true, 'joined_at' => now()->subHours(1)]
+            );
+        }
     }
 }

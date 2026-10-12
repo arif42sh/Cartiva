@@ -12,13 +12,18 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        // If search looks like a group code (e.g. GRP-...), check and redirect to the room
+        // If search looks like a group code (e.g. GRP-...) or order code (ORD-...), check and redirect
         if ($request->filled('q')) {
             $searchQuery = trim($request->input('q'));
             if (str_starts_with(strtoupper($searchQuery), 'GRP-')) {
                 $matchedGroup = GroupBuySession::where('group_code', strtoupper($searchQuery))->first();
                 if ($matchedGroup) {
                     return redirect()->route('group-buy.show', $matchedGroup);
+                }
+            } elseif (str_starts_with(strtoupper($searchQuery), 'ORD-')) {
+                $matchedOrder = \App\Models\Order::where('order_number', strtoupper($searchQuery))->first();
+                if ($matchedOrder) {
+                    return redirect()->route('orders.show', $matchedOrder);
                 }
             }
         }
@@ -68,8 +73,30 @@ class HomeController extends Controller
             ->whereColumn('current_members', '<', 'required_members')
             ->orderByRaw('(current_members / required_members) DESC')
             ->orderBy('expires_at', 'asc')
-            ->take(10)
+            ->take(12)
             ->get();
+
+        // Resilient auto-refresh for sample data so the Hot Deals section remains vibrant and active
+        if ($urgentGroups->count() < 3) {
+            $pastSessions = GroupBuySession::where('expires_at', '<=', now())
+                ->whereColumn('current_members', '<', 'required_members')
+                ->take(8)
+                ->get();
+            foreach ($pastSessions as $idx => $s) {
+                $s->update([
+                    'status' => 'active',
+                    'expires_at' => now()->addHours(($idx % 6) + 1)->addMinutes(rand(10, 55)),
+                ]);
+            }
+            $urgentGroups = GroupBuySession::with(['product.category', 'leader', 'members.user'])
+                ->where('status', 'active')
+                ->where('expires_at', '>', now())
+                ->whereColumn('current_members', '<', 'required_members')
+                ->orderByRaw('(current_members / required_members) DESC')
+                ->orderBy('expires_at', 'asc')
+                ->take(12)
+                ->get();
+        }
 
         // 3. Active Groups List (Core Deals Grid)
         $activeGroups = GroupBuySession::with(['product.category', 'leader', 'members.user'])

@@ -8,9 +8,9 @@
     <title>@yield('title', 'Cartiva – Deeper Discounts, Together | Group Buying Platform')</title>
     <meta name="description" content="Discover incredible group buying discounts on tech, food, fashion and lifestyle products with Cartiva.">
 
-    <!-- Fonts -->
+    <!-- Fonts (Inter for World-Class UI & Hind Siliguri for Crisp Bengali) -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800,900|hind-siliguri:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800,900|hind-siliguri:400,500,600,700&display=swap" rel="stylesheet" />
 
     <!-- Scripts and Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -332,22 +332,18 @@
 
             </div>
 
-            <!-- 3. Category Navigation Menu (Section 1 Checklist) -->
+            <!-- 3. Category & Core Navigation Bar -->
             @if(!request()->routeIs('login', 'register'))
-            <div class="hidden md:flex items-center justify-between border-t border-slate-100 py-1.5 text-xs font-bold text-slate-600">
-                <div class="flex items-center space-x-6 overflow-x-auto no-scrollbar">
-                    
-                    <!-- Categories Mega Dropdown -->
+            <div class="hidden md:flex items-center justify-between border-t border-slate-200/80 py-2.5 text-sm font-semibold text-slate-700">
+                
+                <!-- Left: Browse Categories Mega Dropdown -->
+                <div class="flex items-center space-x-3 lg:space-x-4">
                     <div class="relative" x-data="{ catOpen: false }">
-                        <button @click="catOpen = !catOpen" @click.outside="catOpen = false" 
-                                class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-[#53a318] hover:text-white text-slate-800 transition-all font-black text-xs">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-                            <span>Categories</span>
-                            <svg class="w-3.5 h-3.5 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
+                        
 
+                        <!-- Dropdown Menu -->
                         <div x-show="catOpen" x-cloak 
-                             class="absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-100 p-3 z-50 divide-y divide-slate-100">
+                             class="absolute left-0 mt-2 w-76 bg-white rounded-2xl shadow-2xl border border-slate-100 p-2.5 z-50 divide-y divide-slate-100">
                             <div class="grid grid-cols-1 gap-1 py-1">
                                 <a href="{{ route('category.show', 'smart-tech-audio') }}" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
                                     <span class="text-xl">🎧</span>
@@ -393,40 +389,84 @@
                                 </a>
                             </div>
                             <div class="pt-2 text-center">
-                                <a href="{{ route('home') }}#active-deals" class="text-[11px] font-bold text-[#53a318] hover:underline">
+                                <a href="{{ route('home') }}#active-deals" class="text-xs font-bold text-[#53a318] hover:underline">
                                     Browse All Categories &rarr;
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    <a href="{{ route('home') }}" class="text-[#53a318] hover:text-[#468c13] flex items-center space-x-1 font-extrabold">
-                        <span>Home</span>
-                    </a>
-                    <a href="{{ route('home') }}#active-deals" class="hover:text-[#53a318] transition-colors">
-                        Active Deals Grid
-                    </a>
-                    <a href="{{ route('home') }}#urgent-pools" class="text-rose-600 hover:text-rose-700 flex items-center space-x-1 font-extrabold">
-                        <span>⚡ Rush Hour Pools</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
-                    </a>
-                    <a href="{{ route('category.show', 'smart-tech-audio') }}" class="hover:text-amber-600 transition-colors">
-                        Audio Deals 🔥
-                    </a>
-                    <a href="{{ route('home') }}#how-it-works" class="hover:text-[#53a318] transition-colors">
-                        How It Works
-                    </a>
-                    <a href="{{ route('home') }}#seller-acquisition" class="text-slate-500 hover:text-[#53a318] transition-colors">
-                        Become a Seller
-                    </a>
+                    <div class="h-4 w-px bg-slate-200"></div>
                 </div>
 
-                <div class="flex items-center space-x-4 flex-shrink-0 pl-4 text-[11px]">
-                    <a href="#cartiva-guarantee" class="text-emerald-700 font-bold flex items-center space-x-1">
-                        <svg class="w-3.5 h-3.5 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                        <span>100% Refund Guarantee</span>
+                <!-- Center: Clean Primary Navigation Links -->
+                <nav class="flex items-center space-x-1 lg:space-x-2 text-xs sm:text-sm font-semibold">
+                    <!-- Home -->
+                    <a href="{{ route('home') }}" 
+                       class="px-3 py-1.5 rounded-xl transition-all {{ request()->routeIs('home') && !request()->has('filter') && !request()->has('category') ? 'text-[#53a318] bg-emerald-50/80 font-black' : 'text-slate-700 hover:text-[#53a318] hover:bg-slate-50' }}">
+                        Home
                     </a>
+
+                    <span class="text-slate-300 font-light select-none">•</span>
+
+                    <!-- Hot Deals -->
+                    <a href="{{ route('hot-deals.index') }}" 
+                       class="px-3 py-1.5 rounded-xl transition-all flex items-center space-x-1 {{ request()->routeIs('hot-deals.index') ? 'text-rose-600 bg-rose-50 font-black' : 'text-slate-700 hover:text-rose-600 hover:bg-rose-50/50' }}">
+                        <span>Hot Deals</span>
+                    </a>
+
+                    <span class="text-slate-300 font-light select-none">•</span>
+
+                    <!-- Flash Sales -->
+                    <a href="{{ route('home') }}#flash-deals" 
+                       class="px-3 py-1.5 rounded-xl transition-all flex items-center space-x-1 text-slate-700 hover:text-amber-600 hover:bg-amber-50/50">
+                        <span>Flash Sales</span>
+                    </a>
+
+                    <span class="text-slate-300 font-light select-none">•</span>
+
+                    <!-- Group Pools -->
+                    <a href="{{ route('home') }}#active-deals" 
+                       class="px-3 py-1.5 rounded-xl transition-all flex items-center space-x-1 text-slate-700 hover:text-[#53a318] hover:bg-emerald-50/50">
+                        <span>Group Pools</span>
+                    </a>
+
+                    <span class="text-slate-300 font-light select-none">•</span>
+
+                    <!-- How It Works -->
+                    <a href="{{ route('home') }}#how-it-works" 
+                       class="px-3 py-1.5 rounded-xl transition-all text-slate-700 hover:text-[#53a318] hover:bg-slate-50">
+                        How It Works
+                    </a>
+
+                    <span class="text-slate-300 font-light select-none">•</span>
+
+                    <!-- Track Order -->
+                    <a href="{{ route('orders.index') }}" 
+                       class="px-3 py-1.5 rounded-xl transition-all {{ request()->routeIs('orders.*') ? 'text-[#53a318] bg-emerald-50/80 font-black' : 'text-slate-700 hover:text-[#53a318] hover:bg-slate-50' }}">
+                        Track Order
+                    </a>
+                </nav>
+
+                <!-- Right: Become a Seller & Trust Assurance -->
+                <div class="flex items-center space-x-3 shrink-0">
+                    <div class="h-4 w-px bg-slate-200"></div>
+
+                    @if(auth()->check() && auth()->user()->isSeller())
+                        <a href="{{ route('seller.dashboard') }}" 
+                           class="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200/80 px-3.5 py-1.5 rounded-xl transition-all shadow-2xs">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            <span>Seller Dashboard</span>
+                        </a>
+                    @else
+                        <a href="{{ route('home') }}#seller-acquisition" 
+                           class="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-bold text-slate-700 hover:text-[#53a318] hover:border-[#53a318] bg-slate-50 hover:bg-white border border-slate-200 px-3.5 py-1.5 rounded-xl transition-all shadow-2xs group">
+                            <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-[#53a318] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <span>Become a seller</span>
+                        </a>
+                    @endif
                 </div>
+
             </div>
             @endif
 
@@ -435,17 +475,20 @@
                 <form action="{{ route('home') }}" method="GET" class="mb-3">
                     <input type="text" name="q" value="{{ request('q') }}" placeholder="Search deals or group code (e.g. GRP-HOODIE05)..." class="w-full px-4 py-2.5 text-xs bg-slate-100 border border-slate-200 rounded-lg">
                 </form>
-                <div class="flex flex-col space-y-2 text-xs font-bold text-slate-700">
+                <div class="flex flex-col space-y-2 text-sm font-semibold text-slate-700">
                     <a href="{{ route('home') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100">Home</a>
-                    <a href="{{ route('home') }}#urgent-pools" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-rose-600 flex items-center justify-between">
-                        <span>⚡ Rush Hour / Ending Soon</span>
-                        <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                    <a href="{{ route('hot-deals.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-rose-600 font-bold">Hot Deals</a>
+                    <a href="{{ route('home') }}#flash-deals" class="px-3 py-2 rounded-lg hover:bg-slate-100">Flash Sales</a>
+                    <a href="{{ route('home') }}#active-deals" class="px-3 py-2 rounded-lg hover:bg-slate-100">Group Pools</a>
+                    <a href="{{ route('home') }}#how-it-works" class="px-3 py-2 rounded-lg hover:bg-slate-100">How It Works</a>
+                    <a href="{{ route('orders.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 {{ request()->routeIs('orders.*') ? 'text-[#53a318] font-bold' : '' }}">
+                        Track Order
                     </a>
-                    <a href="{{ route('home') }}#active-deals" class="px-3 py-2 rounded-lg hover:bg-slate-100">🛍️ Live Buying Deals Grid</a>
-                    <a href="{{ route('category.show', 'smart-tech-audio') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100">🎧 Audio & Sound Category</a>
-                    <a href="{{ route('category.show', 'winter-specials') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100">🧥 Winter Specials Category</a>
-                    <a href="{{ route('home') }}#how-it-works" class="px-3 py-2 rounded-lg hover:bg-slate-100">📖 How Group Buying Works</a>
-                    <a href="{{ route('home') }}#seller-acquisition" class="px-3 py-2 rounded-lg hover:bg-slate-100">💼 Sell on Cartiva</a>
+                    @if(auth()->check() && auth()->user()->isSeller())
+                        <a href="{{ route('seller.dashboard') }}" class="px-3 py-2 rounded-lg bg-teal-50 text-teal-700 font-bold">Seller Dashboard</a>
+                    @else
+                        <a href="{{ route('home') }}#seller-acquisition" class="px-3 py-2 rounded-lg hover:bg-slate-100">Become a seller</a>
+                    @endif
                     @auth
                         <a href="{{ route('orders.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-[#53a318]">My Orders & Groups</a>
                     @endauth
