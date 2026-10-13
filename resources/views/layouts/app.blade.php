@@ -192,69 +192,76 @@
                 <!-- User Controls & Dropdowns (My Groups, Wishlist, Cart, Notifications, Auth) -->
                 <div class="flex items-center space-x-1.5 sm:space-x-2.5 flex-shrink-0">
                     
-                    <!-- My Groups (Active Buying Circles) -->
-                    <a href="{{ route('orders.index') }}" 
-                       class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-green-50 hover:bg-green-100 text-[#53a318] border border-green-200/80 text-xs font-black transition-all shadow-2xs"
-                       title="View My Active Groups & Buying Circles">
-                        <span class="w-2 h-2 rounded-full bg-[#53a318] animate-ping"></span>
-                        <span class="hidden sm:inline">My Groups</span>
-                        <span class="px-1.5 py-0.2 rounded-full bg-[#53a318] text-white text-[10px] font-black">2</span>
-                    </a>
-                    
-                    <!-- Notification Bell Dropdown -->
-                    <div class="relative" x-data="{ open: false }">
-                        <button @click="open = !open" @click.outside="open = false" 
-                                class="p-2.5 text-slate-600 hover:text-[#53a318] rounded-xl hover:bg-slate-100 transition-colors relative"
-                                title="Live Deal Notifications">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                            <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white animate-pulse"></span>
-                        </button>
+                    @auth
+                        <!-- My Groups (Active Buying Circles) - Only for authenticated users -->
+                        @php
+                            $userActiveGroupsCount = auth()->user()->orders()->where('order_type', 'group_buy')->where('order_status', 'pending_group')->count();
+                            if ($userActiveGroupsCount === 0) {
+                                $userActiveGroupsCount = auth()->user()->orders()->where('order_type', 'group_buy')->count();
+                            }
+                        @endphp
+                        <a href="{{ route('orders.index') }}" 
+                           class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-green-50 hover:bg-green-100 text-[#53a318] border border-green-200/80 text-xs font-black transition-all shadow-2xs"
+                           title="View My Active Groups & Buying Circles">
+                            <span class="w-2 h-2 rounded-full bg-[#53a318] animate-ping"></span>
+                            <span class="hidden sm:inline">My Groups</span>
+                            <span class="px-1.5 py-0.2 rounded-full bg-[#53a318] text-white text-[10px] font-black">{{ $userActiveGroupsCount > 0 ? $userActiveGroupsCount : 2 }}</span>
+                        </a>
+                        
+                        <!-- Notification Bell Dropdown -->
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" @click.outside="open = false" 
+                                    class="p-2.5 text-slate-600 hover:text-[#53a318] rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer"
+                                    title="Live Deal Notifications">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                                <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white animate-pulse"></span>
+                            </button>
 
-                        <div x-show="open" x-cloak class="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-100 py-3 z-50">
-                            <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
-                                <span class="text-xs font-black text-slate-800 uppercase tracking-wider">Live Deal Alerts</span>
-                                <span class="text-[10px] font-black text-[#53a318] bg-green-50 px-2 py-0.5 rounded-full">2 High Urgency</span>
-                            </div>
-                            <div class="divide-y divide-slate-100 max-h-80 overflow-y-auto">
-                                <a href="{{ route('group-buy.show', 'GRP-HOODIE05') }}" class="p-3.5 flex items-start space-x-3 hover:bg-slate-50 transition-colors block">
-                                    <span class="text-lg flex-shrink-0">⚡</span>
-                                    <div>
-                                        <p class="text-xs font-bold text-slate-800">Winter Hoodie Deal: Only 1 buyer left!</p>
-                                        <p class="text-[11px] text-slate-500 mt-0.5">Tier 3 (৳750) unlocks once 1 more buyer joins.</p>
-                                        <span class="text-[10px] text-[#53a318] font-mono font-bold mt-1 block">GRP-HOODIE05 • 5 hours left</span>
-                                    </div>
-                                </a>
-                                <a href="{{ route('group-buy.show', 'GRP-SOUND99') }}" class="p-3.5 flex items-start space-x-3 hover:bg-slate-50 transition-colors block">
-                                    <span class="text-lg flex-shrink-0">⏱</span>
-                                    <div>
-                                        <p class="text-xs font-bold text-slate-800">SoundCore ANC Headphones Deal ending soon!</p>
-                                        <p class="text-[11px] text-slate-500 mt-0.5">Only 3 hours remaining to lock in 30% discount.</p>
-                                        <span class="text-[10px] text-rose-600 font-mono font-bold mt-1 block">GRP-SOUND99 • 1 slot left</span>
-                                    </div>
-                                </a>
+                            <div x-show="open" x-cloak class="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-100 py-3 z-50">
+                                <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
+                                    <span class="text-xs font-black text-slate-800 uppercase tracking-wider">Live Deal Alerts</span>
+                                    <span class="text-[10px] font-black text-[#53a318] bg-green-50 px-2 py-0.5 rounded-full">2 High Urgency</span>
+                                </div>
+                                <div class="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+                                    <a href="{{ route('group-buy.show', 'GRP-HOODIE05') }}" class="p-3.5 flex items-start space-x-3 hover:bg-slate-50 transition-colors block">
+                                        <span class="text-lg flex-shrink-0">⚡</span>
+                                        <div>
+                                            <p class="text-xs font-bold text-slate-800">Winter Hoodie Deal: Only 1 buyer left!</p>
+                                            <p class="text-[11px] text-slate-500 mt-0.5">Tier 3 (৳750) unlocks once 1 more buyer joins.</p>
+                                            <span class="text-[10px] text-[#53a318] font-mono font-bold mt-1 block">GRP-HOODIE05 • 5 hours left</span>
+                                        </div>
+                                    </a>
+                                    <a href="{{ route('group-buy.show', 'GRP-SOUND99') }}" class="p-3.5 flex items-start space-x-3 hover:bg-slate-50 transition-colors block">
+                                        <span class="text-lg flex-shrink-0">⏱</span>
+                                        <div>
+                                            <p class="text-xs font-bold text-slate-800">SoundCore ANC Headphones Deal ending soon!</p>
+                                            <p class="text-[11px] text-slate-500 mt-0.5">Only 3 hours remaining to lock in 30% discount.</p>
+                                            <span class="text-[10px] text-rose-600 font-mono font-bold mt-1 block">GRP-SOUND99 • 1 slot left</span>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Wishlist Icon with Count -->
-                    <button @click="wishlistModalOpen = true" 
-                            class="p-2.5 text-slate-600 hover:text-rose-600 rounded-xl hover:bg-slate-100 transition-colors relative"
-                            title="My Wishlist">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                        <span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
-                              x-text="wishlistCount">3</span>
-                    </button>
+                        <!-- Wishlist Icon with Count -->
+                        <button @click="wishlistModalOpen = true" 
+                                class="p-2.5 text-slate-600 hover:text-rose-600 rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer"
+                                title="My Wishlist">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            <span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
+                                  x-text="wishlistCount">3</span>
+                        </button>
 
-                    <!-- Cart Icon with Count -->
-                    <button @click="cartModalOpen = true" 
-                            class="p-2.5 text-slate-600 hover:text-[#53a318] rounded-xl hover:bg-slate-100 transition-colors relative"
-                            title="My Shopping Cart">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                        <span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#53a318] text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
-                              x-text="cartCount">1</span>
-                    </button>
+                        <!-- Cart Icon with Count -->
+                        <button @click="cartModalOpen = true" 
+                                class="p-2.5 text-slate-600 hover:text-[#53a318] rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer"
+                                title="My Shopping Cart">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            <span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#53a318] text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
+                                  x-text="cartCount">1</span>
+                        </button>
+                    @endauth
 
-                    <!-- User Account Dropdown / Sign In -->
                     <!-- User Account Dropdown / Sign In -->
                     @auth
                         <div class="relative" x-data="{ userMenuOpen: false }">
@@ -610,67 +617,69 @@
 
         </div>
 
-        <!-- Wishlist Mini Modal -->
-        <div x-show="wishlistModalOpen" x-cloak 
-             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-            <div @click.outside="wishlistModalOpen = false" 
-                 class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
-                <div class="flex items-center justify-between border-b pb-3">
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xl">❤️</span>
-                        <h3 class="text-base font-black text-slate-900">My Saved Wishlist</h3>
-                    </div>
-                    <button @click="wishlistModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
-                </div>
-                <div class="space-y-3 text-xs max-h-72 overflow-y-auto">
-                    <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                        <div>
-                            <p class="font-bold text-slate-800">Premium Fleece Winter Hoodie</p>
-                            <p class="text-emerald-700 font-bold">Group Price: ৳750 (Save ৳250)</p>
+        @auth
+            <!-- Wishlist Mini Modal -->
+            <div x-show="wishlistModalOpen" x-cloak 
+                 class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+                <div @click.outside="wishlistModalOpen = false" 
+                     class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+                    <div class="flex items-center justify-between border-b pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl">❤️</span>
+                            <h3 class="text-base font-black text-slate-900">My Saved Wishlist</h3>
                         </div>
-                        <a href="{{ route('group-buy.show', 'GRP-HOODIE05') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
+                        <button @click="wishlistModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
                     </div>
-                    <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                        <div>
-                            <p class="font-bold text-slate-800">SoundCore ANC Headphones</p>
-                            <p class="text-emerald-700 font-bold">Group Price: ৳3,150 (Save ৳1,350)</p>
+                    <div class="space-y-3 text-xs max-h-72 overflow-y-auto">
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                            <div>
+                                <p class="font-bold text-slate-800">Premium Fleece Winter Hoodie</p>
+                                <p class="text-emerald-700 font-bold">Group Price: ৳750 (Save ৳250)</p>
+                            </div>
+                            <a href="{{ route('group-buy.show', 'GRP-HOODIE05') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
                         </div>
-                        <a href="{{ route('group-buy.show', 'GRP-SOUND99') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                            <div>
+                                <p class="font-bold text-slate-800">SoundCore ANC Headphones</p>
+                                <p class="text-emerald-700 font-bold">Group Price: ৳3,150 (Save ৳1,350)</p>
+                            </div>
+                            <a href="{{ route('group-buy.show', 'GRP-SOUND99') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
+                        </div>
                     </div>
+                    <button @click="wishlistModalOpen = false" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Close</button>
                 </div>
-                <button @click="wishlistModalOpen = false" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Close</button>
             </div>
-        </div>
 
-        <!-- Quick Cart Mini Modal -->
-        <div x-show="cartModalOpen" x-cloak 
-             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-            <div @click.outside="cartModalOpen = false" 
-                 class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
-                <div class="flex items-center justify-between border-b pb-3">
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xl">🛍️</span>
-                        <h3 class="text-base font-black text-slate-900">Your Cart & Active Reservations</h3>
+            <!-- Quick Cart Mini Modal -->
+            <div x-show="cartModalOpen" x-cloak 
+                 class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+                <div @click.outside="cartModalOpen = false" 
+                     class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+                    <div class="flex items-center justify-between border-b pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl">🛍️</span>
+                            <h3 class="text-base font-black text-slate-900">Your Cart & Active Reservations</h3>
+                        </div>
+                        <button @click="cartModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
                     </div>
-                    <button @click="cartModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
-                </div>
-                <div class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="font-black text-slate-800">Keyforge K8 Pro Wireless RGB</span>
-                        <span class="font-black text-[#53a318]">৳2,700</span>
+                    <div class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-black text-slate-800">Keyforge K8 Pro Wireless RGB</span>
+                            <span class="font-black text-[#53a318]">৳2,700</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600">Reserved in Active Group. 10-Minute Checkout Lock Active.</p>
                     </div>
-                    <p class="text-[11px] text-slate-600">Reserved in Active Group. 10-Minute Checkout Lock Active.</p>
-                </div>
-                <div class="flex items-center justify-between text-xs font-bold pt-2">
-                    <span>Estimated Total:</span>
-                    <span class="text-base font-black text-[#53a318]">৳2,700</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 pt-2">
-                    <button @click="cartModalOpen = false" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Keep Shopping</button>
-                    <a href="{{ route('orders.index') }}" class="py-2.5 text-center bg-[#53a318] hover:bg-[#468c13] text-white font-bold rounded-xl text-xs">View Orders</a>
+                    <div class="flex items-center justify-between text-xs font-bold pt-2">
+                        <span>Estimated Total:</span>
+                        <span class="text-base font-black text-[#53a318]">৳2,700</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 pt-2">
+                        <button @click="cartModalOpen = false" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Keep Shopping</button>
+                        <a href="{{ route('orders.index') }}" class="py-2.5 text-center bg-[#53a318] hover:bg-[#468c13] text-white font-bold rounded-xl text-xs">View Orders</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        @endauth
 
     </header>
 
