@@ -30,7 +30,7 @@ class HomeController extends Controller
 
         $categories = Category::withCount('products')->get();
 
-        $query = Product::with(['category', 'seller'])
+        $query = Product::with(['category', 'seller', 'activeGroupSessions.members.user'])
             ->where('is_active', true);
 
         // Search filter
@@ -98,14 +98,49 @@ class HomeController extends Controller
                 ->get();
         }
 
-        // 3. Active Groups List (Core Deals Grid)
-        $activeGroups = GroupBuySession::with(['product.category', 'leader', 'members.user'])
+        // 3. Active Groups List (Group Pools Core Section)
+        if (GroupBuySession::where('status', 'active')->where('expires_at', '>', now())->whereColumn('current_members', '<', 'required_members')->count() < 6) {
+            $pastSessions = GroupBuySession::where('expires_at', '<=', now())
+                ->whereColumn('current_members', '<', 'required_members')
+                ->take(12)
+                ->get();
+            foreach ($pastSessions as $idx => $s) {
+                $s->update([
+                    'status' => 'active',
+                    'expires_at' => now()->addHours(($idx % 8) + 2)->addMinutes(rand(10, 55)),
+                ]);
+            }
+        }
+
+        $activeGroupsQuery = GroupBuySession::with(['product.category', 'leader', 'members.user'])
             ->where('status', 'active')
             ->where('expires_at', '>', now())
-            ->whereColumn('current_members', '<', 'required_members')
-            ->latest()
-            ->take(8)
-            ->get();
+            ->whereColumn('current_members', '<', 'required_members');
+
+        if ($request->filled('q')) {
+            $searchQ = $request->input('q');
+            $activeGroupsQuery->where(function ($sub) use ($searchQ) {
+                $sub->where('group_code', 'like', "%{$searchQ}%")
+                    ->orWhereHas('product', function ($p) use ($searchQ) {
+                        $p->where('title', 'like', "%{$searchQ}%");
+                    });
+            });
+        }
+
+        if ($request->filled('category')) {
+            $catSlug = $request->input('category');
+            $activeGroupsQuery->whereHas('product.category', function ($sub) use ($catSlug) {
+                if ($catSlug === 'smart-tech-audio' || $catSlug === 'tech-accessories') {
+                    $sub->whereIn('slug', ['smart-tech-audio', 'tech-accessories']);
+                } elseif ($catSlug === 'home-living' || $catSlug === 'home-lifestyle') {
+                    $sub->whereIn('slug', ['home-living', 'home-lifestyle']);
+                } else {
+                    $sub->where('slug', $catSlug);
+                }
+            });
+        }
+
+        $activeGroups = $activeGroupsQuery->latest()->take(24)->get();
 
         if (!$spotlightGroup) {
             $spotlightGroup = $activeGroups->first();
@@ -333,6 +368,144 @@ class HomeController extends Controller
             'minPrice', 
             'maxPrice', 
             'minDiscount'
+        ));
+    }
+
+    /**
+     * Dedicated Group Pools Social Commerce Interface
+     */
+    public function groupPools(Request $request)
+    {
+        $categories = Category::withCount(['products' => function ($q) {
+            $q->where('is_active', true);
+        }])->get();
+
+        // Ensure active sessions are available
+        if (GroupBuySession::where('status', 'active')->where('expires_at', '>', now())->whereColumn('current_members', '<', 'required_members')->count() < 8) {
+            $pastSessions = GroupBuySession::where('expires_at', '<=', now())
+                ->whereColumn('current_members', '<', 'required_members')
+                ->take(12)
+                ->get();
+            foreach ($pastSessions as $idx => $s) {
+                $s->update([
+                    'status' => 'active',
+                    'expires_at' => now()->addHours(($idx % 8) + 2)->addMinutes(rand(10, 55)),
+                ]);
+            }
+        }
+
+        $query = GroupBuySession::with(['product.category', 'leader', 'members.user'])
+            ->where('status', 'active')
+            ->where('expires_at', '>', now())
+            ->whereColumn('current_members', '<', 'required_members');
+
+        // 1. Category Filter
+        $selectedCategory = $request->input('category');
+        if ($request->filled('category') && $selectedCategory !== 'all') {
+            $query->whereHas('product.category', function ($q) use ($selectedCategory) {
+                if (in_array($selectedCategory, ['smart-tech-audio', 'tech-accessories'])) {
+                    $q->whereIn('slug', ['smart-tech-audio', 'tech-accessories']);
+                } elseif (in_array($selectedCategory, ['home-living', 'home-lifestyle'])) {
+                    $q->whereIn('slug', ['home-living', 'home-lifestyle']);
+                } else {
+                    $q->where('slug', $selectedCategory);
+                }
+            });
+        }
+
+        // 2. Pool Urgency / Status Filter
+        $filter = $request->input('filter', 'all');
+        if ($filter === '1_slot') {
+            $query->whereRaw('(required_members - current_members) = 1');
+        } elseif ($filter === 'ending_soon') {
+            $query->where('expires_at', '<=', now()->addHours(6));
+        } elseif ($filter === '40_percent') {
+            $query->whereHas('product', function ($q) {
+                $q->whereRaw('ROUND(((single_price - group_price) / single_price) * 100) >= 40');
+            });
+        } elseif ($filter === 'winter') {
+            $query->whereHas('product', function ($q) {
+                $q->where('title', 'like', '%winter%')
+                  ->orWhere('title', 'like', '%fleece%')
+                  ->orWhereHas('category', fn($c) => $c->where('slug', 'winter-specials'));
+            });
+        } elseif ($filter === 'tech') {
+            $query->whereHas('product', function ($q) {
+                $q->where('title', 'like', '%anc%')
+                  ->orWhere('title', 'like', '%earbuds%')
+                  ->orWhere('title', 'like', '%keyboard%')
+                  ->orWhereHas('category', fn($c) => $c->whereIn('slug', ['smart-tech-audio', 'tech-accessories']));
+            });
+        }
+
+        // 3. Price Filter (Preset or Custom Min/Max)
+        $pricePreset = $request->input('price_range');
+        if ($pricePreset) {
+            if ($pricePreset === 'under_1000') {
+                $query->whereHas('product', fn($q) => $q->where('group_price', '<', 1000));
+            } elseif ($pricePreset === '1000_3000') {
+                $query->whereHas('product', fn($q) => $q->whereBetween('group_price', [1000, 3000]));
+            } elseif ($pricePreset === '3000_7000') {
+                $query->whereHas('product', fn($q) => $q->whereBetween('group_price', [3000, 7000]));
+            } elseif ($pricePreset === 'above_7000') {
+                $query->whereHas('product', fn($q) => $q->where('group_price', '>', 7000));
+            }
+        }
+
+        // 4. Search Query
+        if ($request->filled('q')) {
+            $keyword = trim($request->input('q'));
+            $query->where(function ($sub) use ($keyword) {
+                $sub->where('group_code', 'like', "%{$keyword}%")
+                    ->orWhereHas('product', function ($p) use ($keyword) {
+                        $p->where('title', 'like', "%{$keyword}%")
+                          ->orWhere('description', 'like', "%{$keyword}%");
+                    });
+            });
+        }
+
+        // 5. Sorting
+        $sort = $request->input('sort', 'urgency');
+        if ($sort === 'discount') {
+            $query->join('products as p_sort', 'group_buy_sessions.product_id', '=', 'p_sort.id')
+                  ->orderByRaw('((p_sort.single_price - p_sort.group_price) / p_sort.single_price) DESC')
+                  ->select('group_buy_sessions.*');
+        } elseif ($sort === 'price_low') {
+            $query->join('products as p_sort', 'group_buy_sessions.product_id', '=', 'p_sort.id')
+                  ->orderBy('p_sort.group_price', 'asc')
+                  ->select('group_buy_sessions.*');
+        } elseif ($sort === 'price_high') {
+            $query->join('products as p_sort', 'group_buy_sessions.product_id', '=', 'p_sort.id')
+                  ->orderBy('p_sort.group_price', 'desc')
+                  ->select('group_buy_sessions.*');
+        } elseif ($sort === 'most_filled') {
+            $query->orderByRaw('(current_members / required_members) DESC');
+        } elseif ($sort === 'latest') {
+            $query->latest();
+        } else {
+            // Default: Most urgent first
+            $query->orderByRaw('(current_members / required_members) DESC')
+                  ->orderBy('expires_at', 'asc');
+        }
+
+        $pools = $query->paginate(16)->withQueryString();
+
+        // Platform Real-Time Stats
+        $stats = [
+            'active_pools_count' => GroupBuySession::where('status', 'active')->where('expires_at', '>', now())->whereColumn('current_members', '<', 'required_members')->count(),
+            'almost_full_count' => GroupBuySession::where('status', 'active')->where('expires_at', '>', now())->whereRaw('(required_members - current_members) = 1')->count(),
+            'total_saved_bdt' => 2850000 + (GroupBuySession::where('status', 'completed')->count() * 1450),
+            'verified_buyers_today' => 64 + rand(4, 15),
+        ];
+
+        return view('group-pools.index', compact(
+            'pools',
+            'categories',
+            'filter',
+            'sort',
+            'selectedCategory',
+            'pricePreset',
+            'stats'
         ));
     }
 

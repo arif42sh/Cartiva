@@ -547,8 +547,8 @@
                     <span class="text-slate-300 font-light select-none">•</span>
 
                     <!-- Group Pools -->
-                    <a href="{{ route('home') }}#active-deals" 
-                       class="px-3 py-1.5 rounded-xl transition-all flex items-center space-x-1 text-slate-700 hover:text-[#53a318] hover:bg-emerald-50/50">
+                    <a href="{{ route('group-pools.index') }}" 
+                       class="px-3 py-1.5 rounded-xl transition-all flex items-center space-x-1 {{ request()->routeIs('group-pools.*') ? 'text-[#53a318] bg-emerald-50/80 font-black' : 'text-slate-700 hover:text-[#53a318] hover:bg-emerald-50/50' }}">
                         <span>Group Pools</span>
                     </a>
 
@@ -600,7 +600,7 @@
                     <a href="{{ route('home') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100">Home</a>
                     <a href="{{ route('hot-deals.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-rose-600 font-bold">Hot Deals</a>
                     <a href="{{ route('flash-sales.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 {{ request()->routeIs('flash-sales.*') ? 'text-amber-600 font-bold bg-amber-50' : '' }}">⚡ Flash Sales</a>
-                    <a href="{{ route('home') }}#active-deals" class="px-3 py-2 rounded-lg hover:bg-slate-100">Group Pools</a>
+                    <a href="{{ route('group-pools.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 {{ request()->routeIs('group-pools.*') ? 'text-[#53a318] font-bold bg-emerald-50' : '' }}">Group Pools</a>
                     <a href="{{ route('home') }}#how-it-works" class="px-3 py-2 rounded-lg hover:bg-slate-100">How It Works</a>
                     <a href="{{ route('orders.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 {{ request()->routeIs('orders.*') ? 'text-[#53a318] font-bold' : '' }}">
                         Track Order
