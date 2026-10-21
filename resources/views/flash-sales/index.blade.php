@@ -230,178 +230,167 @@
 
 
     <!-- ========================================================
-         5. HIGH-CONVERSION FLASH DEAL CARDS GRID
+         5. COMPACT FLASH DEAL CARDS (5 PER ROW ON DESKTOP - HOT DEALS FORMAT)
          ======================================================== -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-300" id="flash-deals-grid">
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-3 sm:gap-3.5 lg:gap-4 transition-all duration-300" id="flash-deals-grid">
         @forelse($enrichedDeals as $deal)
             @php
                 $isEnded = ($deal['slot_id'] === 'ended');
                 $isUpcoming = in_array($deal['slot_id'], ['upcoming_1', 'upcoming_2']);
+                $isAlmostSold = ($deal['is_almost_sold_out'] ?? false) || ($deal['stock_left'] <= 2);
             @endphp
-            <div class="deal-card bg-white rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden group relative"
+            <div class="deal-card bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg hover:border-[#53a318] hover:-translate-y-1 transition-all duration-300 p-3 sm:p-3.5 flex flex-col justify-between relative group overflow-hidden"
                  data-slot="{{ $deal['slot_id'] }}"
                  data-category="{{ $deal['category_slug'] }}"
                  data-deep-discount="{{ $deal['is_deep_discount'] ? 'true' : 'false' }}"
                  data-under-999="{{ $deal['is_under_999'] ? 'true' : 'false' }}"
                  data-almost-sold="{{ $deal['is_almost_sold_out'] ? 'true' : 'false' }}">
                 
-                <div>
-                    <!-- Product Visual & Aspect-Ratio Container -->
-                    <div class="relative w-full aspect-square bg-slate-100 overflow-hidden">
+                <div class="space-y-2.5 relative z-10">
+                    
+                    <!-- Top Urgency Pill & Monospace Digital Timer -->
+                    <div class="flex items-center justify-between gap-1.5">
+                        @if($isEnded)
+                            <span class="px-2 py-0.5 rounded-lg bg-slate-800 text-slate-200 text-[10px] font-black flex items-center space-x-1 shadow-2xs">
+                                <span>স্টক শেষ</span>
+                            </span>
+                        @elseif($isUpcoming)
+                            <span class="px-2 py-0.5 rounded-lg bg-blue-600 text-white text-[10px] font-black flex items-center space-x-1 shadow-2xs">
+                                <span>⏰ {{ $deal['unlock_time'] }}</span>
+                            </span>
+                        @elseif($isAlmostSold)
+                            <span class="px-2 py-0.5 rounded-lg bg-rose-600 text-white text-[10px] font-black flex items-center space-x-1 shadow-2xs">
+                                <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                                <span>🔥 ১টি স্লট বাকি!</span>
+                            </span>
+                        @else
+                            <span class="px-2 py-0.5 rounded-lg bg-rose-600 text-white text-[10px] font-black flex items-center space-x-1 shadow-2xs">
+                                <span>🔥 {{ $deal['stock_left'] }}টি স্লট বাকি</span>
+                            </span>
+                        @endif
+
+                        <!-- Digital Monospace Countdown Timer -->
+                        <span class="inline-flex items-center space-x-1 font-mono text-[10px] font-black text-rose-700 bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-200/80 shrink-0">
+                            <svg class="w-3 h-3 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span class="card-countdown-ticker" data-seconds="{{ $deal['remaining_secs'] ?? 9200 }}">02:31:24</span>
+                        </span>
+                    </div>
+
+                    <!-- Product Thumbnail with Fixed Compact Height (h-32 sm:h-36) -->
+                    <a href="{{ route('products.show', $deal['slug']) }}" class="block relative w-full h-32 sm:h-36 rounded-xl overflow-hidden bg-slate-100 group/img shadow-inner">
                         <img src="{{ $deal['image_url'] }}" 
                              alt="{{ $deal['title'] }}" 
                              loading="lazy"
-                             class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 {{ $isEnded ? 'grayscale' : '' }}">
-
-                        <!-- Gradient Vignette at Top for Badge Contrast -->
-                        <div class="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/50 to-transparent pointer-events-none"></div>
-
-                        <!-- Top-Left: Discount Tag Pill -->
-                        <div class="absolute top-3 left-3 z-10 flex items-center space-x-1 px-2.5 py-1 rounded-xl text-[10px] font-black bg-gradient-to-r from-amber-500 to-rose-600 text-white shadow-md">
-                            <span>⚡ -{{ $deal['discount_percent'] }}% OFF</span>
-                        </div>
-
-                        <!-- Top-Right: Stock Urgency Pill -->
-                        <div class="absolute top-3 right-3 z-10">
-                            @if($isEnded)
-                                <span class="px-2.5 py-1 rounded-xl text-[10px] font-black bg-slate-900/90 text-slate-300 backdrop-blur-md shadow-xs">
-                                    Sold Out
-                                </span>
-                            @elseif($isUpcoming)
-                                <span class="px-2.5 py-1 rounded-xl text-[10px] font-black bg-blue-600 text-white backdrop-blur-md shadow-xs">
-                                    ⏰ Drop: {{ $deal['unlock_time'] }}
-                                </span>
-                            @elseif($deal['is_almost_sold_out'])
-                                <span class="px-2.5 py-1 rounded-xl text-[10px] font-black bg-rose-600 text-white shadow-md animate-pulse">
-                                    🔥 Only {{ $deal['stock_left'] }} left!
-                                </span>
-                            @else
-                                <span class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-white/95 text-slate-800 backdrop-blur-md shadow-xs">
-                                    ⚡ Limited Stock
-                                </span>
-                            @endif
-                        </div>
-
-                        <!-- Bottom-Left Rating & Social Proof -->
-                        <div class="absolute bottom-3 left-3 z-10 flex items-center space-x-1.5 bg-slate-950/75 backdrop-blur-md text-white px-2.5 py-1 rounded-xl text-[10px] font-bold">
-                            <span class="text-amber-400">★</span>
-                            <span>{{ number_format($deal['rating'], 1) }}</span>
-                            <span class="text-slate-400">|</span>
-                            <span class="text-slate-300 font-normal">({{ $deal['claimed_count'] }}+ claimed)</span>
-                        </div>
-
-                        <!-- Upcoming Blurred Veil Indicator (for upcoming slots) -->
-                        <div class="upcoming-overlay absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] flex items-center justify-center p-4 transition-opacity {{ $isUpcoming ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none' }}">
-                            <div class="bg-white/95 backdrop-blur-md text-slate-900 px-4 py-2 rounded-2xl text-center shadow-xl space-y-0.5 border border-white/40">
-                                <span class="text-[10px] uppercase font-black tracking-wider text-blue-600 block">Upcoming Drop</span>
-                                <span class="text-xs font-black block">Unlocks at {{ $deal['unlock_time'] }}</span>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- Card Body -->
-                    <div class="p-4 sm:p-5 space-y-3.5">
+                             class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300 {{ $isEnded ? 'grayscale' : '' }}">
                         
-                        <!-- Category Subtext -->
-                        <div class="flex items-center justify-between text-[11px] font-bold text-slate-400">
-                            <span class="uppercase tracking-wider truncate max-w-[150px]">{{ $deal['category_name'] }}</span>
-                            <span class="text-emerald-700 font-extrabold bg-emerald-50 px-2 py-0.5 rounded-md">Save ৳{{ number_format($deal['savings_amount']) }}</span>
-                        </div>
+                        <!-- Top Left: Discount Tag -->
+                        <span class="absolute top-2 left-2 px-2 py-0.5 rounded-lg text-[9px] font-black bg-rose-600 text-white shadow-2xs tracking-tight">
+                            -{{ $deal['discount_percent'] }}%
+                        </span>
 
-                        <!-- Product Title -->
-                        <h3 class="text-xs sm:text-sm font-black text-slate-900 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">
+                        <!-- Bottom Right: Room Code Pill -->
+                        <span class="absolute bottom-2 right-2 px-1.5 py-0.5 rounded text-[8px] font-mono font-bold bg-slate-950/80 text-emerald-300 backdrop-blur-xs">
+                            {{ $deal['room_code'] ?? 'GRP-DEAL' }}
+                        </span>
+
+                        <!-- Bottom Left: Low Stock Alert Badge -->
+                        @if(!$isEnded && !$isUpcoming)
+                            <span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded text-[8px] font-bold bg-amber-400 text-slate-950 shadow-2xs">
+                                স্টক সীমিত
+                            </span>
+                        @elseif($isUpcoming)
+                            <span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded text-[8px] font-bold bg-blue-500 text-white shadow-2xs">
+                                শীঘ্রই আসছে
+                            </span>
+                        @endif
+                    </a>
+
+                    <!-- Product Title & Category -->
+                    <div class="space-y-0.5">
+                        <span class="text-[9px] font-bold uppercase tracking-wider text-[#53a318] block truncate">
+                            {{ $deal['category_name'] }}
+                        </span>
+
+                        <h3 class="text-xs font-bold text-slate-900 line-clamp-2 leading-snug group-hover:text-[#53a318] transition-colors min-h-[2rem]">
                             <a href="{{ route('products.show', $deal['slug']) }}">
                                 {{ $deal['title'] }}
                             </a>
                         </h3>
-
-                        <!-- Dual Price Anchor Box -->
-                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100/80 space-y-1">
-                            <div class="flex items-baseline justify-between text-[11px]">
-                                <span class="text-slate-400">Regular: <span class="line-through font-semibold">৳{{ number_format($deal['single_price']) }}</span></span>
-                                <span class="text-[10px] font-black text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded">Flash Drop</span>
+                        
+                        <!-- Pricing & Savings Comparison -->
+                        <div class="pt-1 flex items-baseline justify-between flex-wrap gap-1">
+                            <div class="flex items-baseline space-x-1.5">
+                                <span class="text-base font-black text-[#53a318]">৳{{ number_format($deal['flash_price']) }}</span>
+                                <span class="text-[11px] text-slate-400 line-through">৳{{ number_format($deal['single_price']) }}</span>
                             </div>
-                            <div class="flex items-baseline justify-between">
-                                <div>
-                                    <span class="text-xl sm:text-2xl font-black text-emerald-800 tracking-tight">৳{{ number_format($deal['flash_price']) }}</span>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-[9px] uppercase font-bold text-slate-400 block">Unit Deal</span>
-                                    <span class="text-[11px] font-black text-slate-600">Special Net Rate</span>
-                                </div>
-                            </div>
+                            <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-emerald-50 text-[#53a318] border border-emerald-200/80">
+                                সাশ্রয় ৳{{ number_format($deal['savings_amount']) }}
+                            </span>
                         </div>
-
-                        <!-- Urgency Stock Progress Bar -->
-                        <div class="space-y-1.5">
-                            <div class="flex items-center justify-between text-[11px] font-bold">
-                                @if($isEnded)
-                                    <span class="text-slate-500">Inventory Exhausted</span>
-                                    <span class="text-slate-400">100% Claimed</span>
-                                @elseif($isUpcoming)
-                                    <span class="text-blue-700">Pre-launch Reserved</span>
-                                    <span class="text-blue-600 font-black">Ready to Unlock</span>
-                                @else
-                                    <span class="text-rose-600 flex items-center space-x-1">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-600 animate-ping"></span>
-                                        <span>Only {{ $deal['stock_left'] }} items remaining!</span>
-                                    </span>
-                                    <span class="text-amber-700 font-black">{{ $deal['claimed_percent'] }}% Claimed</span>
-                                @endif
-                            </div>
-                            <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
-                                @if($isEnded)
-                                    <div class="h-full bg-slate-300 rounded-full" style="width: 100%"></div>
-                                @elseif($isUpcoming)
-                                    <div class="h-full bg-blue-500 rounded-full" style="width: 30%"></div>
-                                @else
-                                    <div class="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-rose-600 rounded-full transition-all duration-500" 
-                                         style="width: {{ $deal['claimed_percent'] }}%"></div>
-                                @endif
-                            </div>
-                        </div>
-
                     </div>
+
+                    <!-- Social Proof: Avatar Stack + Member Slots -->
+                    <div class="pt-1 border-t border-slate-100 flex items-center justify-between text-[10px]">
+                        <div class="flex items-center -space-x-1 overflow-hidden">
+                            @php
+                                $avatarChars = ['F', 'A', 'S', 'M', 'R'];
+                                $char1 = $avatarChars[($deal['id'] * 2) % 5];
+                                $char2 = $avatarChars[($deal['id'] * 3 + 1) % 5];
+                            @endphp
+                            <div class="w-5 h-5 rounded-full bg-slate-800 text-white border border-white flex items-center justify-center text-[8px] font-bold">
+                                {{ $char1 }}
+                            </div>
+                            @if(($deal['joined_count'] ?? 1) >= 2)
+                                <div class="w-5 h-5 rounded-full bg-slate-700 text-white border border-white flex items-center justify-center text-[8px] font-bold">
+                                    {{ $char2 }}
+                                </div>
+                            @endif
+                            <!-- Pulsing Empty Slot -->
+                            @if(!$isEnded)
+                                <div class="w-5 h-5 rounded-full border border-dashed border-rose-400 bg-rose-50 text-rose-600 flex items-center justify-center text-[8px] font-black animate-pulse" 
+                                     title="শেষ স্লটটিতে যোগ দিন!">
+                                    +১
+                                </div>
+                            @endif
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-500">
+                            @if($isEnded)
+                                ফুলফিল্ড
+                            @else
+                                {{ $deal['joined_count'] ?? 1 }}/{{ $deal['required_count'] ?? 2 }} যুক্ত
+                            @endif
+                        </span>
+                    </div>
+
+                    <!-- Gradient Animated Progress Bar -->
+                    <div class="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-amber-400 to-[#53a318] rounded-full transition-all duration-500" 
+                             style="width: {{ $isEnded ? 100 : ($deal['claimed_percent'] ?? 75) }}%"></div>
+                    </div>
+
                 </div>
 
-                <!-- Card Bottom Actions & CTAs -->
-                <div class="p-4 sm:p-5 pt-0 space-y-2">
-                    
+                <!-- Action CTAs: Direct 1-Click Join or Remind Me -->
+                <div class="pt-2.5 relative z-10">
                     @if($isEnded)
                         <button type="button" disabled 
-                                class="w-full py-2.5 px-4 rounded-xl bg-slate-100 text-slate-400 font-bold text-xs text-center cursor-not-allowed">
-                            Drop Concluded
+                                class="w-full py-2 px-3 rounded-xl bg-slate-100 text-slate-400 font-bold text-xs text-center cursor-not-allowed">
+                            ড্রপ শেষ হয়েছে
                         </button>
                     @elseif($isUpcoming)
-                        <!-- Upcoming Remind Me Button -->
                         <button type="button" 
-                                class="remind-me-btn w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95 cursor-pointer"
+                                class="remind-me-btn w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs text-center transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-1.5 active:scale-95 cursor-pointer"
                                 data-product-title="{{ $deal['title'] }}"
                                 data-unlock-time="{{ $deal['unlock_time'] }}">
-                            <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                            </svg>
-                            <span class="btn-label">🔔 Remind Me ({{ $deal['unlock_time'] }})</span>
+                            <span>🔔 রিমাইন্ডার সেট করুন</span>
                         </button>
                     @else
-                        <!-- Direct Buyer Flash Deal CTA -->
                         <a href="{{ route('products.show', $deal['slug']) }}" 
-                           class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white font-black text-xs text-center shadow-md shadow-orange-950/20 hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center space-x-1.5">
-                            <span>⚡ Grab Flash Deal</span>
+                           class="w-full py-2 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-1.5 active:scale-95">
+                            <span>⚡ স্লটে জয়েন করুন</span>
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </a>
                     @endif
-
-                    <!-- Cartiva Collective Buying Secondary Hook -->
-                    <a href="{{ route('products.show', $deal['slug']) }}" 
-                       class="w-full py-1.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-bold text-center border border-emerald-200/70 transition-all flex items-center justify-center space-x-1.5 group/pool">
-                        <svg class="w-3.5 h-3.5 text-emerald-600 group-hover/pool:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                        <span>Team Pool: Extra -৳{{ number_format($deal['pool_extra_savings']) }} Save</span>
-                    </a>
-
                 </div>
 
             </div>
@@ -507,21 +496,20 @@
 document.addEventListener('DOMContentLoaded', function () {
     
     /* ----------------------------------------------------
-       A. HIGH-PRECISION REAL-TIME COUNTDOWN TIMER
+       A. HERO COUNTDOWN TIMER
        ---------------------------------------------------- */
-    (function initCountdown() {
+    (function initHeroCountdown() {
         const hoursEl = document.getElementById('countdown-hours');
         const minutesEl = document.getElementById('countdown-minutes');
         const secondsEl = document.getElementById('countdown-seconds');
 
         if (!hoursEl || !minutesEl || !secondsEl) return;
 
-        // Deadline set to 3 hours 42 minutes 18 seconds
         let totalSeconds = (3 * 3600) + (42 * 60) + 18;
 
         function updateTimer() {
             if (totalSeconds <= 0) {
-                totalSeconds = 4 * 3600; // Auto-cycle
+                totalSeconds = 4 * 3600;
             }
 
             const h = Math.floor(totalSeconds / 3600);
@@ -541,7 +529,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     /* ----------------------------------------------------
-       B. INTERACTIVE TIME-SLOT TABS SWITCHER
+       B. PER-CARD INDIVIDUAL DIGITAL COUNTDOWN TICKERS
+       ---------------------------------------------------- */
+    (function initCardTimers() {
+        const cardTimerEls = document.querySelectorAll('.card-countdown-ticker');
+
+        cardTimerEls.forEach(el => {
+            let secs = parseInt(el.getAttribute('data-seconds'), 10) || 7200;
+
+            function tick() {
+                if (secs <= 0) {
+                    el.textContent = 'Expired';
+                    return;
+                }
+
+                const h = Math.floor(secs / 3600);
+                const m = Math.floor((secs % 3600) / 60);
+                const s = secs % 60;
+
+                el.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                secs--;
+            }
+
+            tick();
+            setInterval(tick, 1000);
+        });
+    })();
+
+
+    /* ----------------------------------------------------
+       C. INTERACTIVE TIME-SLOT TABS SWITCHER
        ---------------------------------------------------- */
     const slotButtons = document.querySelectorAll('.slot-tab-btn');
     const dealCards = document.querySelectorAll('.deal-card');
@@ -579,14 +596,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
 
-            // 3. Filter Cards with subtle fade
+            // 3. Filter Cards
             applyFilters();
         });
     });
 
 
     /* ----------------------------------------------------
-       C. CATEGORY & SMART PILLS FILTERING
+       D. CATEGORY & SMART PILLS FILTERING
        ---------------------------------------------------- */
     const filterPills = document.querySelectorAll('.filter-pill-btn');
     let currentFilter = 'all';
@@ -611,7 +628,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         dealCards.forEach(card => {
             const cardSlot = card.getAttribute('data-slot');
-            const cardCategory = card.getAttribute('data-category');
+            const cardCategory = card.getAttribute('data-category') || '';
             const isDeepDiscount = card.getAttribute('data-deep-discount') === 'true';
             const isUnder999 = card.getAttribute('data-under-999') === 'true';
             const isAlmostSold = card.getAttribute('data-almost-sold') === 'true';
@@ -629,9 +646,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 matchesFilter = true;
             } else if (currentFilter === 'almost_sold' && isAlmostSold) {
                 matchesFilter = true;
-            } else if (currentFilter === 'gadgets' && (cardCategory.includes('tech') || cardCategory.includes('audio') || cardCategory.includes('gadgets'))) {
+            } else if (currentFilter === 'gadgets' && (cardCategory.includes('tech') || cardCategory.includes('audio') || cardCategory.includes('gadgets') || cardCategory.includes('electronics') || cardCategory.includes('computers'))) {
                 matchesFilter = true;
-            } else if (currentFilter === 'apparel' && (cardCategory.includes('winter') || cardCategory.includes('apparel') || cardCategory.includes('fashion'))) {
+            } else if (currentFilter === 'apparel' && (cardCategory.includes('winter') || cardCategory.includes('apparel') || cardCategory.includes('fashion') || cardCategory.includes('hoodie'))) {
                 matchesFilter = true;
             }
 
@@ -656,7 +673,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     /* ----------------------------------------------------
-       D. "REMIND ME" INTERACTIVE TOAST TRIGGER
+       E. "REMIND ME" INTERACTIVE TOAST TRIGGER
        ---------------------------------------------------- */
     const toast = document.getElementById('flash-toast');
     const toastTitle = document.getElementById('flash-toast-title');
@@ -696,12 +713,12 @@ document.addEventListener('DOMContentLoaded', function () {
             this.classList.add('bg-emerald-600', 'text-white');
             this.innerHTML = `
                 <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                <span>✓ Reminder Active</span>
+                <span>✓ রিমাইন্ডার সেট হয়েছে</span>
             `;
 
             showToast(
-                '⚡ Alert Activated!', 
-                `We will alert you 5 minutes before "${productTitle.substring(0, 32)}..." unlocks at ${unlockTime}.`
+                '⚡ রিমাইন্ডার সক্রিয় হয়েছে!', 
+                `"${productTitle.substring(0, 30)}..." অফারটি ${unlockTime}-এ আনলক হওয়ার ৫ মিনিট আগে আপনাকে জানানো হবে।`
             );
         });
     });
