@@ -1,6 +1,77 @@
 @extends('layouts.app')
 
-@section('title', '⚡ ফ্ল্যাশ সেল — লিমিটেড টাইম সুপার ডিল | Cartiva')
+@section('title', 'ফ্ল্যাশ সেল — লিমিটেড টাইম সুপার ডিল | Cartiva')
+
+@push('styles')
+<style>
+    /* Filter Pills Strict Visual State (Prevents disappearing on mouseout) */
+    .filter-pill-btn {
+        transition: all 0.15s ease-in-out !important;
+        outline: none !important;
+    }
+    .filter-pill-btn.active {
+        background-color: #53a318 !important;
+        color: #ffffff !important;
+        border: 1px solid #53a318 !important;
+        box-shadow: 0 1px 3px rgba(83, 163, 24, 0.25) !important;
+    }
+    .filter-pill-btn.active span {
+        color: #ffffff !important;
+    }
+    .filter-pill-btn:not(.active) {
+        background-color: #ffffff !important;
+        color: #334155 !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+    .filter-pill-btn:not(.active):hover {
+        background-color: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+        color: #0f172a !important;
+    }
+
+    /* Slot Tabs Strict Visual State */
+    .slot-tab-btn {
+        transition: all 0.15s ease-in-out !important;
+        outline: none !important;
+    }
+    .slot-tab-btn.active-slot {
+        background-color: #53a318 !important;
+        border-color: #53a318 !important;
+        box-shadow: 0 4px 6px -1px rgba(83, 163, 24, 0.25) !important;
+    }
+    .slot-tab-btn.active-slot .slot-time {
+        color: #ffffff !important;
+    }
+    .slot-tab-btn.active-slot .slot-subtext {
+        color: #d1fae5 !important;
+    }
+    .slot-tab-btn.active-slot .slot-badge {
+        background-color: rgba(255, 255, 255, 0.22) !important;
+        color: #ffffff !important;
+    }
+    .slot-tab-btn:not(.active-slot) {
+        background-color: #ffffff !important;
+        border-color: #e2e8f0 !important;
+    }
+    .slot-tab-btn:not(.active-slot) .slot-time {
+        color: #0f172a !important;
+    }
+    .slot-tab-btn:not(.active-slot) .slot-subtext {
+        color: #64748b !important;
+    }
+    .slot-tab-btn:not(.active-slot):hover {
+        border-color: #cbd5e1 !important;
+        background-color: #f8fafc !important;
+    }
+    .slot-tab-btn.is-ended:not(.active-slot) {
+        background-color: #f1f5f9 !important;
+        border-color: #e2e8f0 !important;
+    }
+    .slot-tab-btn.is-ended:not(.active-slot) .slot-time {
+        color: #64748b !important;
+    }
+</style>
+@endpush
 
 @section('content')
 <div class="max-w-[1680px] w-full mx-auto px-3 sm:px-5 lg:px-6 py-4 sm:py-5 space-y-5 antialiased" id="flash-sales-app">
@@ -22,7 +93,7 @@
                 <a href="{{ route('home') }}" class="hover:text-slate-800 transition-colors">Home</a>
                 <span>/</span>
                 <span class="text-[#53a318] font-bold flex items-center space-x-1">
-                    <span>⚡</span>
+                    
                     <span>Flash Sales</span>
                 </span>
             </nav>
@@ -46,11 +117,11 @@
             <div class="space-y-2 max-w-2xl">
                 <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-rose-600 text-white text-[10px] font-black uppercase tracking-wider shadow-sm">
                     <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                    <span>⚡ FLASH DEALS</span>
+                    <span>FLASH DEALS</span>
                 </div>
 
                 <h1 class="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-snug">
-                    ফ্ল্যাশ সেল — সীমিত সময়ের স্পেশাল অফার
+                    ফ্ল্যাশ সেল - সীমিত সময়ের স্পেশাল অফার
                 </h1>
 
                 <p class="text-xs sm:text-sm text-emerald-100/90 leading-relaxed font-normal max-w-xl">
@@ -164,7 +235,7 @@
 
         <button type="button" data-filter="deep_discount" 
                 class="filter-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 shrink-0 bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 hover:border-slate-300 cursor-pointer">
-            <span>Flat Discount 50%</span>
+            <span>Flat Discount</span>
         </button>
 
         <button type="button" data-filter="under_999" 
