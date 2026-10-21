@@ -50,6 +50,10 @@ class HomeController extends Controller
                     $sub->whereIn('slug', ['smart-tech-audio', 'tech-accessories']);
                 } elseif ($catSlug === 'home-living' || $catSlug === 'home-lifestyle') {
                     $sub->whereIn('slug', ['home-living', 'home-lifestyle']);
+                } elseif ($catSlug === 'computing-gaming' || $catSlug === 'computers-accessories') {
+                    $sub->whereIn('slug', ['computing-gaming', 'computers-accessories']);
+                } elseif (in_array($catSlug, ['fashion-wearables', 'winter-specials', 'fashion-bags'])) {
+                    $sub->whereIn('slug', ['fashion-wearables', 'winter-specials', 'fashion-bags']);
                 } else {
                     $sub->where('slug', $catSlug);
                 }
@@ -134,6 +138,10 @@ class HomeController extends Controller
                     $sub->whereIn('slug', ['smart-tech-audio', 'tech-accessories']);
                 } elseif ($catSlug === 'home-living' || $catSlug === 'home-lifestyle') {
                     $sub->whereIn('slug', ['home-living', 'home-lifestyle']);
+                } elseif ($catSlug === 'computing-gaming' || $catSlug === 'computers-accessories') {
+                    $sub->whereIn('slug', ['computing-gaming', 'computers-accessories']);
+                } elseif (in_array($catSlug, ['fashion-wearables', 'winter-specials', 'fashion-bags'])) {
+                    $sub->whereIn('slug', ['fashion-wearables', 'winter-specials', 'fashion-bags']);
                 } else {
                     $sub->where('slug', $catSlug);
                 }
@@ -190,6 +198,12 @@ class HomeController extends Controller
             $categoryIds = array_unique(array_merge($categoryIds, $related));
         } elseif (in_array($category->slug, ['home-living', 'home-lifestyle'])) {
             $related = Category::whereIn('slug', ['home-living', 'home-lifestyle'])->pluck('id')->toArray();
+            $categoryIds = array_unique(array_merge($categoryIds, $related));
+        } elseif (in_array($category->slug, ['computing-gaming', 'computers-accessories'])) {
+            $related = Category::whereIn('slug', ['computing-gaming', 'computers-accessories'])->pluck('id')->toArray();
+            $categoryIds = array_unique(array_merge($categoryIds, $related));
+        } elseif (in_array($category->slug, ['fashion-wearables', 'winter-specials', 'fashion-bags'])) {
+            $related = Category::whereIn('slug', ['fashion-wearables', 'winter-specials', 'fashion-bags'])->pluck('id')->toArray();
             $categoryIds = array_unique(array_merge($categoryIds, $related));
         }
 

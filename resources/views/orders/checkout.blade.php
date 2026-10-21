@@ -9,9 +9,9 @@
         <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Checkout & Order Confirmation</h1>
         <p class="text-xs text-slate-500 mt-1">
             @if($orderType === 'group_buy')
-                ⚡ You are securing a slot in a <strong>Group Buy Deal</strong>. Your team wholesale discount is applied!
+                 You are securing a slot in a <strong>Group Buy Deal</strong>. Your team wholesale discount is applied!
             @else
-                📦 Standard Solo Direct Purchase. Immediate dispatch.
+                Standard Solo Direct Purchase. Immediate dispatch.
             @endif
         </p>
     </div>
