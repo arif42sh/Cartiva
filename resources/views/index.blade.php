@@ -819,51 +819,140 @@
 
 
     <!-- ========================================================
-         5. LIVE ACTIVE BUYING DEALS GRID (CORE SECTION)
-         Theme: 3-Tier Visual Pricing & Social-Proof Cards
+         5. ACTIVE GROUP POOLS (CORE SOCIAL COMMERCE MARKETPLACE)
+         Theme: Dynamic Live Pools Grid, Monospace Timers, Avatar Stacks & Assurance Pillars
          ======================================================== -->
-    <section id="active-deals" class="space-y-8">
+    <section id="active-deals" class="space-y-8 scroll-mt-24" x-data="{ poolFilter: 'all', viewMode: 'pools' }">
         
-        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200/80 pb-4">
-            <div>
-                <span class="text-[11px] font-black uppercase tracking-wider text-[#53a318]">CORE MARKETPLACE</span>
-                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-0.5">
-                    🛍️ Live Active Buying Deals Grid
+        <!-- Header & Live Pulse Bar -->
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 border-b border-slate-200/80 pb-5">
+            <div class="space-y-1.5 max-w-2xl">
+                <div class="flex items-center space-x-2">
+                    <span class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-[#53a318] text-[10px] font-black uppercase tracking-wider shadow-2xs">
+                        <span class="w-2 h-2 rounded-full bg-[#53a318] animate-ping"></span>
+                        <span>👥 ACTIVE GROUP POOLS • সক্রিয় গ্রুপ পুলসমূহ</span>
+                    </span>
+                    <span class="hidden sm:inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold">
+                        <span>🟢 {{ $activeGroups->count() }}টি পুল ওপেন</span>
+                    </span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                    সক্রিয় গ্রুপ পুলে যোগ দিন — একসাথে কিনুন, ডিসকাউন্ট আনলক করুন!
                 </h2>
-                <p class="text-xs text-slate-500 mt-1">
-                    মাল্টি-টিয়ার ডিসকাউন্ট, লাইভ প্রোগ্রেস বার এবং সোশ্যাল শেয়ারসহ সক্রিয় পণ্য তালিকা
+                <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                    সরাসরি প্রস্তুতকারক ও পাইকারি রেটে কেনাকাটা করুন। ১ জন বাকি থাকা পুলে এখনই যোগ দিয়ে সাথে সাথে অর্ডার লক করুন!
                 </p>
             </div>
             
-            <!-- Quick Filter Bar -->
-            <div class="flex items-center space-x-2 text-xs font-bold overflow-x-auto no-scrollbar">
-                <button type="button" @click="activeFilterTab = 'all'" 
-                        :class="activeFilterTab === 'all' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
-                        class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0">
-                    <span>🌟 All Deals</span>
-                </button>
-                <button type="button" @click="activeFilterTab = 'fastest'" 
-                        :class="activeFilterTab === 'fastest' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
-                        class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0">
-                    <span>⚡ Fastest Filling</span>
-                </button>
-                <button type="button" @click="activeFilterTab = 'max_discount'" 
-                        :class="activeFilterTab === 'max_discount' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
-                        class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0">
-                    <span>🔥 Maximum Discount</span>
-                </button>
-                <button type="button" @click="activeFilterTab = 'winter'" 
-                        :class="activeFilterTab === 'winter' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
-                        class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0">
-                    <span>🧥 Winter Specials</span>
-                </button>
+            <!-- Quick View Switcher & Assurance Badge -->
+            <div class="flex items-center space-x-2 flex-wrap gap-y-2">
+                <div class="inline-flex items-center space-x-1 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold">
+                    <span class="text-[#53a318]">🛡️</span>
+                    <span>১০০% সেফ রিফান্ড</span>
+                </div>
+
+                <!-- Toggle between Active Pools & Full Catalog -->
+                <div class="inline-flex p-1 rounded-2xl bg-slate-100 border border-slate-200 text-xs font-bold">
+                    <button type="button" @click="viewMode = 'pools'" 
+                            :class="viewMode === 'pools' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'"
+                            class="px-3.5 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 cursor-pointer">
+                        <span>🔥 সক্রিয় পুল ({{ $activeGroups->count() }})</span>
+                    </button>
+                    <button type="button" @click="viewMode = 'catalog'" 
+                            :class="viewMode === 'catalog' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'"
+                            class="px-3.5 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 cursor-pointer">
+                        <span>📦 সকল ক্যাটালগ পণ্য</span>
+                    </button>
+                </div>
+
+                <!-- Link to Dedicated Group Pools Page -->
+                <a href="{{ route('group-pools.index') }}" 
+                   class="px-3.5 py-2 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white text-xs font-black transition-all flex items-center space-x-1.5 shadow-2xs hover:shadow-md">
+                    <span>সম্পূর্ণ পুল হাব &rarr;</span>
+                </a>
             </div>
         </div>
 
-        @if(request('category'))
+        <!-- Filter Tabs for Active Group Pools (When viewMode === 'pools') -->
+        <div x-show="viewMode === 'pools'" class="flex items-center justify-between gap-3 overflow-x-auto no-scrollbar pb-1">
+            <div class="flex items-center space-x-2 text-xs font-bold overflow-x-auto no-scrollbar">
+                <!-- All Pools -->
+                <button type="button" @click="poolFilter = 'all'" 
+                        :class="poolFilter === 'all' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                        class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+                    <span>🌟 সকল পুল</span>
+                </button>
+
+                <!-- 1 Slot Away -->
+                <button type="button" @click="poolFilter = 'one_left'" 
+                        :class="poolFilter === 'one_left' ? 'bg-rose-600 text-white shadow-md' : 'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200/60'"
+                        class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+                    <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping" x-show="poolFilter === 'one_left'"></span>
+                    <span>🔥 ১টি স্লট বাকি</span>
+                </button>
+
+                <!-- Ending Soon -->
+                <button type="button" @click="poolFilter = 'ending_soon'" 
+                        :class="poolFilter === 'ending_soon' ? 'bg-amber-500 text-white shadow-md' : 'bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200/60'"
+                        class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+                    <span>⚡ সময় শেষ হচ্ছে</span>
+                </button>
+
+                <!-- 40%+ Max Discount -->
+                <button type="button" @click="poolFilter = 'max_discount'" 
+                        :class="poolFilter === 'max_discount' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                        class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+                    <span>💰 সর্বোচ্চ ছাড় (৪০%+)</span>
+                </button>
+
+                <!-- Winter Specials -->
+                <button type="button" @click="poolFilter = 'winter'" 
+                        :class="poolFilter === 'winter' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                        class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+                    <span>🧥 উইন্টার স্পেশাল</span>
+                </button>
+
+                <!-- Tech & Gadgets -->
+                <button type="button" @click="poolFilter = 'tech'" 
+                        :class="poolFilter === 'tech' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                        class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+                    <span>🎧 টেক ও অডিও</span>
+                </button>
+            </div>
+
+            <span class="hidden md:inline-block text-[11px] font-bold text-slate-400 shrink-0">
+                গ্রুপ কোড বা লিডার দিয়ে সরাসরি ফিল্টার করুন
+            </span>
+        </div>
+
+        <!-- Filter Tabs for Catalog Products (When viewMode === 'catalog') -->
+        <div x-show="viewMode === 'catalog'" class="flex items-center space-x-2 text-xs font-bold overflow-x-auto no-scrollbar pb-1">
+            <button type="button" @click="activeFilterTab = 'all'" 
+                    :class="activeFilterTab === 'all' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                    class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+                <span>All Deals</span>
+            </button>
+            <button type="button" @click="activeFilterTab = 'fastest'" 
+                    :class="activeFilterTab === 'fastest' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                    class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+                <span>Fastest Filling</span>
+            </button>
+            <button type="button" @click="activeFilterTab = 'max_discount'" 
+                    :class="activeFilterTab === 'max_discount' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                    class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+                <span>Maximum Discount</span>
+            </button>
+            <button type="button" @click="activeFilterTab = 'winter'" 
+                    :class="activeFilterTab === 'winter' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                    class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+                <span>Winter Specials</span>
+            </button>
+        </div>
+
+        @if(request('category') || request('q'))
             @php
                 $activeCatItem = collect($topNavCategories)->firstWhere('slug', request('category'));
-                $activeCatLabel = $activeCatItem ? $activeCatItem['name'] : ucwords(str_replace('-', ' ', request('category')));
+                $activeCatLabel = $activeCatItem ? $activeCatItem['name'] : ucwords(str_replace('-', ' ', request('category', '')));
             @endphp
             <div class="p-3.5 sm:p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
                 <div class="flex items-center space-x-3">
@@ -872,140 +961,378 @@
                     </span>
                     <div>
                         <div class="flex items-center space-x-2">
-                            <span class="text-xs font-black text-slate-900">Filtered by: <span class="text-[#53a318]">{{ $activeCatLabel }}</span></span>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-[#53a318]">Active Filter</span>
+                            @if(request('category'))
+                                <span class="text-xs font-black text-slate-900">ক্যাটাগরি: <span class="text-[#53a318]">{{ $activeCatLabel }}</span></span>
+                            @endif
+                            @if(request('q'))
+                                <span class="text-xs font-black text-slate-900">সার্চ: <span class="text-[#53a318]">"{{ request('q') }}"</span></span>
+                            @endif
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-[#53a318]">সক্রিয় ফিল্টার</span>
                         </div>
-                        <span class="text-[11px] text-slate-500 block">Showing {{ $products->total() }} matching group buy {{ Str::plural('deal', $products->total()) }}</span>
+                        <span class="text-[11px] text-slate-500 block">মোট {{ $activeGroups->count() }}টি পুল ও {{ $products->total() }}টি পণ্য পাওয়া গেছে</span>
                     </div>
                 </div>
 
                 <a href="{{ route('home') }}#active-deals" 
                    class="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-rose-600 border border-slate-200 hover:border-rose-300 font-bold text-xs transition-colors shadow-2xs flex items-center space-x-1.5">
-                    <span>✕ Clear Category Filter</span>
+                    <span>✕ ফিল্টার মুছুন</span>
                 </a>
             </div>
         @endif
 
-        <!-- The Rich Product / Buying Pool Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            @forelse($products as $product)
+        <!-- ========================================================
+             VIEW MODE 1: ACTIVE GROUP POOLS GRID (DEFAULT)
+             ======================================================== -->
+        <div x-show="viewMode === 'pools'" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+            @forelse($activeGroups as $group)
                 @php
-                    $discountPct = round((($product->single_price - $product->group_price) / $product->single_price) * 100);
-                    $nextTierPrice = round($product->group_price * 0.90);
-                    $simulatedFilled = min(92, max(45, round((($product->sales_count * 7) % 50 + 25))));
-                    $simulatedBuyers = max(2, round(($product->sales_count % 15) + 3));
-                    $targetBuyers = $simulatedBuyers + rand(1, 4);
-                    $isFastest = $simulatedFilled >= 60;
-                    $isMaxDiscount = $discountPct >= 20;
-                    $isWinter = ($product->category && str_contains($product->category->slug, 'winter')) || str_contains(strtolower($product->title), 'winter') || str_contains(strtolower($product->title), 'fleece');
+                    $p = $group->product;
+                    $needed = max(1, $group->required_members - $group->current_members);
+                    $pct = min(100, round(($group->current_members / max(1, $group->required_members)) * 100));
+                    $discountPct = round((($p->single_price - $p->group_price) / max(1, $p->single_price)) * 100);
+                    $saveAmount = $p->single_price - $p->group_price;
+                    $remainingSecs = max(0, (int) now()->diffInSeconds($group->expires_at, false));
+                    $isOneLeft = ($needed === 1);
+                    $isEndingSoon = ($remainingSecs > 0 && $remainingSecs <= 14400); // 4 hours
+                    $isMaxDiscount = ($discountPct >= 35);
+                    $isWinter = ($p->category && str_contains($p->category->slug, 'winter')) || str_contains(strtolower($p->title), 'winter') || str_contains(strtolower($p->title), 'fleece');
+                    $isTech = ($p->category && (str_contains($p->category->slug, 'tech') || str_contains($p->category->slug, 'audio'))) || str_contains(strtolower($p->title), 'anc') || str_contains(strtolower($p->title), 'earbuds') || str_contains(strtolower($p->title), 'keyboard');
+                    $cleanCat = $p->category->name ?? 'General';
+                    $cleanCat = preg_match('/\((.*?)\)/', $cleanCat, $m) ? $m[1] : $cleanCat;
+                    $joinedMembers = $group->members->take(3);
                 @endphp
-                <div x-show="activeFilterTab === 'all' || (activeFilterTab === 'fastest' && {{ $isFastest ? 'true' : 'false' }}) || (activeFilterTab === 'max_discount' && {{ $isMaxDiscount ? 'true' : 'false' }}) || (activeFilterTab === 'winter' && {{ $isWinter ? 'true' : 'false' }})"
+                <div x-show="poolFilter === 'all' || (poolFilter === 'one_left' && {{ $isOneLeft ? 'true' : 'false' }}) || (poolFilter === 'ending_soon' && {{ $isEndingSoon ? 'true' : 'false' }}) || (poolFilter === 'max_discount' && {{ $isMaxDiscount ? 'true' : 'false' }}) || (poolFilter === 'winter' && {{ $isWinter ? 'true' : 'false' }}) || (poolFilter === 'tech' && {{ $isTech ? 'true' : 'false' }})"
                      x-transition:enter="transition ease-out duration-300"
                      x-transition:enter-start="opacity-0 scale-95"
                      x-transition:enter-end="opacity-100 scale-100"
-                     class="bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
+                     x-data="groupCountdown({{ $remainingSecs }})"
+                     x-init="start()"
+                     class="bg-white rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-2xl hover:border-[#53a318] hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden group relative">
                     
                     <div>
-                        <!-- Product Image & Badges -->
-                        <div class="relative w-full aspect-square bg-slate-100 overflow-hidden">
-                            <img src="{{ $product->image_url }}" alt="{{ $product->title }}" class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500">
+                        <!-- Pool Room Header Strip (Room Code + Urgency + Live Countdown Timer) -->
+                        <div class="px-4 py-2.5 bg-slate-900 text-white flex items-center justify-between gap-1.5 border-b border-slate-800">
+                            <!-- Room Code Pill with Copy Action -->
+                            <div class="flex items-center space-x-1.5">
+                                <span class="font-mono text-[10px] font-bold text-emerald-300 bg-white/10 px-2 py-0.5 rounded-md border border-white/10">
+                                    {{ $group->group_code }}
+                                </span>
+                            </div>
+
+                            <!-- Live Monospace Ticker -->
+                            <span class="inline-flex items-center space-x-1 font-mono text-[10px] font-bold text-amber-300 bg-amber-400/15 px-2 py-0.5 rounded-md border border-amber-400/20">
+                                <svg class="w-3 h-3 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span x-text="timeString"></span>
+                            </span>
+                        </div>
+
+                        <!-- Product Thumbnail with Zoom Effect & Overlay Badges -->
+                        <a href="{{ route('products.show', $p->slug) }}" class="block relative w-full aspect-square bg-slate-100 overflow-hidden group/img">
+                            <img src="{{ $p->image_url }}" alt="{{ $p->title }}" class="w-full h-full object-cover group-hover/img:scale-106 transition-transform duration-500">
                             
                             <!-- Category Badge -->
                             <span class="absolute top-3 left-3 px-2.5 py-1 rounded-xl text-[10px] font-black bg-white/95 text-slate-800 backdrop-blur-md shadow-xs">
-                                {{ $product->category->name ?? 'General' }}
+                                {{ $cleanCat }}
                             </span>
 
                             <!-- Discount Tag -->
-                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-xl text-[10px] font-black bg-[#53a318] text-white shadow-xs">
-                                -{{ $discountPct }}% OFF
+                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-xl text-[10px] font-black bg-rose-600 text-white shadow-xs tracking-tight">
+                                -{{ $discountPct }}%
                             </span>
 
-                            <!-- Rating overlay -->
-                            <div class="absolute bottom-2.5 left-3 flex items-center space-x-1 bg-black/60 backdrop-blur-xs text-white px-2.5 py-1 rounded-lg text-[10px] font-bold">
-                                <span class="text-amber-400">★</span>
-                                <span>{{ number_format($product->rating, 1) }}</span>
-                                <span class="text-slate-300">({{ $product->sales_count }})</span>
-                            </div>
-                        </div>
+                            <!-- Urgency Ribbon on Thumbnail -->
+                            <div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between pointer-events-none">
+                                @if($isOneLeft)
+                                    <span class="px-2 py-0.5 rounded-lg bg-rose-600/95 text-white text-[10px] font-black flex items-center space-x-1 shadow-xs backdrop-blur-xs">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                                        <span>🔥 ১টি স্লট বাকি!</span>
+                                    </span>
+                                @else
+                                    <span class="px-2 py-0.5 rounded-lg bg-slate-900/85 text-emerald-300 text-[10px] font-bold flex items-center space-x-1 shadow-xs backdrop-blur-xs">
+                                        <span>⚡ {{ $needed }}টি স্লট বাকি</span>
+                                    </span>
+                                @endif
 
-                        <!-- Card Body -->
-                        <div class="p-5 space-y-3.5">
-                            <h3 class="text-xs sm:text-sm font-black text-slate-900 line-clamp-2 leading-snug group-hover:text-[#53a318] transition-colors">
-                                {{ $product->title }}
+                                <div class="flex items-center space-x-1 bg-black/60 backdrop-blur-xs text-white px-2 py-0.5 rounded-lg text-[9px] font-bold">
+                                    <span class="text-amber-400">★</span>
+                                    <span>{{ number_format($p->rating, 1) }}</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- Card Body Details -->
+                        <div class="p-4 sm:p-5 space-y-3.5">
+                            <!-- Product Title -->
+                            <h3 class="text-xs sm:text-sm font-black text-slate-900 line-clamp-2 leading-snug group-hover:text-[#53a318] transition-colors min-h-[2.4rem]">
+                                <a href="{{ route('products.show', $p->slug) }}">
+                                    {{ $p->title }}
+                                </a>
                             </h3>
 
-                            <!-- Tier Pricing Visual Card -->
-                            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                            <!-- 3-Tier Visual Pricing & Savings Card -->
+                            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
                                 <div class="flex items-baseline justify-between text-[11px]">
-                                    <span class="text-slate-400">Regular: <span class="line-through">৳{{ number_format($product->single_price) }}</span></span>
-                                    <span class="text-[10px] font-black text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded">Save ৳{{ number_format($product->single_price - $product->group_price) }}</span>
+                                    <span class="text-slate-400">খুচরা মূল্য: <span class="line-through">৳{{ number_format($p->single_price) }}</span></span>
+                                    <span class="text-[10px] font-black text-[#53a318] bg-emerald-100/70 px-2 py-0.5 rounded-md">
+                                        সাশ্রয় ৳{{ number_format($saveAmount) }}
+                                    </span>
                                 </div>
-                                <div class="flex items-baseline justify-between">
+                                <div class="flex items-baseline justify-between pt-0.5">
                                     <div>
-                                        <span class="text-[10px] uppercase font-bold text-slate-400 block">Current Unlocked:</span>
-                                        <span class="text-lg font-black text-[#53a318]">৳{{ number_format($product->group_price) }}</span>
+                                        <span class="text-[9px] uppercase font-bold text-slate-400 block leading-tight">গ্রুপ পুল মূল্য:</span>
+                                        <span class="text-lg font-black text-[#53a318]">৳{{ number_format($p->group_price) }}</span>
                                     </div>
                                     <div class="text-right">
-                                        <span class="text-[9px] uppercase font-bold text-amber-700 block">Next Target:</span>
-                                        <span class="text-xs font-black text-amber-600">৳{{ number_format($nextTierPrice) }}</span>
+                                        <span class="text-[9px] uppercase font-bold text-slate-400 block leading-tight">ডেলিভারি:</span>
+                                        <span class="text-xs font-bold text-slate-700">আলাদা হোম ডেলিভারি</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Dynamic Progress Bar -->
+                            <!-- Team Fill Progress Bar -->
                             <div class="space-y-1">
                                 <div class="flex items-center justify-between text-[11px] font-bold">
-                                    <span class="text-slate-600">Progress ({{ $simulatedBuyers }}/{{ $targetBuyers }} buyers)</span>
-                                    <span class="text-[#53a318] font-black">{{ $simulatedFilled }}%</span>
+                                    <span class="text-slate-600">{{ $group->current_members }}/{{ $group->required_members }} সদস্য যুক্ত</span>
+                                    <span class="text-[#53a318] font-black">{{ $pct }}% পূর্ণ</span>
                                 </div>
                                 <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
-                                    <div class="h-full bg-gradient-to-r from-emerald-500 to-[#53a318] rounded-full" style="width: {{ $simulatedFilled }}%"></div>
+                                    <div class="h-full bg-gradient-to-r from-amber-400 via-emerald-500 to-[#53a318] rounded-full transition-all duration-500" 
+                                         style="width: {{ $pct }}%"></div>
                                 </div>
                             </div>
 
-                            <!-- Member Avatars Social Proof -->
-                            <div class="flex items-center space-x-2 pt-1">
-                                <div class="flex -space-x-1.5 overflow-hidden">
-                                    <div class="inline-block h-5 w-5 rounded-full ring-2 ring-white bg-slate-800 text-white font-bold text-[8px] flex items-center justify-center">A</div>
-                                    <div class="inline-block h-5 w-5 rounded-full ring-2 ring-white bg-green-600 text-white font-bold text-[8px] flex items-center justify-center">S</div>
-                                    <div class="inline-block h-5 w-5 rounded-full ring-2 ring-white bg-amber-500 text-white font-bold text-[8px] flex items-center justify-center">M</div>
+                            <!-- Social Proof: Members Avatars Stack + Pulsing Empty Slot + Leader -->
+                            <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-[10px]">
+                                <div class="flex items-center -space-x-1.5 overflow-hidden">
+                                    @foreach($joinedMembers as $mIdx => $m)
+                                        <div class="w-6 h-6 rounded-full ring-2 ring-white {{ $mIdx === 0 ? 'bg-slate-900 text-amber-300' : 'bg-slate-700 text-white' }} flex items-center justify-center font-bold text-[9px]"
+                                             title="{{ $m->user->name ?? 'Customer' }} {{ $mIdx === 0 ? '(Group Leader)' : '' }}">
+                                            @if($mIdx === 0)
+                                                👑
+                                            @else
+                                                {{ strtoupper(substr($m->user->name ?? 'U', 0, 1)) }}
+                                            @endif
+                                        </div>
+                                    @endforeach
+
+                                    <!-- Empty Pulsing Slot Calling the User -->
+                                    <div class="w-6 h-6 rounded-full ring-2 ring-white border-2 border-dashed border-rose-500 bg-rose-50 text-rose-600 flex items-center justify-center font-black text-[9px] animate-pulse" 
+                                         title="এখানে আপনার স্লট! দ্রুত বুক করুন">
+                                        +১
+                                    </div>
                                 </div>
-                                <span class="text-[10px] text-slate-500 font-semibold">+{{ $simulatedBuyers }} buyers active</span>
+
+                                <div class="text-right">
+                                    <span class="text-[9px] text-slate-400 block">টিম লিডার:</span>
+                                    <span class="font-bold text-slate-700 truncate block max-w-[100px]">
+                                        {{ $group->leader->name ?? 'Verified Buyer' }}
+                                    </span>
+                                </div>
                             </div>
 
                         </div>
                     </div>
 
-                    <!-- Dual Action Buttons: Join Group & Share / Copy Link -->
-                    <div class="p-5 pt-0 grid grid-cols-2 gap-2">
-                        <a href="{{ route('products.show', $product) }}" 
-                           class="py-2.5 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs flex items-center justify-center space-x-1">
-                            <span>Join Group</span>
+                    <!-- Dual Action CTAs: Direct Join Slot & Share Invite -->
+                    <div class="p-4 sm:p-5 pt-0 grid grid-cols-2 gap-2">
+                        <a href="{{ route('group-buy.show', $group->group_code) }}" 
+                           class="py-2.5 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-1 active:scale-95">
+                            <span>⚡ স্লটে জয়েন</span>
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </a>
 
-                        <button type="button" @click="openShare('GRP-PROD{{ $product->id }}', '{{ addslashes($product->title) }}')" 
-                                class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs text-center transition-colors">
-                            Share Link
+                        <button type="button" @click="openShare('{{ $group->group_code }}', '{{ addslashes($p->title) }}')" 
+                                class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs text-center transition-colors flex items-center justify-center space-x-1">
+                            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                            <span>ইনভাইট</span>
                         </button>
                     </div>
 
                 </div>
             @empty
                 <div class="col-span-full py-16 px-6 text-center bg-white rounded-3xl border border-slate-200/90 text-slate-500 space-y-3 shadow-xs">
-                    <span class="text-4xl block">🔍</span>
-                    <h3 class="text-base font-black text-slate-800">No active products found in this category</h3>
-                    <p class="text-xs text-slate-400 max-w-sm mx-auto">বর্তমানে এই বিভাগে কোনো সক্রিয় পুল নেই। অন্যান্য ক্যাটাগরি ব্রাউজ করুন অথবা সরাসরি সকল পণ্য দেখুন।</p>
-                    <a href="{{ route('home') }}#active-deals" class="inline-block py-2.5 px-6 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-bold text-xs transition-colors shadow-xs">
-                        View All Active Deals &rarr;
-                    </a>
+                    <span class="text-4xl block">👥</span>
+                    <h3 class="text-base font-black text-slate-800">বর্তমানে এই ফিল্টারে কোনো সক্রিয় পুল নেই</h3>
+                    <p class="text-xs text-slate-400 max-w-sm mx-auto">ফিল্টার পরিবর্তন করুন অথবা ক্যাটালগ থেকে পছন্দের পণ্যটি বাছাই করে নিজেই নতুন একটি গ্রুপ পুল শুরু করুন।</p>
+                    <div class="pt-2 flex items-center justify-center space-x-3">
+                        <button type="button" @click="poolFilter = 'all'" class="py-2.5 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer">
+                            সকল পুল দেখুন
+                        </button>
+                        <button type="button" @click="viewMode = 'catalog'" class="py-2.5 px-5 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-bold text-xs transition-colors shadow-xs cursor-pointer">
+                            ক্যাটালগ ব্রাউজ করুন &rarr;
+                        </button>
+                    </div>
                 </div>
             @endforelse
         </div>
 
-        <!-- Catalog Pagination -->
-        <div class="pt-4 flex justify-center">
-            {{ $products->links() }}
+        <!-- ========================================================
+             VIEW MODE 2: CATALOG PRODUCTS GRID (OPTIONAL/EXPLORE)
+             ======================================================== -->
+        <div x-show="viewMode === 'catalog'" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                @forelse($products as $product)
+                    @php
+                        $discountPct = round((($product->single_price - $product->group_price) / max(1, $product->single_price)) * 100);
+                        $nextTierPrice = round($product->group_price * 0.90);
+                        $simulatedFilled = min(92, max(45, round((($product->sales_count * 7) % 50 + 25))));
+                        $simulatedBuyers = max(2, round(($product->sales_count % 15) + 3));
+                        $targetBuyers = $simulatedBuyers + rand(1, 4);
+                        $isFastest = $simulatedFilled >= 60;
+                        $isMaxDiscount = $discountPct >= 20;
+                        $isWinter = ($product->category && str_contains($product->category->slug, 'winter')) || str_contains(strtolower($product->title), 'winter') || str_contains(strtolower($product->title), 'fleece');
+                    @endphp
+                    <div x-show="activeFilterTab === 'all' || (activeFilterTab === 'fastest' && {{ $isFastest ? 'true' : 'false' }}) || (activeFilterTab === 'max_discount' && {{ $isMaxDiscount ? 'true' : 'false' }}) || (activeFilterTab === 'winter' && {{ $isWinter ? 'true' : 'false' }})"
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         class="bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
+                        
+                        <div>
+                            <!-- Product Image & Badges -->
+                            <div class="relative w-full aspect-square bg-slate-100 overflow-hidden">
+                                <img src="{{ $product->image_url }}" alt="{{ $product->title }}" class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500">
+                                
+                                <!-- Category Badge -->
+                                <span class="absolute top-3 left-3 px-2.5 py-1 rounded-xl text-[10px] font-black bg-white/95 text-slate-800 backdrop-blur-md shadow-xs">
+                                    {{ $product->category->name ?? 'General' }}
+                                </span>
+
+                                <!-- Discount Tag -->
+                                <span class="absolute top-3 right-3 px-2.5 py-1 rounded-xl text-[10px] font-black bg-[#53a318] text-white shadow-xs">
+                                    -{{ $discountPct }}% OFF
+                                </span>
+
+                                <!-- Rating overlay -->
+                                <div class="absolute bottom-2.5 left-3 flex items-center space-x-1 bg-black/60 backdrop-blur-xs text-white px-2.5 py-1 rounded-lg text-[10px] font-bold">
+                                    <span class="text-amber-400">★</span>
+                                    <span>{{ number_format($product->rating, 1) }}</span>
+                                    <span class="text-slate-300">({{ $product->sales_count }})</span>
+                                </div>
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="p-5 space-y-3.5">
+                                <h3 class="text-xs sm:text-sm font-black text-slate-900 line-clamp-2 leading-snug group-hover:text-[#53a318] transition-colors">
+                                    <a href="{{ route('products.show', $product->slug) }}">
+                                        {{ $product->title }}
+                                    </a>
+                                </h3>
+
+                                <!-- Tier Pricing Visual Card -->
+                                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                                    <div class="flex items-baseline justify-between text-[11px]">
+                                        <span class="text-slate-400">খুচরা মূল্য: <span class="line-through">৳{{ number_format($product->single_price) }}</span></span>
+                                        <span class="text-[10px] font-black text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded">সাশ্রয় ৳{{ number_format($product->single_price - $product->group_price) }}</span>
+                                    </div>
+                                    <div class="flex items-baseline justify-between">
+                                        <div>
+                                            <span class="text-[10px] uppercase font-bold text-slate-400 block">আনলক রেট:</span>
+                                            <span class="text-lg font-black text-[#53a318]">৳{{ number_format($product->group_price) }}</span>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="text-[9px] uppercase font-bold text-amber-700 block">পরবর্তী টার্গেট:</span>
+                                            <span class="text-xs font-black text-amber-600">৳{{ number_format($nextTierPrice) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dynamic Progress Bar -->
+                                <div class="space-y-1">
+                                    <div class="flex items-center justify-between text-[11px] font-bold">
+                                        <span class="text-slate-600">অগ্রগতি ({{ $simulatedBuyers }}/{{ $targetBuyers }} ক্রেতা)</span>
+                                        <span class="text-[#53a318] font-black">{{ $simulatedFilled }}%</span>
+                                    </div>
+                                    <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-emerald-500 to-[#53a318] rounded-full" style="width: {{ $simulatedFilled }}%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Member Avatars Social Proof -->
+                                <div class="flex items-center space-x-2 pt-1">
+                                    <div class="flex -space-x-1.5 overflow-hidden">
+                                        <div class="inline-block h-5 w-5 rounded-full ring-2 ring-white bg-slate-800 text-white font-bold text-[8px] flex items-center justify-center">A</div>
+                                        <div class="inline-block h-5 w-5 rounded-full ring-2 ring-white bg-green-600 text-white font-bold text-[8px] flex items-center justify-center">S</div>
+                                        <div class="inline-block h-5 w-5 rounded-full ring-2 ring-white bg-amber-500 text-white font-bold text-[8px] flex items-center justify-center">M</div>
+                                    </div>
+                                    <span class="text-[10px] text-slate-500 font-semibold">+{{ $simulatedBuyers }} ক্রেতা যুক্ত আছেন</span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="p-5 pt-0 grid grid-cols-2 gap-2">
+                            <a href="{{ route('products.show', $product->slug) }}" 
+                               class="py-2.5 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs flex items-center justify-center space-x-1">
+                                <span>নতুন পুল খুলুন</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+
+                            <button type="button" @click="openShare('GRP-PROD{{ $product->id }}', '{{ addslashes($product->title) }}')" 
+                                    class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs text-center transition-colors">
+                                লিংক শেয়ার
+                            </button>
+                        </div>
+
+                    </div>
+                @empty
+                    <div class="col-span-full py-16 px-6 text-center bg-white rounded-3xl border border-slate-200/90 text-slate-500 space-y-3 shadow-xs">
+                        <span class="text-4xl block">🔍</span>
+                        <h3 class="text-base font-black text-slate-800">কোনো পণ্য পাওয়া যায়নি</h3>
+                        <p class="text-xs text-slate-400 max-w-sm mx-auto">বর্তমানে এই ফিল্টারে কোনো সক্রিয় পণ্য নেই। অন্যান্য ক্যাটাগরি ব্রাউজ করুন।</p>
+                    </div>
+                @endforelse
+            </div>
+
+            <!-- Catalog Pagination -->
+            <div class="pt-4 flex justify-center">
+                {{ $products->links() }}
+            </div>
+        </div>
+
+        <!-- ========================================================
+             3 SOURCING & PLATFORM ASSURANCE PILLARS
+             ======================================================== -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+            <!-- Pillar 1: 100% Refund -->
+            <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs hover:shadow-md transition-shadow flex items-start space-x-3.5">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#53a318] flex items-center justify-center text-xl shrink-0 font-black">
+                    🛡️
+                </div>
+                <div class="space-y-1">
+                    <h4 class="text-xs font-black text-slate-900">১০০% অটো-রিফান্ড গ্যারান্টি</h4>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">
+                        নির্ধারিত সময়ে পুল পূর্ণ না হলে কোনো প্রশ্ন ছাড়াই আপনার অ্যাকাউন্টে তাৎক্ষণিক সম্পূর্ণ টাকা স্বয়ংক্রিয়ভাবে ফেরত দেওয়া হবে।
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pillar 2: Separate Home Delivery -->
+            <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs hover:shadow-md transition-shadow flex items-start space-x-3.5">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0 font-black">
+                    📦
+                </div>
+                <div class="space-y-1">
+                    <h4 class="text-xs font-black text-slate-900">সবার ঠিকানায় আলাদা ডেলিভারি</h4>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">
+                        গ্রুপে অন্য মেম্বার কে বা কোথায় থাকে তা দেখার বিষয় নয়; প্রত্যেকের পার্সেল নিজস্ব ঠিকানায় আলাদাভাবে হোম ডেলিভারি হবে।
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pillar 3: Authentic Factory Sourcing -->
+            <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs hover:shadow-md transition-shadow flex items-start space-x-3.5">
+                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shrink-0 font-black">
+                    🏭
+                </div>
+                <div class="space-y-1">
+                    <h4 class="text-xs font-black text-slate-900">সরাসরি ফ্যাক্টরি ও মার্চেন্ট রেট</h4>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">
+                        কোনো মধ্যস্বত্বভোগী বা ব্রোকার কমিশন নেই — সরাসরি অনুমোদিত প্রস্তুতকারক ও ভেরিফাইড ডিস্ট্রিবিউটর থেকে শতভাগ আসল পণ্য।
+                    </p>
+                </div>
+            </div>
         </div>
 
     </section>
