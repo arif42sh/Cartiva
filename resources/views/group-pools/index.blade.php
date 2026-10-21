@@ -349,11 +349,11 @@
                         @if($isOneLeft)
                             <span class="px-2 py-0.5 rounded-lg bg-rose-600 text-white text-[10px] font-black flex items-center space-x-1 shadow-2xs">
                                 <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                                <span>🔥 ১টি স্লট বাকি!</span>
+                                <span>1 Slot Left</span>
                             </span>
                         @else
                             <span class="px-2 py-0.5 rounded-lg bg-amber-500 text-white text-[10px] font-black flex items-center space-x-1 shadow-2xs">
-                                <span>⚡ {{ $needed }}টি স্লট বাকি</span>
+                                <span>{{ $needed }} slots left</span>
                             </span>
                         @endif
 
@@ -451,11 +451,11 @@
                 <div class="pt-2.5 relative z-10 grid grid-cols-4 gap-1.5">
                     <a href="{{ route('group-buy.show', $group->group_code) }}" 
                        class="col-span-3 py-2 px-2.5 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-1 active:scale-95">
-                        <span>⚡ স্লটে জয়েন</span>
+                        <span>Join Group</span>
                     </a>
 
                     <button type="button" @click="openShare('{{ $group->group_code }}', '{{ addslashes($p->title) }}')"
-                            title="ইনভাইট শেয়ার করুন"
+                            title="Share Invite"
                             class="col-span-1 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors cursor-pointer">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
                     </button>
@@ -477,7 +477,7 @@
         <h3 class="text-base font-black text-slate-800">এই ফিল্টারে কোনো সক্রিয় পুল নেই</h3>
         <p class="text-xs text-slate-400 max-w-sm mx-auto">আপনার নির্বাচিত ফিল্টারের সাথে মিলে এমন কোনো সক্রিয় টিম ডিল পাওয়া যায়নি।</p>
         <button type="button" id="reset-filter-btn" class="inline-block py-2.5 px-6 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-bold text-xs transition-colors shadow-xs cursor-pointer">
-            সব ফিল্টার ক্লিয়ার করুন
+            Clear All Filters
         </button>
     </div>
 
