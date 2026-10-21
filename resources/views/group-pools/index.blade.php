@@ -533,70 +533,9 @@
 
 
     <!-- ========================================================
-         6. SOCIAL SHARE MODAL
+         6. SOCIAL SHARE MODAL (PROFESSIONAL CIRCULAR BRANDED)
          ======================================================== -->
-    <div x-show="shareModalOpen" 
-         x-cloak 
-         class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-        
-        <div @click.outside="shareModalOpen = false" 
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 scale-95"
-             x-transition:enter-end="opacity-100 scale-100"
-             class="bg-white rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-5 border border-slate-100">
-            
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <div class="flex items-center space-x-2.5">
-                    <span class="w-8 h-8 rounded-xl bg-green-50 text-[#53a318] flex items-center justify-center text-lg">
-                        📲
-                    </span>
-                    <h3 class="text-base font-black text-slate-900">ইনভাইট ও গ্রুপ শেয়ার করুন</h3>
-                </div>
-                <button type="button" @click="shareModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-xl cursor-pointer">&times;</button>
-            </div>
-
-            <div class="space-y-2">
-                <span class="text-xs font-bold text-slate-500">গ্রুপ ডিল:</span>
-                <p class="text-sm font-black text-slate-800" x-text="shareGroupTitle"></p>
-                <div class="flex items-center space-x-2 pt-1">
-                    <span class="text-xs font-bold text-slate-500">রুম কোড:</span>
-                    <span class="font-mono text-xs font-black bg-slate-900 text-emerald-300 px-2.5 py-1 rounded-lg" x-text="shareGroupCode"></span>
-                </div>
-            </div>
-
-            <!-- Share Buttons Grid -->
-            <div class="grid grid-cols-2 gap-2.5 pt-1">
-                <!-- WhatsApp -->
-                <a :href="'https://api.whatsapp.com/send?text=' + encodeURIComponent('আমার সাথে কার্টিভায় গ্রুপ পুলে যোগ দিয়ে পাইকারি রেট আনলক করুন! রুম কোড: ' + shareGroupCode + ' লিংক: ' + window.location.origin + '/group-buy/' + shareGroupCode)"
-                   target="_blank"
-                   class="py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center space-x-1.5 transition-colors border border-emerald-200">
-                    <span>WhatsApp Share</span>
-                </a>
-
-                <!-- Messenger -->
-                <a :href="'fb-messenger://share/?link=' + encodeURIComponent(window.location.origin + '/group-buy/' + shareGroupCode)"
-                   target="_blank"
-                   class="py-2.5 px-3 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center space-x-1.5 transition-colors border border-blue-200">
-                    <span>Messenger</span>
-                </a>
-            </div>
-
-            <!-- Direct Link Copy Field -->
-            <div class="space-y-1.5 pt-1">
-                <span class="text-xs font-bold text-slate-500">অথবা সরাসরি লিঙ্ক কপি করুন:</span>
-                <div class="flex items-center space-x-2">
-                    <input type="text" readonly 
-                           :value="window.location.origin + '/group-buy/' + shareGroupCode"
-                           class="w-full text-xs font-mono bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-700 focus:outline-none">
-                    <button type="button" @click="copyShareLink(shareGroupCode)"
-                            class="px-4 py-2.5 bg-[#53a318] hover:bg-[#468c13] text-white font-bold text-xs rounded-xl transition-colors shrink-0 flex items-center space-x-1 cursor-pointer">
-                        <span x-text="copiedToast ? 'কপি হয়েছে!' : 'কপি'"></span>
-                    </button>
-                </div>
-            </div>
-
-        </div>
-    </div>
+    @include('partials.share-modal')
 
 </div>
 
