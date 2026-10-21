@@ -365,7 +365,7 @@
                 <div>
                     <div class="flex flex-wrap items-center gap-2">
                         <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight flex items-center gap-1.5">
-                            <span>🔥 হট ডিল — শেষ মুহূর্তের টিম</span>
+                            <span> HOT DEAL-শেষ মুহূর্তের অফার</span>
                             <span class="text-xs font-bold text-slate-400 font-sans hidden sm:inline">(Ending Soon & Almost Full)</span>
                         </h2>
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-100 text-rose-700 border border-rose-200/80 shadow-2xs">
