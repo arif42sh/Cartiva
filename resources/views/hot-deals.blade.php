@@ -560,18 +560,20 @@
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
-                        <div class="p-2.5 pt-0 flex items-center gap-1.5">
+                        <!-- Action Buttons: Join Group (Left) & Share Invite (Right) - Strictly Horizontal -->
+                        <div class="p-2.5 pt-0 flex items-center gap-1.5" style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 6px !important; width: 100% !important;">
                             <a href="{{ route('products.show', $product->slug) }}" 
-                               class="flex-1 py-1.5 px-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[11px] text-center transition-all shadow-2xs flex items-center justify-center space-x-1">
-                                <span>Join Pool</span>
+                               style="flex: 1 !important; display: flex !important; align-items: center !important; justify-content: center !important;"
+                               class="py-1.5 px-2 rounded-lg bg-[#53a318] hover:bg-[#468c13] text-white font-bold text-[11px] text-center transition-all shadow-2xs flex items-center justify-center space-x-1 active:scale-95">
+                                <span>Join Group</span>
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </a>
 
                             <button type="button" @click="openShare('{{ $group->group_code }}', '{{ addslashes($product->title) }}')" 
                                     title="Share Pool"
-                                    class="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-100/80 transition-colors shrink-0 cursor-pointer">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                                    style="width: 34px !important; height: 30px !important; min-width: 34px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important;"
+                                    class="rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-100/80 transition-colors shrink-0 cursor-pointer">
+                                <svg style="width: 14px !important; height: 14px !important;" class="w-3.5 h-3.5 text-emerald-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
                             </button>
                         </div>
 

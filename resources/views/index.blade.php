@@ -63,7 +63,7 @@
                 <!-- Dual Action CTAs -->
                 <div class="flex flex-wrap items-center gap-2.5 pt-1">
                     <a href="#urgent-pools" class="px-5 py-2.5 rounded-xl text-xs font-black bg-[#53a318] hover:bg-[#468c13] text-white shadow-lg shadow-green-950/40 hover:scale-[1.02] active:scale-95 transition-all flex items-center space-x-2">
-                        <span>⚡ Join Active Pool Now</span>
+                        <span> Join Active Pool Now</span>
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                     
@@ -717,10 +717,7 @@
         <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 border-b border-slate-200/80 pb-5">
             <div class="space-y-1.5 max-w-2xl">
                 <div class="flex items-center space-x-2">
-                    <span class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-[#53a318] text-[10px] font-black uppercase tracking-wider shadow-2xs">
-                        <span class="w-2 h-2 rounded-full bg-[#53a318] animate-ping"></span>
-                        <span>👥 ACTIVE GROUP POOLS • সক্রিয় গ্রুপ পুলসমূহ</span>
-                    </span>
+                   
                     <span class="hidden sm:inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold">
                         <span>🟢 {{ $activeGroups->count() }}টি পুল ওপেন</span>
                     </span>
@@ -735,29 +732,14 @@
             
             <!-- Quick View Switcher & Assurance Badge -->
             <div class="flex items-center space-x-2 flex-wrap gap-y-2">
-                <div class="inline-flex items-center space-x-1 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold">
-                    <span class="text-[#53a318]">🛡️</span>
-                    <span>১০০% সেফ রিফান্ড</span>
-                </div>
+                
 
-                <!-- Toggle between Active Pools & Full Catalog -->
-                <div class="inline-flex p-1 rounded-2xl bg-slate-100 border border-slate-200 text-xs font-bold">
-                    <button type="button" @click="viewMode = 'pools'" 
-                            :class="viewMode === 'pools' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'"
-                            class="px-3.5 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 cursor-pointer">
-                        <span>🔥 সক্রিয় পুল ({{ $activeGroups->count() }})</span>
-                    </button>
-                    <button type="button" @click="viewMode = 'catalog'" 
-                            :class="viewMode === 'catalog' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'"
-                            class="px-3.5 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 cursor-pointer">
-                        <span>📦 সকল ক্যাটালগ পণ্য</span>
-                    </button>
-                </div>
+                
 
                 <!-- Link to Dedicated Group Pools Page -->
                 <a href="{{ route('group-pools.index') }}" 
                    class="px-3.5 py-2 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white text-xs font-black transition-all flex items-center space-x-1.5 shadow-2xs hover:shadow-md">
-                    <span>সম্পূর্ণ পুল হাব &rarr;</span>
+                    <span>See All</span>
                 </a>
             </div>
         </div>
@@ -769,7 +751,7 @@
                 <button type="button" @click="poolFilter = 'all'" 
                         :class="poolFilter === 'all' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
                         class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
-                    <span>🌟 সকল পুল</span>
+                    <span>All Pool</span>
                 </button>
 
                 <!-- 1 Slot Away -->
@@ -777,28 +759,28 @@
                         :class="poolFilter === 'one_left' ? 'bg-rose-600 text-white shadow-md' : 'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200/60'"
                         class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
                     <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping" x-show="poolFilter === 'one_left'"></span>
-                    <span>🔥 ১টি স্লট বাকি</span>
+                    <span>Slot left </span>
                 </button>
 
                 <!-- Ending Soon -->
                 <button type="button" @click="poolFilter = 'ending_soon'" 
                         :class="poolFilter === 'ending_soon' ? 'bg-amber-500 text-white shadow-md' : 'bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200/60'"
                         class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
-                    <span>⚡ সময় শেষ হচ্ছে</span>
+                    <span>Ending soon</span>
                 </button>
 
                 <!-- 40%+ Max Discount -->
                 <button type="button" @click="poolFilter = 'max_discount'" 
                         :class="poolFilter === 'max_discount' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
                         class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
-                    <span>💰 সর্বোচ্চ ছাড় (৪০%+)</span>
+                    <span>Max discount</span>
                 </button>
 
                 <!-- Winter Specials -->
                 <button type="button" @click="poolFilter = 'winter'" 
                         :class="poolFilter === 'winter' ? 'bg-[#53a318] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
                         class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
-                    <span>🧥 উইন্টার স্পেশাল</span>
+                    <span>Winter Special</span>
                 </button>
 
                 <!-- Tech & Gadgets -->
@@ -934,11 +916,11 @@
                                 @if($isOneLeft)
                                     <span class="px-2 py-0.5 rounded-lg bg-rose-600/95 text-white text-[10px] font-black flex items-center space-x-1 shadow-xs backdrop-blur-xs">
                                         <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                                        <span>🔥 ১টি স্লট বাকি!</span>
+                                        <span>Slot left</span>
                                     </span>
                                 @else
                                     <span class="px-2 py-0.5 rounded-lg bg-slate-900/85 text-emerald-300 text-[10px] font-bold flex items-center space-x-1 shadow-xs backdrop-blur-xs">
-                                        <span>⚡ {{ $needed }}টি স্লট বাকি</span>
+                                        <span> {{ $needed }} Slot left</span>
                                     </span>
                                 @endif
 
@@ -1022,18 +1004,20 @@
                         </div>
                     </div>
 
-                    <!-- Dual Action CTAs: Direct Join Slot & Share Invite -->
-                    <div class="p-4 sm:p-5 pt-0 grid grid-cols-2 gap-2">
+                    <!-- Dual Action CTAs: Direct Join Slot (Left) & Share Invite (Right) - Strictly Horizontal -->
+                    <div class="p-4 sm:p-5 pt-0 flex items-center gap-2" style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 8px !important; width: 100% !important;">
                         <a href="{{ route('group-buy.show', $group->group_code) }}" 
-                           class="py-2.5 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-1 active:scale-95">
-                            <span>⚡ স্লটে জয়েন</span>
+                           style="flex: 1 !important; display: flex !important; align-items: center !important; justify-content: center !important;"
+                           class="py-2.5 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs hover:shadow-md active:scale-95 space-x-1">
+                            <span>Join Group</span>
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </a>
 
                         <button type="button" @click="openShare('{{ $group->group_code }}', '{{ addslashes($p->title) }}')" 
-                                class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs text-center transition-colors flex items-center justify-center space-x-1">
-                            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-                            <span>ইনভাইট</span>
+                                title="Share Invite"
+                                style="width: 42px !important; height: 38px !important; min-width: 42px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important;"
+                                class="rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer border border-slate-200/80">
+                            <svg style="width: 16px !important; height: 16px !important;" class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
                         </button>
                     </div>
 
@@ -1150,17 +1134,20 @@
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
-                        <div class="p-5 pt-0 grid grid-cols-2 gap-2">
+                        <!-- Action Buttons: Join / Start Pool (Left) & Share Invite (Right) - Strictly Horizontal -->
+                        <div class="p-5 pt-0 flex items-center gap-2" style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 8px !important; width: 100% !important;">
                             <a href="{{ route('products.show', $product->slug) }}" 
-                               class="py-2.5 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs flex items-center justify-center space-x-1">
-                                <span>নতুন পুল খুলুন</span>
+                               style="flex: 1 !important; display: flex !important; align-items: center !important; justify-content: center !important;"
+                               class="py-2.5 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs flex items-center justify-center space-x-1 active:scale-95">
+                                <span>Join Group</span>
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </a>
 
                             <button type="button" @click="openShare('GRP-PROD{{ $product->id }}', '{{ addslashes($product->title) }}')" 
-                                    class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs text-center transition-colors">
-                                লিংক শেয়ার
+                                    title="Share Invite"
+                                    style="width: 42px !important; height: 38px !important; min-width: 42px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important;"
+                                    class="rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer border border-slate-200/80">
+                                <svg style="width: 16px !important; height: 16px !important;" class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
                             </button>
                         </div>
 
