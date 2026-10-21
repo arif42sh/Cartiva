@@ -333,17 +333,20 @@
                     </div>
                 </div>
 
-                <!-- Dual Action Buttons: Join Group & Share / Copy Link -->
-                <div class="p-5 pt-0 grid grid-cols-2 gap-2">
+                <!-- Dual Action Buttons: Join Group (Left) & Share Invite (Right) - Strictly Horizontal -->
+                <div class="p-5 pt-0 flex items-center gap-2" style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 8px !important; width: 100% !important;">
                     <a href="{{ route('products.show', $product) }}" 
-                       class="py-2.5 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs flex items-center justify-center space-x-1">
+                       style="flex: 1 !important; display: flex !important; align-items: center !important; justify-content: center !important;"
+                       class="py-2.5 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs flex items-center justify-center space-x-1 active:scale-95">
                         <span>Join Group</span>
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
 
                     <button type="button" @click="openShare('GRP-PROD{{ $product->id }}', '{{ addslashes($product->title) }}')" 
-                            class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs text-center transition-colors">
-                        Share Link
+                            title="Share Invite"
+                            style="width: 42px !important; height: 38px !important; min-width: 42px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important;"
+                            class="rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer border border-slate-200/80">
+                        <svg style="width: 16px !important; height: 16px !important;" class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
                     </button>
                 </div>
 

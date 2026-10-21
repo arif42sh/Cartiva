@@ -209,54 +209,62 @@
                                 </span>
                             </div>
 
-                            <!-- Circular Brand Icons -->
-                            <div class="grid grid-cols-4 gap-2 text-center pt-0.5">
+                            <!-- Circular Brand Icons (Horizontal Row with Official Colors) -->
+                            <div class="flex items-center justify-around gap-2 pt-1" style="display: flex !important; flex-direction: row !important; justify-content: space-around !important; align-items: flex-start !important; width: 100% !important;">
                                 <!-- WhatsApp -->
                                 <a :href="'https://api.whatsapp.com/send?text=' + encodeURIComponent('আমার সাথে কার্টিভায় গ্রুপ পুলে যোগ দিয়ে পাইকারি রেট আনলক করুন!\nপণ্য: {{ addslashes($session->product->title) }}\nরুম কোড: {{ $session->group_code }}\nলিংক: ' + shareUrl)"
                                    target="_blank"
-                                   class="group flex flex-col items-center space-y-1 cursor-pointer">
-                                    <div class="w-11 h-11 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-md shadow-emerald-600/20 group-hover:scale-110 active:scale-95 transition-all">
-                                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                                   style="display: flex !important; flex-direction: column !important; align-items: center !important; text-decoration: none !important; cursor: pointer !important; flex: 1 !important; text-align: center !important;"
+                                   class="group">
+                                    <div style="width: 48px !important; height: 48px !important; min-width: 48px !important; min-height: 48px !important; border-radius: 50% !important; background-color: #25D366 !important; display: flex !important; align-items: center !important; justify-content: center !important; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.4) !important; transition: transform 0.2s ease;"
+                                         onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                        <svg style="width: 24px !important; height: 24px !important; fill: #ffffff !important; color: #ffffff !important;" viewBox="0 0 24 24">
                                             <path fill-rule="evenodd" clip-rule="evenodd" d="M18.403 5.638A8.955 8.955 0 0012.053 3c-4.968 0-9.01 4.042-9.01 9.013 0 1.587.413 3.134 1.198 4.492L3 21l4.637-1.217a8.983 8.983 0 004.416 1.154h.004c4.968 0 9.01-4.042 9.01-9.013 0-2.408-.937-4.673-2.664-6.286zm-6.35 13.733h-.003a7.48 7.48 0 01-3.811-1.042l-.273-.162-2.832.743.756-2.761-.178-.283a7.48 7.48 0 01-1.147-3.992c0-4.14 3.369-7.509 7.513-7.509 2.006 0 3.892.782 5.309 2.2a7.452 7.452 0 012.198 5.308c0 4.14-3.369 7.509-7.532 7.509zm4.126-5.635c-.226-.113-1.339-.661-1.547-.737-.207-.075-.358-.113-.509.113-.15.226-.583.737-.715.888-.132.151-.264.17-.49.057-.226-.114-.954-.352-1.817-1.121-.671-.598-1.125-1.337-1.257-1.564-.132-.226-.014-.349.099-.461.102-.102.226-.264.339-.396.113-.132.151-.226.226-.377.075-.151.038-.283-.019-.396-.057-.113-.509-1.226-.698-1.678-.184-.442-.372-.382-.509-.389-.132-.007-.283-.008-.433-.008-.151 0-.396.057-.603.283-.207.226-.792.774-.792 1.887 0 1.113.811 2.188.924 2.339.113.151 1.597 2.438 3.87 3.418.541.233.963.372 1.293.477.544.173 1.039.148 1.431.09.437-.065 1.339-.547 1.528-1.075.188-.528.188-.981.132-1.075-.057-.094-.208-.151-.434-.264z"/>
                                         </svg>
                                     </div>
-                                    <span class="text-[10px] font-bold text-slate-700 group-hover:text-[#25D366] transition-colors">WhatsApp</span>
+                                    <span style="font-size: 10px !important; font-weight: 700 !important; color: #1e293b !important; margin-top: 5px !important; display: block !important;">WhatsApp</span>
                                 </a>
 
                                 <!-- Messenger -->
                                 <a :href="'fb-messenger://share/?link=' + encodeURIComponent(shareUrl)"
                                    target="_blank"
-                                   class="group flex flex-col items-center space-y-1 cursor-pointer">
-                                    <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-[#00B2FE] via-[#006AFF] to-[#9900FF] text-white flex items-center justify-center shadow-md shadow-blue-600/20 group-hover:scale-110 active:scale-95 transition-all">
-                                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                                   style="display: flex !important; flex-direction: column !important; align-items: center !important; text-decoration: none !important; cursor: pointer !important; flex: 1 !important; text-align: center !important;"
+                                   class="group">
+                                    <div style="width: 48px !important; height: 48px !important; min-width: 48px !important; min-height: 48px !important; border-radius: 50% !important; background: linear-gradient(135deg, #00B2FE 0%, #006AFF 50%, #9900FF 100%) !important; display: flex !important; align-items: center !important; justify-content: center !important; box-shadow: 0 4px 14px rgba(0, 106, 255, 0.4) !important; transition: transform 0.2s ease;"
+                                         onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                        <svg style="width: 24px !important; height: 24px !important; fill: #ffffff !important; color: #ffffff !important;" viewBox="0 0 24 24">
                                             <path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.914 1.455 5.518 3.735 7.205V22l3.413-1.874c.905.251 1.864.387 2.852.387 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.066 12.443l-2.73-2.912-5.328 2.912 5.86-6.223 2.798 2.912 5.26-2.912-5.86 6.223z"/>
                                         </svg>
                                     </div>
-                                    <span class="text-[10px] font-bold text-slate-700 group-hover:text-[#006AFF] transition-colors">Messenger</span>
+                                    <span style="font-size: 10px !important; font-weight: 700 !important; color: #1e293b !important; margin-top: 5px !important; display: block !important;">Messenger</span>
                                 </a>
 
                                 <!-- Facebook -->
                                 <a :href="'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl)"
                                    target="_blank"
-                                   class="group flex flex-col items-center space-y-1 cursor-pointer">
-                                    <div class="w-11 h-11 rounded-full bg-[#1877F2] text-white flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-110 active:scale-95 transition-all">
-                                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                                   style="display: flex !important; flex-direction: column !important; align-items: center !important; text-decoration: none !important; cursor: pointer !important; flex: 1 !important; text-align: center !important;"
+                                   class="group">
+                                    <div style="width: 48px !important; height: 48px !important; min-width: 48px !important; min-height: 48px !important; border-radius: 50% !important; background-color: #1877F2 !important; display: flex !important; align-items: center !important; justify-content: center !important; box-shadow: 0 4px 14px rgba(24, 119, 242, 0.4) !important; transition: transform 0.2s ease;"
+                                         onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                        <svg style="width: 24px !important; height: 24px !important; fill: #ffffff !important; color: #ffffff !important;" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                         </svg>
                                     </div>
-                                    <span class="text-[10px] font-bold text-slate-700 group-hover:text-[#1877F2] transition-colors">Facebook</span>
+                                    <span style="font-size: 10px !important; font-weight: 700 !important; color: #1e293b !important; margin-top: 5px !important; display: block !important;">Facebook</span>
                                 </a>
 
                                 <!-- Telegram -->
                                 <a :href="'https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent('আমার সাথে কার্টিভায় গ্রুপ পুলে যোগ দিয়ে পাইকারি রেট আনলক করুন! রুম কোড: {{ $session->group_code }}')"
                                    target="_blank"
-                                   class="group flex flex-col items-center space-y-1 cursor-pointer">
-                                    <div class="w-11 h-11 rounded-full bg-[#24A1DE] text-white flex items-center justify-center shadow-md shadow-sky-500/20 group-hover:scale-110 active:scale-95 transition-all">
-                                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                                   style="display: flex !important; flex-direction: column !important; align-items: center !important; text-decoration: none !important; cursor: pointer !important; flex: 1 !important; text-align: center !important;"
+                                   class="group">
+                                    <div style="width: 48px !important; height: 48px !important; min-width: 48px !important; min-height: 48px !important; border-radius: 50% !important; background-color: #24A1DE !important; display: flex !important; align-items: center !important; justify-content: center !important; box-shadow: 0 4px 14px rgba(36, 161, 222, 0.4) !important; transition: transform 0.2s ease;"
+                                         onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                        <svg style="width: 24px !important; height: 24px !important; fill: #ffffff !important; color: #ffffff !important;" viewBox="0 0 24 24">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.27-5.63 3.72-.53.36-1.02.54-1.45.53-.48-.01-1.4-.27-2.09-.49-.84-.27-1.51-.42-1.45-.89.03-.25.38-.51 1.07-.78 4.19-1.82 6.99-3.03 8.39-3.62 3.99-1.68 4.82-1.97 5.37-1.98.12 0 .39.03.56.17.14.12.18.28.2.4.01.09.02.26.01.4z"/>
                                         </svg>
                                     </div>
-                                    <span class="text-[10px] font-bold text-slate-700 group-hover:text-[#24A1DE] transition-colors">Telegram</span>
+                                    <span style="font-size: 10px !important; font-weight: 700 !important; color: #1e293b !important; margin-top: 5px !important; display: block !important;">Telegram</span>
                                 </a>
                             </div>
 
