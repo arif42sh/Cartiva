@@ -420,11 +420,11 @@
                         @elseif($isAlmostSold)
                             <span class="px-2 py-0.5 rounded-lg bg-rose-600 text-white text-[10px] font-black flex items-center space-x-1 shadow-2xs">
                                 <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                                <span>🔥 ১টি স্লট বাকি!</span>
+                                <span>Slot left!</span>
                             </span>
                         @else
                             <span class="px-2 py-0.5 rounded-lg bg-rose-600 text-white text-[10px] font-black flex items-center space-x-1 shadow-2xs">
-                                <span>🔥 {{ $deal['stock_left'] }}টি স্লট বাকি</span>
+                                <span>{{ $deal['stock_left'] }} Slot left!</span>
                             </span>
                         @endif
 

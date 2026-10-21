@@ -63,7 +63,7 @@
                 <!-- Dual Action CTAs -->
                 <div class="flex flex-wrap items-center gap-2.5 pt-1">
                     <a href="#urgent-pools" class="px-5 py-2.5 rounded-xl text-xs font-black bg-[#53a318] hover:bg-[#468c13] text-white shadow-lg shadow-green-950/40 hover:scale-[1.02] active:scale-95 transition-all flex items-center space-x-2">
-                        <span>⚡ Join Active Pool Now</span>
+                        <span> Join Active Pool Now</span>
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                     
@@ -916,11 +916,11 @@
                                 @if($isOneLeft)
                                     <span class="px-2 py-0.5 rounded-lg bg-rose-600/95 text-white text-[10px] font-black flex items-center space-x-1 shadow-xs backdrop-blur-xs">
                                         <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                                        <span>🔥 ১টি স্লট বাকি!</span>
+                                        <span>Slot left</span>
                                     </span>
                                 @else
                                     <span class="px-2 py-0.5 rounded-lg bg-slate-900/85 text-emerald-300 text-[10px] font-bold flex items-center space-x-1 shadow-xs backdrop-blur-xs">
-                                        <span>⚡ {{ $needed }}টি স্লট বাকি</span>
+                                        <span> {{ $needed }} Slot left</span>
                                     </span>
                                 @endif
 
