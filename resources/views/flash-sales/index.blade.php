@@ -6,27 +6,58 @@
 <style>
     /* Filter Pills Strict Visual State (Prevents disappearing on mouseout) */
     .filter-pill-btn {
-        transition: all 0.15s ease-in-out !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 0.75rem !important; /* rounded-xl */
+        padding: 0.4rem 0.9rem !important;
+        font-size: 0.75rem !important; /* text-xs */
+        font-weight: 700 !important;
+        transition: all 0.2s ease-in-out !important;
         outline: none !important;
+        cursor: pointer !important;
+        user-select: none !important;
+        white-space: nowrap !important;
+        box-sizing: border-box !important;
     }
     .filter-pill-btn.active {
         background-color: #53a318 !important;
         color: #ffffff !important;
-        border: 1px solid #53a318 !important;
-        box-shadow: 0 1px 3px rgba(83, 163, 24, 0.25) !important;
+        border: 1.5px solid #53a318 !important;
+        box-shadow: 0 1px 3px rgba(83, 163, 24, 0.3) !important;
+    }
+    .filter-pill-btn.active:hover {
+        background-color: #468c13 !important;
+        border-color: #468c13 !important;
+        color: #ffffff !important;
     }
     .filter-pill-btn.active span {
+        color: #ffffff !important;
+    }
+    .filter-pill-btn.active .count-badge {
+        background-color: rgba(255, 255, 255, 0.25) !important;
         color: #ffffff !important;
     }
     .filter-pill-btn:not(.active) {
         background-color: #ffffff !important;
         color: #334155 !important;
-        border: 1px solid #e2e8f0 !important;
+        border: 1.5px solid #e2e8f0 !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
     }
     .filter-pill-btn:not(.active):hover {
         background-color: #f8fafc !important;
         border-color: #cbd5e1 !important;
         color: #0f172a !important;
+    }
+    .filter-pill-btn:not(.active) span {
+        color: #334155 !important;
+    }
+    .filter-pill-btn:not(.active):hover span {
+        color: #0f172a !important;
+    }
+    .filter-pill-btn:not(.active) .count-badge {
+        background-color: #f1f5f9 !important;
+        color: #475569 !important;
     }
 
     /* Slot Tabs Strict Visual State */
@@ -227,34 +258,28 @@
     <div class="flex items-center space-x-2 overflow-x-auto no-scrollbar py-1" id="filter-pills-container">
         <span class="text-xs font-black text-slate-400 uppercase tracking-wider shrink-0 mr-1">Filters:</span>
 
-        <button type="button" data-filter="all" 
-                class="filter-pill-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 shrink-0 bg-[#53a318] text-white shadow-xs cursor-pointer">
+        <button type="button" data-filter="all" class="filter-pill-btn active shrink-0 space-x-1.5">
             <span>All</span>
-            <span class="text-[10px] px-1.5 py-0.2 bg-white/20 rounded-full font-black count-badge">{{ count($enrichedDeals) }}</span>
+            <span class="count-badge text-[10px] px-1.5 py-0.2 rounded-full font-black">{{ count($enrichedDeals) }}</span>
         </button>
 
-        <button type="button" data-filter="deep_discount" 
-                class="filter-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 shrink-0 bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 hover:border-slate-300 cursor-pointer">
-            <span>Flat Discount</span>
+        <button type="button" data-filter="deep_discount" class="filter-pill-btn shrink-0">
+            <span>Flat Discount 50%</span>
         </button>
 
-        <button type="button" data-filter="under_999" 
-                class="filter-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 shrink-0 bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 hover:border-slate-300 cursor-pointer">
+        <button type="button" data-filter="under_999" class="filter-pill-btn shrink-0">
             <span>Under ৳999</span>
         </button>
 
-        <button type="button" data-filter="almost_sold" 
-                class="filter-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 shrink-0 bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 hover:border-slate-300 cursor-pointer">
+        <button type="button" data-filter="almost_sold" class="filter-pill-btn shrink-0">
             <span>Almost Sold</span>
         </button>
 
-        <button type="button" data-filter="gadgets" 
-                class="filter-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 shrink-0 bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 hover:border-slate-300 cursor-pointer">
+        <button type="button" data-filter="gadgets" class="filter-pill-btn shrink-0">
             <span>Gadgets & Audio</span>
         </button>
 
-        <button type="button" data-filter="apparel" 
-                class="filter-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 shrink-0 bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 hover:border-slate-300 cursor-pointer">
+        <button type="button" data-filter="apparel" class="filter-pill-btn shrink-0">
             <span>Winter</span>
         </button>
     </div>
@@ -439,6 +464,20 @@
                 </a>
             </div>
         @endforelse
+
+        <!-- Dynamic Filter Empty State (when 0 cards match client-side filters) -->
+        <div id="filter-empty-state" class="hidden col-span-full py-16 text-center space-y-4 bg-white rounded-3xl border border-slate-200 p-8 shadow-xs">
+            <div class="w-14 h-14 mx-auto rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-2xl font-black">
+                🔍
+            </div>
+            <h3 class="text-base font-black text-slate-800">কোনো ডিল পাওয়া যায়নি</h3>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto">
+                এই স্লট বা ফিল্টারে বর্তমানে কোনো প্রোডাক্ট নেই। সব ডিল দেখতে ফিল্টার রিসেট করুন।
+            </p>
+            <button type="button" id="reset-filter-btn" class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white text-xs font-bold transition-all shadow-xs cursor-pointer">
+                <span>সব ডিল দেখুন (All)</span>
+            </button>
+        </div>
     </div>
 
 </div>
@@ -588,29 +627,43 @@ document.addEventListener('DOMContentLoaded', function () {
        D. CATEGORY & SMART PILLS FILTERING
        ---------------------------------------------------- */
     const filterPills = document.querySelectorAll('.filter-pill-btn');
+    const emptyStateEl = document.getElementById('filter-empty-state');
+    const resetFilterBtn = document.getElementById('reset-filter-btn');
     let currentFilter = 'all';
+
+    function updateFilterPillsUI(activeFilter) {
+        filterPills.forEach(pill => {
+            const filterVal = pill.getAttribute('data-filter');
+            if (filterVal === activeFilter) {
+                pill.classList.add('active');
+            } else {
+                pill.classList.remove('active');
+            }
+        });
+    }
 
     filterPills.forEach(pill => {
         pill.addEventListener('click', function () {
-            filterPills.forEach(p => {
-                p.classList.remove('bg-[#53a318]', 'text-white', 'shadow-xs');
-                p.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-200');
-            });
-
-            this.classList.remove('bg-white', 'text-slate-700', 'border', 'border-slate-200');
-            this.classList.add('bg-[#53a318]', 'text-white', 'shadow-xs');
-
             currentFilter = this.getAttribute('data-filter');
+            updateFilterPillsUI(currentFilter);
             applyFilters();
         });
     });
+
+    if (resetFilterBtn) {
+        resetFilterBtn.addEventListener('click', function () {
+            currentFilter = 'all';
+            updateFilterPillsUI('all');
+            applyFilters();
+        });
+    }
 
     function applyFilters() {
         let visibleCount = 0;
 
         dealCards.forEach(card => {
             const cardSlot = card.getAttribute('data-slot');
-            const cardCategory = card.getAttribute('data-category') || '';
+            const cardCategory = (card.getAttribute('data-category') || '').toLowerCase();
             const isDeepDiscount = card.getAttribute('data-deep-discount') === 'true';
             const isUnder999 = card.getAttribute('data-under-999') === 'true';
             const isAlmostSold = card.getAttribute('data-almost-sold') === 'true';
@@ -628,9 +681,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 matchesFilter = true;
             } else if (currentFilter === 'almost_sold' && isAlmostSold) {
                 matchesFilter = true;
-            } else if (currentFilter === 'gadgets' && (cardCategory.includes('tech') || cardCategory.includes('audio') || cardCategory.includes('gadgets') || cardCategory.includes('electronics') || cardCategory.includes('computers'))) {
+            } else if (currentFilter === 'gadgets' && (
+                cardCategory.includes('tech') || 
+                cardCategory.includes('audio') || 
+                cardCategory.includes('gadget') || 
+                cardCategory.includes('electronic') || 
+                cardCategory.includes('comput') || 
+                cardCategory.includes('mobile') || 
+                cardCategory.includes('watch')
+            )) {
                 matchesFilter = true;
-            } else if (currentFilter === 'apparel' && (cardCategory.includes('winter') || cardCategory.includes('apparel') || cardCategory.includes('fashion') || cardCategory.includes('hoodie'))) {
+            } else if (currentFilter === 'apparel' && (
+                cardCategory.includes('winter') || 
+                cardCategory.includes('apparel') || 
+                cardCategory.includes('fashion') || 
+                cardCategory.includes('wearable') || 
+                cardCategory.includes('hoodie') || 
+                cardCategory.includes('bag')
+            )) {
                 matchesFilter = true;
             }
 
@@ -643,14 +711,24 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Update count badge
-        const activeCountBadge = document.querySelector('.filter-pill-btn.bg-\\[\\#53a318\\] .count-badge');
-        if (activeCountBadge && currentFilter === 'all') {
-            activeCountBadge.textContent = visibleCount;
+        // Show/hide dynamic empty state
+        if (emptyStateEl) {
+            if (visibleCount === 0) {
+                emptyStateEl.classList.remove('hidden');
+            } else {
+                emptyStateEl.classList.add('hidden');
+            }
+        }
+
+        // Update count badge on 'All' button
+        const allBadge = document.querySelector('.filter-pill-btn[data-filter="all"] .count-badge');
+        if (allBadge && currentFilter === 'all') {
+            allBadge.textContent = visibleCount;
         }
     }
 
     // Initial filter run
+    updateFilterPillsUI('all');
     applyFilters();
 
 
