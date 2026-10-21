@@ -367,45 +367,9 @@
 
 
     <!-- ========================================================
-         7. SHARE MODAL (ALPINE.JS)
+         7. SHARE MODAL (PROFESSIONAL CIRCULAR BRANDED)
          ======================================================== -->
-    <div x-show="shareModalOpen" x-cloak 
-         class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-        <div @click.outside="shareModalOpen = false" 
-             class="bg-white rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-5 border border-slate-100">
-            
-            <div class="flex items-center justify-between border-b pb-3">
-                <div class="flex items-center space-x-2">
-                    <span class="text-xl">📢</span>
-                    <h3 class="text-base font-black text-slate-900">Share Group Buy Deal</h3>
-                </div>
-                <button @click="shareModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
-            </div>
-
-            <div>
-                <p class="text-xs text-slate-600 font-medium" x-text="shareGroupTitle"></p>
-                <div class="flex items-center space-x-2 mt-3 p-3 rounded-2xl bg-slate-50 border border-slate-200">
-                    <span class="font-mono text-xs font-black text-slate-800 flex-1 truncate" x-text="window.location.origin + '/group-buy/' + shareGroupCode"></span>
-                    <button type="button" @click="copyShareLink(shareGroupCode)" 
-                            class="px-3.5 py-1.5 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white text-xs font-black transition-all flex items-center space-x-1 shadow-2xs">
-                        <span x-text="copiedToast ? 'Copied!' : 'Copy'">Copy</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-2 text-xs font-bold">
-                <a :href="'https://wa.me/?text=' + encodeURIComponent('Join our Cartiva group buy and save up to 45%! ' + window.location.origin + '/group-buy/' + shareGroupCode)" 
-                   target="_blank" class="py-2.5 px-3 rounded-xl bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-center transition-colors">
-                    WhatsApp Share
-                </a>
-                <a :href="'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.origin + '/group-buy/' + shareGroupCode)" 
-                   target="_blank" class="py-2.5 px-3 rounded-xl bg-blue-50 text-blue-800 hover:bg-blue-100 text-center transition-colors">
-                    Facebook Share
-                </a>
-            </div>
-
-        </div>
-    </div>
+    @include('partials.share-modal')
 
 </div>
 @endsection

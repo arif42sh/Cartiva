@@ -488,7 +488,7 @@ class HomeController extends Controller
                   ->orderBy('expires_at', 'asc');
         }
 
-        $pools = $query->paginate(16)->withQueryString();
+        $pools = $query->paginate(20)->withQueryString();
 
         // Platform Real-Time Stats
         $stats = [

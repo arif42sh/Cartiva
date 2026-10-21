@@ -366,33 +366,21 @@
                     <div class="flex flex-wrap items-center gap-2">
                         <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight flex items-center gap-1.5">
                             <span> HOT DEAL-শেষ মুহূর্তের অফার</span>
-                            <span class="text-xs font-bold text-slate-400 font-sans hidden sm:inline">(Ending Soon & Almost Full)</span>
+                        
                         </h2>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-100 text-rose-700 border border-rose-200/80 shadow-2xs">
-                            ⚡ টিম প্রায় পূর্ণ
-                        </span>
+                       
                     </div>
-                    <p class="text-xs text-slate-500">
-                        সময় ও স্লট শেষ হওয়ার আগেই শেষ সদস্য হিসেবে যোগ দিয়ে সর্বোচ্চ পাইকারি ছাড় নিশ্চিত করুন
-                    </p>
+                  
                 </div>
             </div>
 
             <!-- Carousel Controls: Auto-slide Indicator & Manual Arrows -->
             <div class="flex items-center space-x-2 shrink-0">
-                <!-- Auto-Scroll Status / Toggle Button -->
-                <button type="button" @click="toggleAutoPlay()" 
-                        :class="autoPlay ? 'bg-emerald-50 text-[#53a318] border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'"
-                        class="hidden md:inline-flex items-center space-x-1.5 text-[11px] font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer shadow-2xs"
-                        :title="autoPlay ? 'Click to pause automatic sliding' : 'Click to resume automatic sliding'">
-                    <span class="w-2 h-2 rounded-full" :class="autoPlay ? 'bg-[#53a318] animate-ping' : 'bg-slate-400'"></span>
-                    <span x-text="autoPlay ? 'Auto-Slide On' : 'Paused'"></span>
-                </button>
-
+               
                 <!-- See All Hot Deals Link -->
                 <a href="{{ route('hot-deals.index') }}" 
                    class="inline-flex items-center space-x-1.5 text-xs font-bold text-[#53a318] hover:text-[#418212] px-3.5 py-2 rounded-xl border border-slate-200 hover:border-[#53a318] bg-white transition-all shadow-2xs group">
-                    <span>সবগুলো ডিল</span>
+                    <span>See all</span>
                     <svg class="w-3.5 h-3.5 text-[#53a318] group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </a>
 
@@ -437,11 +425,11 @@
                             @if($needed === 1)
                                 <span class="px-2 py-0.5 rounded-lg bg-rose-600 text-white text-[10px] font-black flex items-center space-x-1 shadow-2xs">
                                     <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                                    <span>🔥 ১টি স্লট বাকি!</span>
+                                    <span>Slot left</span>
                                 </span>
                             @else
                                 <span class="px-2 py-0.5 rounded-lg bg-amber-500 text-white text-[10px] font-black flex items-center space-x-1 shadow-2xs">
-                                    <span>⚡ {{ $needed }}টি স্লট বাকি</span>
+                                    <span>{{ $needed }} Slot left</span>
                                 </span>
                             @endif
 
@@ -467,7 +455,7 @@
 
                             <!-- Low Stock Alert Badge -->
                             <span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded text-[8px] font-bold bg-amber-400 text-slate-950 shadow-2xs">
-                                স্টক সীমিত
+                                সীমিত স্টক
                             </span>
                         </a>
 
@@ -526,7 +514,7 @@
                     <div class="pt-2.5 relative z-10">
                         <a href="{{ route('group-buy.show', $group->group_code) }}" 
                            class="w-full py-2 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs text-center transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-1.5 active:scale-95">
-                            <span>⚡ স্লটে জয়েন করুন</span>
+                            <span>Join Slot</span>
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </a>
                     </div>
@@ -537,103 +525,6 @@
     </section>
     @endif
 
-
-    <!-- ========================================================
-         2.6 DUAL FLASH DEAL CAMPAIGN BANNERS (HIGH CONVERSION SOCIAL COMMERCE)
-         ======================================================== -->
-    <div id="flash-deals" class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 scroll-mt-24">
-        
-        <!-- Promo Banner 1: Smart Audio & Wireless ANC Gear -->
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-[#07192e] border border-blue-900/40 p-6 sm:p-7 text-white shadow-xl group hover:shadow-2xl hover:border-blue-700/50 transition-all duration-300">
-            <div class="absolute -top-16 -right-16 w-48 h-48 bg-cyan-500/15 rounded-full blur-2xl pointer-events-none group-hover:bg-cyan-500/25 transition-all"></div>
-            
-            <div class="relative z-10 flex flex-col justify-between h-full space-y-4">
-                <div class="space-y-2">
-                    <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-cyan-300 text-[10px] font-black uppercase tracking-wider">
-                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                        <span>🔥 TRENDING AUDIO POOL • SAVE UP TO 42%</span>
-                    </div>
-
-                    <h3 class="text-xl sm:text-2xl font-black tracking-tight leading-tight">
-                        Studio ANC Audio & Wireless Earbuds
-                    </h3>
-
-                    <p class="text-xs text-slate-300 leading-relaxed max-w-md">
-                        একসাথে ৩ জন সদস্য মিললেই ফ্ল্যাগশিপ সাউন্ড গ্যাজেটে আনলক হয় সরাসরি পাইকারি কারখানা রেট।
-                    </p>
-
-                    <!-- Feature Pills -->
-                    <div class="flex flex-wrap items-center gap-2 pt-1 text-[10px] font-bold text-slate-300">
-                        <span class="px-2 py-0.5 rounded-md bg-white/10 border border-white/10">35dB Active ANC</span>
-                        <span class="px-2 py-0.5 rounded-md bg-white/10 border border-white/10">60H Playback</span>
-                        <span class="px-2 py-0.5 rounded-md bg-white/10 border border-white/10 text-emerald-300">✓ 1-Year Warranty</span>
-                    </div>
-                </div>
-
-                <!-- Price + CTA -->
-                <div class="flex items-center justify-between pt-2 border-t border-white/10">
-                    <div>
-                        <span class="text-[10px] text-slate-400 font-bold uppercase block">Team Price From</span>
-                        <div class="flex items-baseline space-x-2">
-                            <span class="text-xl font-black text-cyan-300">৳১,৮৯০</span>
-                            <span class="text-xs text-slate-400 line-through">৳৩,২৫০</span>
-                        </div>
-                    </div>
-                    <a href="{{ route('category.show', 'smart-tech-audio') }}" 
-                       class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-black text-xs shadow-md shadow-blue-950/60 hover:scale-105 active:scale-95 transition-all flex items-center space-x-1.5">
-                        <span>Join Audio Pool</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Promo Banner 2: Winter Fleece & Cozy Living Drop -->
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-[#0a2012] to-slate-900 border border-emerald-900/40 p-6 sm:p-7 text-white shadow-xl group hover:shadow-2xl hover:border-emerald-700/50 transition-all duration-300">
-            <div class="absolute -top-16 -right-16 w-48 h-48 bg-[#53a318]/15 rounded-full blur-2xl pointer-events-none group-hover:bg-[#53a318]/25 transition-all"></div>
-            
-            <div class="relative z-10 flex flex-col justify-between h-full space-y-4">
-                <div class="space-y-2">
-                    <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[10px] font-black uppercase tracking-wider">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#84cc16] animate-ping"></span>
-                        <span>❄️ WINTER SPECIAL DROP • DIRECT WHOLESALE TIER</span>
-                    </div>
-
-                    <h3 class="text-xl sm:text-2xl font-black tracking-tight leading-tight">
-                        Heavyweight Fleece Hoodies & Home Gear
-                    </h3>
-
-                    <p class="text-xs text-slate-300 leading-relaxed max-w-md">
-                        সরাসরি নিটিং কারখানা থেকে প্রিমিয়াম অর্গানিক ফ্লিস এবং ডেইলি হোম অ্যাপ্লায়েন্স অফার।
-                    </p>
-
-                    <!-- Feature Pills -->
-                    <div class="flex flex-wrap items-center gap-2 pt-1 text-[10px] font-bold text-slate-300">
-                        <span class="px-2 py-0.5 rounded-md bg-white/10 border border-white/10">340+ GSM Organic Fleece</span>
-                        <span class="px-2 py-0.5 rounded-md bg-white/10 border border-white/10">Zero Shrinkage</span>
-                        <span class="px-2 py-0.5 rounded-md bg-white/10 border border-white/10 text-emerald-300">✓ 100% Refundable</span>
-                    </div>
-                </div>
-
-                <!-- Price + CTA -->
-                <div class="flex items-center justify-between pt-2 border-t border-white/10">
-                    <div>
-                        <span class="text-[10px] text-slate-400 font-bold uppercase block">Team Price From</span>
-                        <div class="flex items-baseline space-x-2">
-                            <span class="text-xl font-black text-[#84cc16]">৳৮৫০</span>
-                            <span class="text-xs text-slate-400 line-through">৳১,৪৫০</span>
-                        </div>
-                    </div>
-                    <a href="{{ route('category.show', 'winter-specials') }}" 
-                       class="px-4 py-2.5 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs shadow-md shadow-green-950/60 hover:scale-105 active:scale-95 transition-all flex items-center space-x-1.5">
-                        <span>Explore Winter Pools</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-    </div>
 
 
     <!-- ========================================================
@@ -651,9 +542,7 @@
                     Authorized Brand Partners & Wholesale Sourcing
                 </h3>
             </div>
-            <p class="text-[11px] text-slate-500 sm:text-right">
-                ১০০% জেনুইন প্রোডাক্টস • সরাসরি অথোরাইজড ডিস্ট্রিবিউটর ও ফ্যাক্টরি হাব
-            </p>
+
         </div>
 
         <!-- Brand Cards Grid (8 Core Sourcing Brands) -->
@@ -1467,59 +1356,10 @@
          POPUP MODALS: SHARE MODAL & RULES MODAL
          ======================================================== -->
     
-    <!-- Share / Copy Link Viral Modal -->
-    <div x-show="shareModalOpen" x-cloak 
-         class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-        <div @click.outside="shareModalOpen = false" 
-             class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-5">
-            
-            <div class="flex items-center justify-between border-b pb-3">
-                <div class="flex items-center space-x-2">
-                    <span class="text-2xl">🚀</span>
-                    <h3 class="text-base font-black text-slate-900">Invite Friends & Unlock Deal</h3>
-                </div>
-                <button @click="shareModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-2xl leading-none">&times;</button>
-            </div>
-
-            <div class="space-y-4">
-                <p class="text-xs text-slate-600" x-text="'Share &quot;' + shareGroupTitle + '&quot; with friends to reach group milestone faster!'"></p>
-
-                <!-- Group Code Display -->
-                <div class="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-center space-y-1">
-                    <span class="text-[10px] uppercase font-bold text-amber-700 block tracking-wider">Group Access Code:</span>
-                    <span class="text-2xl font-mono font-black text-amber-900 block" x-text="shareGroupCode"></span>
-                </div>
-
-                <!-- One Click Copy Link Button -->
-                <button type="button" @click="copyShareLink(shareGroupCode)" 
-                        class="w-full py-3 bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs rounded-xl shadow-md transition-colors flex items-center justify-center space-x-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    <span>Copy Invitation Link</span>
-                </button>
-
-                <!-- Direct Social Shortcuts -->
-                <div class="pt-2 space-y-2">
-                    <span class="text-[10px] font-black uppercase text-slate-400 block tracking-wider">Direct Social Share:</span>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <a :href="'https://api.whatsapp.com/send?text=' + encodeURIComponent('Hey! Join my Cartiva Group Buy circle to unlock huge volume discount: ' + window.location.origin + '/group-buy/' + shareGroupCode)" 
-                           target="_blank" 
-                           class="py-2.5 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-center flex items-center justify-center space-x-1.5 transition-colors">
-                            <span>WhatsApp</span>
-                        </a>
-                        <a :href="'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.origin + '/group-buy/' + shareGroupCode)" 
-                           target="_blank" 
-                           class="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-center flex items-center justify-center space-x-1.5 transition-colors">
-                            <span>Facebook</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <button type="button" @click="shareModalOpen = false" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors">
-                Done
-            </button>
-        </div>
-    </div>
+    <!-- ========================================================
+         SHARE / VIRAL MODAL (PROFESSIONAL CIRCULAR BRANDED)
+         ======================================================== -->
+    @include('partials.share-modal')
 
 
     <!-- Rules & Refund Policy Modal -->
