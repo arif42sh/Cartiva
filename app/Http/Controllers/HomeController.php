@@ -335,4 +335,362 @@ class HomeController extends Controller
             'minDiscount'
         ));
     }
+
+    /**
+     * Dedicated Flash Sales Rush Interface
+     */
+    public function flashSales(Request $request)
+    {
+        $categories = Category::withCount(['products' => function ($q) {
+            $q->where('is_active', true);
+        }])->get();
+
+        // 1. Time Slots Definition
+        $timeSlots = [
+            [
+                'id' => 'ended',
+                'time' => '10:00 AM',
+                'label' => 'Past Drop',
+                'subtext' => 'Ended',
+                'status' => 'ended',
+                'is_live' => false,
+                'is_upcoming' => false,
+                'is_ended' => true,
+                'unlock_time' => '10:00 AM',
+                'badge' => 'ENDED',
+            ],
+            [
+                'id' => 'live',
+                'time' => '02:00 PM',
+                'label' => 'LIVE NOW',
+                'subtext' => 'Ends in 03:42:18',
+                'status' => 'live',
+                'is_live' => true,
+                'is_upcoming' => false,
+                'is_ended' => false,
+                'unlock_time' => '02:00 PM',
+                'badge' => 'ACTIVE DROP',
+            ],
+            [
+                'id' => 'upcoming_1',
+                'time' => '06:00 PM',
+                'label' => 'Starts in 4h',
+                'subtext' => 'Set Alert',
+                'status' => 'upcoming',
+                'is_live' => false,
+                'is_upcoming' => true,
+                'is_ended' => false,
+                'unlock_time' => '06:00 PM',
+                'badge' => 'UPCOMING',
+            ],
+            [
+                'id' => 'upcoming_2',
+                'time' => '10:00 PM',
+                'label' => 'Night Rush',
+                'subtext' => 'Midnight Drop',
+                'status' => 'upcoming',
+                'is_live' => false,
+                'is_upcoming' => true,
+                'is_ended' => false,
+                'unlock_time' => '10:00 PM',
+                'badge' => 'NIGHT RUSH',
+            ],
+        ];
+
+        // 2. Fetch active products from DB or fallback mock array
+        $dbProducts = Product::with(['category', 'seller', 'activeGroupSessions'])
+            ->where('is_active', true)
+            ->get();
+
+        $enrichedDeals = [];
+        $slotDistribution = [
+            'live', 'live', 'live', 'live', 'live', 
+            'live', 'live', 'live', 'live', 'live',
+            'upcoming_1', 'upcoming_1', 'upcoming_1', 'upcoming_1', 'upcoming_1', 
+            'upcoming_2', 'upcoming_2', 'upcoming_2', 'upcoming_2', 'upcoming_2',
+            'ended', 'ended', 'ended', 'ended', 'ended'
+        ];
+
+        if ($dbProducts->isNotEmpty()) {
+            foreach ($dbProducts as $index => $product) {
+                $slotId = $slotDistribution[$index % count($slotDistribution)];
+                
+                // Deterministic high-conversion flash discount (38% to 68%)
+                $discountPct = intval(38 + (($product->id * 7) % 31));
+                $flashPrice = round($product->single_price * (1 - ($discountPct / 100)));
+                $savingsAmount = round($product->single_price - $flashPrice);
+                
+                // Collective pool extra savings
+                $poolPrice = $product->group_price > 0 ? $product->group_price : round($flashPrice * 0.88);
+                $poolExtraSavings = max(80, round($flashPrice - $poolPrice));
+                if ($poolExtraSavings <= 0) {
+                    $poolExtraSavings = max(100, round($flashPrice * 0.12));
+                    $poolPrice = max(50, $flashPrice - $poolExtraSavings);
+                }
+
+                // Stock claiming urgency
+                $claimedPct = intval(65 + (($product->id * 9) % 28)); // 65% to 93%
+                $stockLeft = max(1, min(8, intval((100 - $claimedPct) / 3)));
+                if ($slotId === 'ended') {
+                    $claimedPct = 100;
+                    $stockLeft = 0;
+                }
+
+                $claimedCount = max(85, intval(($product->sales_count * 2) + (($product->id * 23) % 90)));
+
+                $unlockTime = '02:00 PM';
+                if ($slotId === 'upcoming_1') $unlockTime = '06:00 PM';
+                elseif ($slotId === 'upcoming_2') $unlockTime = '10:00 PM';
+                elseif ($slotId === 'ended') $unlockTime = '10:00 AM';
+
+                $rawCat = $product->category->name ?? 'General';
+                $cleanCat = trim(preg_replace('/\(.*?\)/', '', $rawCat));
+                $catSlug = $product->category->slug ?? 'gadgets';
+
+                $remainingSecs = max(1800, (2 * 3600) + (($product->id * 437) % 10800));
+                $roomCode = 'GRP-' . strtoupper(substr(str_replace('-', '', $product->slug), 0, 6));
+                $joinedCount = ($product->id % 2 === 0) ? 2 : 1;
+                $requiredCount = ($product->id % 2 === 0) ? 3 : 2;
+
+                $enrichedDeals[] = [
+                    'id' => $product->id,
+                    'title' => $product->title,
+                    'slug' => $product->slug,
+                    'image_url' => $product->image_url,
+                    'category_name' => $cleanCat,
+                    'category_slug' => $catSlug,
+                    'single_price' => (float)$product->single_price,
+                    'flash_price' => (float)$flashPrice,
+                    'discount_percent' => $discountPct,
+                    'savings_amount' => (float)$savingsAmount,
+                    'pool_price' => (float)$poolPrice,
+                    'pool_extra_savings' => (float)$poolExtraSavings,
+                    'rating' => (float)($product->rating ?: 4.8),
+                    'sales_count' => (int)($product->sales_count ?: 45),
+                    'claimed_count' => $claimedCount,
+                    'claimed_percent' => $claimedPct,
+                    'stock_left' => $stockLeft,
+                    'is_almost_sold_out' => ($stockLeft <= 2),
+                    'is_deep_discount' => ($discountPct >= 50),
+                    'is_under_999' => ($flashPrice < 1000),
+                    'slot_id' => $slotId,
+                    'unlock_time' => $unlockTime,
+                    'remaining_secs' => $remainingSecs,
+                    'room_code' => $roomCode,
+                    'joined_count' => $joinedCount,
+                    'required_count' => $requiredCount,
+                ];
+            }
+        } else {
+            // Standalone Mock Dataset for instant out-of-the-box rendering/testing
+            $mockItems = [
+                [
+                    'id' => 101,
+                    'title' => 'SoundCore Ultra ANC Wireless Studio Headphones',
+                    'slug' => 'soundcore-ultra-anc-wireless',
+                    'image_url' => 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80',
+                    'category_name' => 'Gadgets & Audio',
+                    'category_slug' => 'gadgets',
+                    'single_price' => 4500,
+                    'flash_price' => 1990,
+                    'discount_percent' => 56,
+                    'savings_amount' => 2510,
+                    'pool_price' => 1840,
+                    'pool_extra_savings' => 150,
+                    'rating' => 4.9,
+                    'sales_count' => 140,
+                    'claimed_count' => 182,
+                    'claimed_percent' => 88,
+                    'stock_left' => 4,
+                    'is_almost_sold_out' => true,
+                    'is_deep_discount' => true,
+                    'is_under_999' => false,
+                    'slot_id' => 'live',
+                    'unlock_time' => '02:00 PM',
+                ],
+                [
+                    'id' => 102,
+                    'title' => 'Heavyweight 450 GSM Organic Fleece Winter Drop Hoodie',
+                    'slug' => 'heavyweight-fleece-hoodie',
+                    'image_url' => 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80',
+                    'category_name' => 'Campus Apparel',
+                    'category_slug' => 'apparel',
+                    'single_price' => 1850,
+                    'flash_price' => 890,
+                    'discount_percent' => 52,
+                    'savings_amount' => 960,
+                    'pool_price' => 740,
+                    'pool_extra_savings' => 150,
+                    'rating' => 4.95,
+                    'sales_count' => 310,
+                    'claimed_count' => 264,
+                    'claimed_percent' => 92,
+                    'stock_left' => 3,
+                    'is_almost_sold_out' => true,
+                    'is_deep_discount' => true,
+                    'is_under_999' => true,
+                    'slot_id' => 'live',
+                    'unlock_time' => '02:00 PM',
+                ],
+                [
+                    'id' => 103,
+                    'title' => '65W GaN III Multiport Super Fast Charging Hub',
+                    'slug' => '65w-gan-fast-charger',
+                    'image_url' => 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=800&q=80',
+                    'category_name' => 'Gadgets & Audio',
+                    'category_slug' => 'gadgets',
+                    'single_price' => 2200,
+                    'flash_price' => 980,
+                    'discount_percent' => 55,
+                    'savings_amount' => 1220,
+                    'pool_price' => 830,
+                    'pool_extra_savings' => 150,
+                    'rating' => 4.85,
+                    'sales_count' => 95,
+                    'claimed_count' => 110,
+                    'claimed_percent' => 74,
+                    'stock_left' => 8,
+                    'is_almost_sold_out' => false,
+                    'is_deep_discount' => true,
+                    'is_under_999' => true,
+                    'slot_id' => 'live',
+                    'unlock_time' => '02:00 PM',
+                ],
+                [
+                    'id' => 104,
+                    'title' => 'AeroFit Pro Wireless Sport Earbuds with BassBoost',
+                    'slug' => 'aerofit-pro-wireless-earbuds',
+                    'image_url' => 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&q=80',
+                    'category_name' => 'Gadgets & Audio',
+                    'category_slug' => 'gadgets',
+                    'single_price' => 3250,
+                    'flash_price' => 1490,
+                    'discount_percent' => 54,
+                    'savings_amount' => 1760,
+                    'pool_price' => 1340,
+                    'pool_extra_savings' => 150,
+                    'rating' => 4.88,
+                    'sales_count' => 220,
+                    'claimed_count' => 195,
+                    'claimed_percent' => 85,
+                    'stock_left' => 5,
+                    'is_almost_sold_out' => true,
+                    'is_deep_discount' => true,
+                    'is_under_999' => false,
+                    'slot_id' => 'live',
+                    'unlock_time' => '02:00 PM',
+                ],
+                [
+                    'id' => 105,
+                    'title' => 'CyberBeast RGB 75% Mechanical Hot-Swap Keyboard',
+                    'slug' => 'cyberbeast-rgb-mechanical-keyboard',
+                    'image_url' => 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&q=80',
+                    'category_name' => 'Gadgets & Audio',
+                    'category_slug' => 'gadgets',
+                    'single_price' => 4800,
+                    'flash_price' => 2350,
+                    'discount_percent' => 51,
+                    'savings_amount' => 2450,
+                    'pool_price' => 2150,
+                    'pool_extra_savings' => 200,
+                    'rating' => 4.92,
+                    'sales_count' => 88,
+                    'claimed_count' => 0,
+                    'claimed_percent' => 0,
+                    'stock_left' => 25,
+                    'is_almost_sold_out' => false,
+                    'is_deep_discount' => true,
+                    'is_under_999' => false,
+                    'slot_id' => 'upcoming_1',
+                    'unlock_time' => '06:00 PM',
+                ],
+                [
+                    'id' => 106,
+                    'title' => 'Minimalist Water-Resistant Commuter Laptop Backpack 25L',
+                    'slug' => 'minimalist-laptop-backpack',
+                    'image_url' => 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80',
+                    'category_name' => 'Campus Apparel',
+                    'category_slug' => 'apparel',
+                    'single_price' => 2400,
+                    'flash_price' => 950,
+                    'discount_percent' => 60,
+                    'savings_amount' => 1450,
+                    'pool_price' => 820,
+                    'pool_extra_savings' => 130,
+                    'rating' => 4.86,
+                    'sales_count' => 175,
+                    'claimed_count' => 0,
+                    'claimed_percent' => 0,
+                    'stock_left' => 30,
+                    'is_almost_sold_out' => false,
+                    'is_deep_discount' => true,
+                    'is_under_999' => true,
+                    'slot_id' => 'upcoming_1',
+                    'unlock_time' => '06:00 PM',
+                ],
+                [
+                    'id' => 107,
+                    'title' => '1.96-inch AMOLED IP68 Bluetooth Calling Smartwatch',
+                    'slug' => 'amoled-smartwatch-ip68',
+                    'image_url' => 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
+                    'category_name' => 'Gadgets & Audio',
+                    'category_slug' => 'gadgets',
+                    'single_price' => 3990,
+                    'flash_price' => 1890,
+                    'discount_percent' => 53,
+                    'savings_amount' => 2100,
+                    'pool_price' => 1690,
+                    'pool_extra_savings' => 200,
+                    'rating' => 4.79,
+                    'sales_count' => 130,
+                    'claimed_count' => 0,
+                    'claimed_percent' => 0,
+                    'stock_left' => 18,
+                    'is_almost_sold_out' => false,
+                    'is_deep_discount' => true,
+                    'is_under_999' => false,
+                    'slot_id' => 'upcoming_2',
+                    'unlock_time' => '10:00 PM',
+                ],
+                [
+                    'id' => 108,
+                    'title' => 'Compact 1500W Rapid Air Fryer with Digital Preset Menu',
+                    'slug' => 'compact-rapid-air-fryer',
+                    'image_url' => 'https://images.unsplash.com/photo-1585670149967-b4f4da88cc9f?w=800&q=80',
+                    'category_name' => 'Lifestyle & Home',
+                    'category_slug' => 'home',
+                    'single_price' => 6500,
+                    'flash_price' => 3200,
+                    'discount_percent' => 51,
+                    'savings_amount' => 3300,
+                    'pool_price' => 2950,
+                    'pool_extra_savings' => 250,
+                    'rating' => 4.91,
+                    'sales_count' => 60,
+                    'claimed_count' => 50,
+                    'claimed_percent' => 100,
+                    'stock_left' => 0,
+                    'is_almost_sold_out' => false,
+                    'is_deep_discount' => true,
+                    'is_under_999' => false,
+                    'slot_id' => 'ended',
+                    'unlock_time' => '10:00 AM',
+                ],
+            ];
+            $enrichedDeals = $mockItems;
+        }
+
+        $selectedSlot = $request->input('slot', 'live');
+        $validSlotIds = array_column($timeSlots, 'id');
+        if (!in_array($selectedSlot, $validSlotIds)) {
+            $selectedSlot = 'live';
+        }
+
+        return view('flash-sales.index', compact(
+            'timeSlots',
+            'enrichedDeals',
+            'categories',
+            'selectedSlot'
+        ));
+    }
 }

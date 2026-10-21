@@ -538,8 +538,9 @@
                     <span class="text-slate-300 font-light select-none">•</span>
 
                     <!-- Flash Sales -->
-                    <a href="{{ route('home') }}#flash-deals" 
-                       class="px-3 py-1.5 rounded-xl transition-all flex items-center space-x-1 text-slate-700 hover:text-amber-600 hover:bg-amber-50/50">
+                    <a href="{{ route('flash-sales.index') }}" 
+                       class="px-3 py-1.5 rounded-xl transition-all flex items-center space-x-1 {{ request()->routeIs('flash-sales.*') ? 'text-amber-600 bg-amber-50 font-bold shadow-xs' : 'text-slate-700 hover:text-amber-600 hover:bg-amber-50/50' }}">
+                        <span class="text-amber-500">⚡</span>
                         <span>Flash Sales</span>
                     </a>
 
@@ -598,7 +599,7 @@
                 <div class="flex flex-col space-y-2 text-sm font-semibold text-slate-700">
                     <a href="{{ route('home') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100">Home</a>
                     <a href="{{ route('hot-deals.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-rose-600 font-bold">Hot Deals</a>
-                    <a href="{{ route('home') }}#flash-deals" class="px-3 py-2 rounded-lg hover:bg-slate-100">Flash Sales</a>
+                    <a href="{{ route('flash-sales.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 {{ request()->routeIs('flash-sales.*') ? 'text-amber-600 font-bold bg-amber-50' : '' }}">⚡ Flash Sales</a>
                     <a href="{{ route('home') }}#active-deals" class="px-3 py-2 rounded-lg hover:bg-slate-100">Group Pools</a>
                     <a href="{{ route('home') }}#how-it-works" class="px-3 py-2 rounded-lg hover:bg-slate-100">How It Works</a>
                     <a href="{{ route('orders.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 {{ request()->routeIs('orders.*') ? 'text-[#53a318] font-bold' : '' }}">
@@ -811,7 +812,7 @@
                         <li><a href="#how-it-works" class="hover:text-white hover:translate-x-1 transition-all inline-block">About Us</a></li>
                         <li><a href="{{ route('home') }}" class="hover:text-white hover:translate-x-1 transition-all inline-block">All Products</a></li>
                         <li><a href="#today-deals" class="hover:text-white hover:translate-x-1 transition-all inline-block">Group Deals</a></li>
-                        <li><a href="#flash-deals" class="hover:text-white hover:translate-x-1 transition-all inline-block">Flash Deals</a></li>
+                        <li><a href="{{ route('flash-sales.index') }}" class="hover:text-white hover:translate-x-1 transition-all inline-block">Flash Deals</a></li>
                         <li><a href="#quick-categories" class="hover:text-white hover:translate-x-1 transition-all inline-block">Categories</a></li>
                     </ul>
                 </div>
