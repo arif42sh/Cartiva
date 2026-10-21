@@ -133,8 +133,8 @@
             <!-- Quantity Selector (Applies to both Solo & Team purchases) -->
             <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-wrap items-center justify-between gap-3">
                 <div>
-                    <span class="text-xs font-bold text-slate-900 block">Select Purchase Quantity</span>
-                    <span class="text-[11px] text-slate-500">Applies to both Team Buy and Solo Purchase</span>
+                    <span class="text-xs font-bold text-slate-900 block">Quantity</span>
+                    
                 </div>
 
                 <div class="flex items-center space-x-2">
@@ -159,9 +159,7 @@
                 <div class="relative bg-emerald-50/70 rounded-3xl border-2 border-[#53a318] p-5 shadow-xs flex flex-col justify-between space-y-4">
                     <div class="space-y-2">
                         <div class="flex items-center justify-between">
-                            <span class="px-2.5 py-0.5 rounded-full bg-[#53a318] text-white text-[10px] font-black uppercase tracking-wider shadow-2xs">
-                                ★ BEST VALUE
-                            </span>
+                           
                             <span class="text-[10px] font-bold text-emerald-800 bg-white/90 px-2 py-0.5 rounded-md border border-emerald-200">
                                 {{ $product->group_size_required }} Buyers Team
                             </span>
@@ -191,7 +189,7 @@
                             <input type="hidden" name="quantity" :value="qty">
                             <button type="submit" 
                                     class="w-full py-3 px-4 rounded-xl font-black text-xs sm:text-sm bg-[#53a318] hover:bg-[#468c13] text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2 active:scale-[0.99] cursor-pointer">
-                                <span>Start Team Buy</span>
+                                <span>Group Buy</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </button>
                         </form>
@@ -202,22 +200,15 @@
                 <div class="relative bg-white rounded-3xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between space-y-4">
                     <div class="space-y-2">
                         <div class="flex items-center justify-between">
-                            <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold uppercase tracking-wider">
-                                SOLO PURCHASE
-                            </span>
-                            <span class="text-[10px] font-bold text-slate-400">
-                                Immediate dispatch
-                            </span>
+                            
                         </div>
 
                         <div>
-                            <span class="text-[10px] uppercase font-bold text-slate-500 block">Regular Retail Price</span>
+                            <span class="text-[10px] uppercase font-bold text-slate-500 block">Price</span>
                             <div class="flex items-baseline space-x-2 mt-0.5">
                                 <span class="text-xl sm:text-2xl font-black text-slate-900">৳{{ number_format($product->single_price) }}</span>
                             </div>
-                            <span class="text-[10px] text-slate-500 block mt-1">
-                                Standard direct checkout
-                            </span>
+                            
                         </div>
                     </div>
 
@@ -230,7 +221,7 @@
 
                         <a :href="'{{ route('checkout', ['product_id' => $product->id, 'type' => 'single', 'action' => 'buy_single']) }}' + '&quantity=' + qty" 
                            class="w-full py-3 px-4 rounded-xl font-bold text-xs sm:text-sm bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-all flex items-center justify-center space-x-2 active:scale-[0.99] text-center">
-                            <span>Buy Solo Direct</span>
+                            <span>Purchase</span>
                         </a>
                     </div>
                 </div>
@@ -250,7 +241,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
             <div>
                 <div class="flex items-center space-x-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500 {{ $activeGroups->isNotEmpty() ? 'animate-ping' : '' }}"></span>
+                    
                     <h2 class="text-base font-black text-slate-900 tracking-tight">
                         Active Running Teams for this Product
                     </h2>
