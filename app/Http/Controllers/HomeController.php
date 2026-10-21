@@ -271,6 +271,95 @@ class HomeController extends Controller
         ));
     }
 
+    public function categoriesIndex(Request $request)
+    {
+        $selectedCategorySlug = $request->input('category', 'all');
+        $viewMode = $request->input('view', 'all');
+        $searchQ = $request->input('q');
+        $sort = $request->input('sort', 'latest');
+
+        $categories = Category::withCount(['products' => function ($q) {
+            $q->where('is_active', true);
+        }])->get();
+
+        $selectedCategoryModel = null;
+        if ($selectedCategorySlug !== 'all') {
+            $selectedCategoryModel = Category::where('slug', $selectedCategorySlug)->first();
+        }
+
+        $productsQuery = Product::with(['category', 'seller', 'activeGroupSessions.members.user'])
+            ->where('is_active', true);
+
+        if ($request->filled('q')) {
+            $q = trim($searchQ);
+            $productsQuery->where(function ($sub) use ($q) {
+                $sub->where('title', 'like', "%{$q}%")
+                    ->orWhere('description', 'like', "%{$q}%");
+            });
+        }
+
+        if ($selectedCategorySlug !== 'all') {
+            $productsQuery->whereHas('category', function ($sub) use ($selectedCategorySlug) {
+                if ($selectedCategorySlug === 'smart-tech-audio' || $selectedCategorySlug === 'tech-accessories') {
+                    $sub->whereIn('slug', ['smart-tech-audio', 'tech-accessories']);
+                } elseif ($selectedCategorySlug === 'home-living' || $selectedCategorySlug === 'home-lifestyle') {
+                    $sub->whereIn('slug', ['home-living', 'home-lifestyle']);
+                } elseif ($selectedCategorySlug === 'computing-gaming' || $selectedCategorySlug === 'computers-accessories') {
+                    $sub->whereIn('slug', ['computing-gaming', 'computers-accessories']);
+                } elseif (in_array($selectedCategorySlug, ['fashion-wearables', 'winter-specials', 'fashion-bags'])) {
+                    $sub->whereIn('slug', ['fashion-wearables', 'winter-specials', 'fashion-bags']);
+                } else {
+                    $sub->where('slug', $selectedCategorySlug);
+                }
+            });
+        }
+
+        switch ($sort) {
+            case 'discount':
+                $productsQuery->orderByRaw('((single_price - group_price) / single_price) DESC');
+                break;
+            case 'price_low':
+                $productsQuery->orderBy('group_price', 'asc');
+                break;
+            case 'price_high':
+                $productsQuery->orderBy('group_price', 'desc');
+                break;
+            case 'popular':
+                $productsQuery->orderBy('sales_count', 'desc');
+                break;
+            default:
+                $productsQuery->latest();
+                break;
+        }
+
+        $products = $productsQuery->paginate(16)->withQueryString();
+
+        $groupedCategories = Category::withCount(['products' => function ($q) {
+                $q->where('is_active', true);
+            }])
+            ->having('products_count', '>', 0)
+            ->with(['products' => function ($q) {
+                $q->where('is_active', true)
+                  ->with(['category', 'seller', 'activeGroupSessions.members.user'])
+                  ->take(8);
+            }])
+            ->get();
+
+        $totalProductsCount = Product::where('is_active', true)->count();
+
+        return view('categories.index', compact(
+            'categories',
+            'products',
+            'groupedCategories',
+            'selectedCategorySlug',
+            'selectedCategoryModel',
+            'viewMode',
+            'searchQ',
+            'sort',
+            'totalProductsCount'
+        ));
+    }
+
     public function hotDeals(Request $request)
     {
         $categories = Category::withCount(['products' => function ($q) {

@@ -19,6 +19,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/hot-deals', [HomeController::class, 'hotDeals'])->name('hot-deals.index');
 Route::get('/flash-sales', [HomeController::class, 'flashSales'])->name('flash-sales.index');
 Route::get('/group-pools', [HomeController::class, 'groupPools'])->name('group-pools.index');
+Route::get('/categories', [HomeController::class, 'categoriesIndex'])->name('categories.index');
 Route::get('/category/{category:slug}', [HomeController::class, 'category'])->name('category.show');
 Route::get('/product/{product:slug}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/group-buy/{session:group_code}', [GroupBuyController::class, 'show'])->name('group-buy.show');
