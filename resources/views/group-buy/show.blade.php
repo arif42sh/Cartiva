@@ -46,7 +46,7 @@
                 </span>
                 <h1 class="text-base sm:text-lg font-black text-white flex items-center space-x-2">
                     @if($isCompleted)
-                        <span>🎉 Wholesale Team Price Successfully Unlocked!</span>
+                        <span> Wholesale Team Price Successfully Unlocked!</span>
                     @elseif($isExpired)
                         <span>⏳ Group Pool Expired</span>
                     @else

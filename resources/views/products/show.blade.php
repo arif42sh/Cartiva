@@ -193,19 +193,7 @@
                         </div>
 
                         <!-- Slots remaining preview -->
-                        <div class="p-2.5 rounded-xl bg-white/90 border border-emerald-200/90 text-[11px] text-slate-700 space-y-1">
-                            <template x-if="!isSelfGroup">
-                                <div>
-                                    <span class="font-bold text-slate-800">টার্গেট কোটা: {{ $product->group_size_required }}টি</span> • 
-                                    <span>আপনি নিচ্ছেন <strong x-text="qty"></strong>টি (বাকি থাকবে <strong class="text-emerald-700" x-text="groupSizeRequired - qty"></strong>টি স্লট)</span>
-                                </div>
-                            </template>
-                            <template x-if="isSelfGroup">
-                                <div class="text-emerald-800 font-bold">
-                                    আপনি একাই পুরো গ্রুপের কোটা ({{ $product->group_size_required }}টি) পূরণ করছেন! কোনো অপেক্ষা ছাড়াই সরাসরি গ্রুপ রেট প্রযোজ্য।
-                                </div>
-                            </template>
-                        </div>
+                    
                     </div>
 
                     <!-- Total Subtotal for Qty -->
@@ -248,21 +236,9 @@
                                     <span class="text-xs text-slate-400 line-through">৳{{ number_format($product->single_price) }}</span>
                                 </template>
                             </div>
-                            <template x-if="soloSavingsPerUnit > 0">
-                                <span class="text-[10px] font-bold text-emerald-700 block mt-1">
-                                    সাশ্রয়: ৳<span x-text="Number(soloSavingsPerUnit).toLocaleString()"></span> / ইউনিট
-                                </span>
-                            </template>
                         </div>
 
-                        <!-- Tier Indicator Strip -->
-                        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-600 space-y-1">
-                            <div class="flex justify-between items-center text-[10px]">
-                                <span :class="qty === 1 ? 'font-black text-slate-900' : 'text-slate-400'">১টি: ৳{{ number_format($product->single_price) }}</span>
-                                <span :class="qty === 2 ? 'font-black text-emerald-700' : 'text-slate-400'">২টি: ৳{{ number_format($product->tier2_price) }}</span>
-                                <span :class="qty >= 3 ? 'font-black text-emerald-700' : 'text-slate-400'">৩+ টি: ৳{{ number_format($product->group_price) }}</span>
-                            </div>
-                        </div>
+
                     </div>
 
                     <!-- Total Subtotal for Qty -->
