@@ -27,13 +27,24 @@ class OrderController extends Controller
         if ($sessionId) {
             $session = GroupBuySession::findOrFail($sessionId);
             if ($session->isExpired() || $session->isCompleted()) {
-                return redirect()->route('products.show', $product)
-                    ->with('error', 'This team buy session is no longer active.');
+                return redirect()->route('products.show', $product->slug)
+                    ->with('error', 'এই গ্রুপটির সময় শেষ হয়ে গেছে অথবা ইতোমধ্যে সম্পূর্ণ হয়ে গেছে।');
             }
         }
 
-        $unitPrice = ($orderType === 'group_buy') ? $product->group_price : $product->single_price;
         $quantity = max(1, min((int) $request->input('quantity', 1), max(1, $product->stock)));
+
+        if ($orderType === 'group_buy') {
+            $unitPrice = (float) $product->group_price;
+            if ($session) {
+                $remaining = $session->remainingSlots();
+                $quantity = min($quantity, max(1, $remaining));
+            }
+        } else {
+            // Method 2: Dynamic Bulk Tier Pricing for Solo Buy
+            $unitPrice = $product->getSoloUnitPrice($quantity);
+        }
+
         $subtotal = $unitPrice * $quantity;
         $shipping = 0.00; // Free shipping promo
         $total = $subtotal + $shipping;
@@ -62,10 +73,21 @@ class OrderController extends Controller
         $orderType = $request->order_type;
         $action = $request->action;
 
-        $unitPrice = ($orderType === 'group_buy') ? $product->group_price : $product->single_price;
-        $quantity = max(1, min((int) $request->input('quantity', 1), max(1, $product->stock)));
-        $total = $unitPrice * $quantity;
+        $quantity = max(1, (int) $request->input('quantity', 1));
 
+        // Real-time stock validation
+        if ($product->stock < $quantity) {
+            return back()->with('error', 'দুঃখিত, এই পণ্যের মাত্র ' . $product->stock . 'টি পণ্য স্টকে রয়েছে।');
+        }
+
+        if ($orderType === 'group_buy') {
+            $unitPrice = (float) $product->group_price;
+        } else {
+            // Method 2: Dynamic Bulk Tier Pricing for Solo Buy
+            $unitPrice = $product->getSoloUnitPrice($quantity);
+        }
+
+        $total = $unitPrice * $quantity;
         $createdSession = null;
 
         $order = DB::transaction(function () use ($request, $user, $product, $orderType, $action, $unitPrice, $quantity, $total, &$createdSession) {
@@ -74,21 +96,23 @@ class OrderController extends Controller
 
             if ($orderType === 'group_buy') {
                 if ($action === 'start_new') {
-                    // Start new group buy session
+                    $targetUnits = (int) $product->group_size_required;
+                    // If the user's quantity already meets or exceeds target quota, instant complete!
+                    $isInstantComplete = ($quantity >= $targetUnits);
+
                     $createdSession = GroupBuySession::create([
                         'product_id' => $product->id,
                         'leader_user_id' => $user->id,
                         'group_code' => 'GRP-' . strtoupper(Str::random(6)),
-                        'required_members' => $product->group_size_required,
-                        'current_members' => 1,
-                        'status' => 'active',
+                        'required_members' => $targetUnits,
+                        'current_members' => $quantity, // Unit/Quantity-based quota
+                        'status' => $isInstantComplete ? 'completed' : 'active',
                         'expires_at' => now()->addHours($product->group_duration_hours),
                     ]);
 
                     $sessionId = $createdSession->id;
-                    $orderStatus = 'pending_group';
+                    $orderStatus = $isInstantComplete ? 'processing' : 'pending_group';
 
-                    // Add leader as member
                     GroupBuyMember::create([
                         'group_buy_session_id' => $createdSession->id,
                         'user_id' => $user->id,
@@ -99,29 +123,36 @@ class OrderController extends Controller
                     $existingSession = GroupBuySession::lockForUpdate()->findOrFail($request->session_id);
 
                     if ($existingSession->isExpired() || $existingSession->isCompleted()) {
-                        throw new \Exception('This team buy session is no longer active.');
+                        throw new \Exception('এই গ্রুপটির সময় শেষ হয়ে গেছে অথবা ইতোমধ্যে সম্পূর্ণ হয়ে গেছে।');
                     }
 
-                    if ($existingSession->hasUserJoined($user->id)) {
-                        throw new \Exception('You have already joined this group.');
+                    $remaining = $existingSession->remainingSlots();
+                    if ($quantity > $remaining) {
+                        throw new \Exception('এই গ্রুপটি সম্পন্ন করতে আর মাত্র ' . $remaining . 'টি স্লট বাকি আছে।');
                     }
 
-                    $existingSession->increment('current_members');
+                    $newTotalUnits = $existingSession->current_members + $quantity;
+                    $isCompleted = ($newTotalUnits >= $existingSession->required_members);
+
+                    $existingSession->update([
+                        'current_members' => $newTotalUnits,
+                        'status' => $isCompleted ? 'completed' : 'active',
+                    ]);
+
                     $sessionId = $existingSession->id;
                     $createdSession = $existingSession;
 
-                    GroupBuyMember::create([
+                    // Support multiple contributions by existing members without unique key conflict
+                    GroupBuyMember::firstOrCreate([
                         'group_buy_session_id' => $existingSession->id,
                         'user_id' => $user->id,
+                    ], [
                         'is_leader' => false,
                         'joined_at' => now(),
                     ]);
 
-                    // Check if group is now complete
-                    if ($existingSession->current_members >= $existingSession->required_members) {
-                        $existingSession->update(['status' => 'completed']);
+                    if ($isCompleted) {
                         $orderStatus = 'processing';
-
                         // Transition all previous members' orders in this session to processing
                         Order::where('group_buy_session_id', $existingSession->id)
                             ->where('order_status', 'pending_group')
@@ -157,7 +188,8 @@ class OrderController extends Controller
                 'subtotal' => $total,
             ]);
 
-            // Increment product sales count
+            // Real-time stock decrement and sales increment
+            $product->decrement('stock', $quantity);
             $product->increment('sales_count', $quantity);
 
             return $order;
@@ -165,15 +197,15 @@ class OrderController extends Controller
 
         if ($orderType === 'group_buy' && $createdSession) {
             if ($createdSession->status === 'completed') {
-                return redirect()->route('group-buy.show', $createdSession)
-                    ->with('success', '🎉 Congratulations! Your Team Buy is 100% complete and your order is now processing!');
+                return redirect()->route('group-buy.show', $createdSession->group_code)
+                    ->with('success', 'অভিনন্দন! আপনার গ্রুপের সম্পূর্ণ কোটা পূরণ হয়েছে এবং অর্ডারটি প্রসেসিং শুরু হয়েছে।');
             }
-            return redirect()->route('group-buy.show', $createdSession)
-                ->with('success', 'Team Buy initiated! Share the link with friends to lock in your discount!');
+            return redirect()->route('group-buy.show', $createdSession->group_code)
+                ->with('success', 'গ্রুপ সফলভাবে শুরু হয়েছে! বাকি স্লট পূরণ করতে বন্ধুদের সাথে শেয়ার করুন।');
         }
 
         return redirect()->route('orders.show', $order)
-            ->with('success', 'Your order has been placed successfully!');
+            ->with('success', 'আপনার অর্ডারটি সফলভাবে সম্পন্ন হয়েছে!');
     }
 
     public function index()

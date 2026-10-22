@@ -12,6 +12,9 @@ class ProductController extends Controller
     {
         abort_unless($product->is_active, 404);
 
+        // Auto-expire any outdated sessions and release inventory
+        GroupBuySession::checkAndExpireSessions();
+
         $product->load(['seller', 'category']);
 
         // Active groups for this specific product that have slots available

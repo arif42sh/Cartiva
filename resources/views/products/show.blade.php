@@ -19,8 +19,24 @@
         activeTab: 'specs',
         activeImg: '{{ $product->image_url }}',
         groupUnitPrice: {{ (float) $product->group_price }},
-        singleUnitPrice: {{ (float) $product->single_price }},
+        baseSinglePrice: {{ (float) $product->single_price }},
+        groupSizeRequired: {{ (int) $product->group_size_required }},
         savePerUnit: {{ (float) $savePerUnit }},
+        get currentSingleUnitPrice() {
+            if (this.qty >= 3) {
+                return this.groupUnitPrice;
+            } else if (this.qty === 2) {
+                const diff = this.baseSinglePrice - this.groupUnitPrice;
+                return Math.round((this.baseSinglePrice - (diff * 0.8)) / 10) * 10;
+            }
+            return this.baseSinglePrice;
+        },
+        get soloSavingsPerUnit() {
+            return Math.max(0, this.baseSinglePrice - this.currentSingleUnitPrice);
+        },
+        get isSelfGroup() {
+            return this.qty >= this.groupSizeRequired;
+        },
         inc() { if (this.qty < this.maxQty) this.qty++; },
         dec() { if (this.qty > 1) this.qty--; }
      }">
@@ -159,9 +175,9 @@
                 <div class="relative bg-emerald-50/70 rounded-3xl border-2 border-[#53a318] p-5 shadow-xs flex flex-col justify-between space-y-4">
                     <div class="space-y-2">
                         <div class="flex items-center justify-between">
-                           
                             <span class="text-[10px] font-bold text-emerald-800 bg-white/90 px-2 py-0.5 rounded-md border border-emerald-200">
-                                {{ $product->group_size_required }} Buyers Team
+                                <span x-show="!isSelfGroup">{{ $product->group_size_required }} Buyers Pool</span>
+                                <span x-show="isSelfGroup" class="text-emerald-700 font-extrabold">Instant Group Unlocked</span>
                             </span>
                         </div>
 
@@ -174,6 +190,21 @@
                             <span class="text-[10px] font-bold text-emerald-700 block mt-1">
                                 Save ৳{{ number_format($savePerUnit) }} per unit
                             </span>
+                        </div>
+
+                        <!-- Slots remaining preview -->
+                        <div class="p-2.5 rounded-xl bg-white/90 border border-emerald-200/90 text-[11px] text-slate-700 space-y-1">
+                            <template x-if="!isSelfGroup">
+                                <div>
+                                    <span class="font-bold text-slate-800">টার্গেট কোটা: {{ $product->group_size_required }}টি</span> • 
+                                    <span>আপনি নিচ্ছেন <strong x-text="qty"></strong>টি (বাকি থাকবে <strong class="text-emerald-700" x-text="groupSizeRequired - qty"></strong>টি স্লট)</span>
+                                </div>
+                            </template>
+                            <template x-if="isSelfGroup">
+                                <div class="text-emerald-800 font-bold">
+                                    আপনি একাই পুরো গ্রুপের কোটা ({{ $product->group_size_required }}টি) পূরণ করছেন! কোনো অপেক্ষা ছাড়াই সরাসরি গ্রুপ রেট প্রযোজ্য।
+                                </div>
+                            </template>
                         </div>
                     </div>
 
@@ -189,26 +220,48 @@
                             <input type="hidden" name="quantity" :value="qty">
                             <button type="submit" 
                                     class="w-full py-3 px-4 rounded-xl font-black text-xs sm:text-sm bg-[#53a318] hover:bg-[#468c13] text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2 active:scale-[0.99] cursor-pointer">
-                                <span>Group Buy</span>
+                                <span x-show="!isSelfGroup">Group Buy</span>
+                                <span x-show="isSelfGroup">Instant Group Buy</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </button>
                         </form>
                     </div>
                 </div>
 
-                <!-- Option B: Solo Instant Buy -->
+                <!-- Option B: Solo Instant Buy (Method 2: Dynamic Bulk Tier) -->
                 <div class="relative bg-white rounded-3xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between space-y-4">
                     <div class="space-y-2">
                         <div class="flex items-center justify-between">
-                            
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md"
+                                  :class="qty >= 3 ? 'bg-emerald-100 text-emerald-800' : (qty === 2 ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600')">
+                                <span x-show="qty === 1">খুচরা মূল্য</span>
+                                <span x-show="qty === 2">মিনি বাল্ক রেট</span>
+                                <span x-show="qty >= 3">হোলসেল রেট</span>
+                            </span>
                         </div>
 
                         <div>
-                            <span class="text-[10px] uppercase font-bold text-slate-500 block">Price</span>
+                            <span class="text-[10px] uppercase font-bold text-slate-500 block">Unit Price</span>
                             <div class="flex items-baseline space-x-2 mt-0.5">
-                                <span class="text-xl sm:text-2xl font-black text-slate-900">৳{{ number_format($product->single_price) }}</span>
+                                <span class="text-xl sm:text-2xl font-black text-slate-900">৳<span x-text="Number(currentSingleUnitPrice).toLocaleString()"></span></span>
+                                <template x-if="qty > 1">
+                                    <span class="text-xs text-slate-400 line-through">৳{{ number_format($product->single_price) }}</span>
+                                </template>
                             </div>
-                            
+                            <template x-if="soloSavingsPerUnit > 0">
+                                <span class="text-[10px] font-bold text-emerald-700 block mt-1">
+                                    সাশ্রয়: ৳<span x-text="Number(soloSavingsPerUnit).toLocaleString()"></span> / ইউনিট
+                                </span>
+                            </template>
+                        </div>
+
+                        <!-- Tier Indicator Strip -->
+                        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-600 space-y-1">
+                            <div class="flex justify-between items-center text-[10px]">
+                                <span :class="qty === 1 ? 'font-black text-slate-900' : 'text-slate-400'">১টি: ৳{{ number_format($product->single_price) }}</span>
+                                <span :class="qty === 2 ? 'font-black text-emerald-700' : 'text-slate-400'">২টি: ৳{{ number_format($product->tier2_price) }}</span>
+                                <span :class="qty >= 3 ? 'font-black text-emerald-700' : 'text-slate-400'">৩+ টি: ৳{{ number_format($product->group_price) }}</span>
+                            </div>
                         </div>
                     </div>
 
@@ -216,18 +269,18 @@
                     <div class="pt-2 border-t border-slate-100">
                         <div class="flex items-center justify-between text-xs mb-3">
                             <span class="text-slate-600 font-semibold">Total (<span x-text="qty"></span> <span x-text="qty > 1 ? 'units' : 'unit'"></span>):</span>
-                            <span class="text-sm font-black text-slate-900">৳<span x-text="Number(qty * singleUnitPrice).toLocaleString()"></span></span>
+                            <span class="text-sm font-black text-slate-900">৳<span x-text="Number(qty * currentSingleUnitPrice).toLocaleString()"></span></span>
                         </div>
 
                         <div class="grid grid-cols-2 gap-2">
                             <button type="button"
-                                    @click="window.addToCart({ id: {{ $product->id }}, title: '{{ addslashes($product->title) }}', price: {{ $product->single_price }}, image: '{{ $product->image_url }}', slug: '{{ $product->slug }}' })"
-                                    class="w-full py-3 px-3 rounded-xl font-bold text-xs bg-slate-100 hover:bg-slate-200 text-slate-800 transition-all flex items-center justify-center space-x-1.5 active:scale-[0.99] cursor-pointer border border-slate-200">
-                                <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                    @click="window.addToCart({ id: {{ $product->id }}, title: '{{ addslashes($product->title) }}', price: currentSingleUnitPrice, image: '{{ $product->image_url }}', slug: '{{ $product->slug }}' })"
+                                    class="w-full py-3 px-3 rounded-xl font-bold text-xs bg-emerald-50 hover:bg-emerald-100 text-[#53a318] border border-emerald-200/90 transition-all flex items-center justify-center space-x-1.5 active:scale-[0.99] cursor-pointer shadow-2xs">
+                                <svg class="w-4 h-4 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                                 <span>Add to Cart</span>
                             </button>
                             <a :href="'{{ route('checkout', ['product_id' => $product->id, 'type' => 'single', 'action' => 'buy_single']) }}' + '&quantity=' + qty" 
-                               class="w-full py-3 px-3 rounded-xl font-bold text-xs bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-all flex items-center justify-center space-x-1.5 active:scale-[0.99] text-center">
+                               class="w-full py-3 px-3 rounded-xl font-bold text-xs bg-[#53a318] hover:bg-[#468c13] text-white shadow-xs transition-all flex items-center justify-center space-x-1.5 active:scale-[0.99] text-center">
                                 <span>Buy Now</span>
                             </a>
                         </div>

@@ -552,7 +552,7 @@
                             </a>
                             <button type="button" 
                                     @click.prevent.stop="window.addToCart({ id: {{ $deal['id'] }}, title: '{{ addslashes($deal['title']) }}', price: {{ $deal['flash_price'] }}, image: '{{ $deal['image_url'] }}', slug: '{{ $deal['slug'] }}' })"
-                                    class="w-9 h-8 rounded-xl bg-slate-900 hover:bg-[#53a318] text-white flex items-center justify-center transition-all duration-200 active:scale-95 shadow-xs shrink-0 cursor-pointer"
+                                    class="w-9 h-8 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white flex items-center justify-center transition-all duration-200 active:scale-95 shadow-xs shrink-0 cursor-pointer border border-[#468c13]/30"
                                     title="কার্টে যোগ করুন">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>

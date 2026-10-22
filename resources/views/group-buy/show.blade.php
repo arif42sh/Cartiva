@@ -176,18 +176,54 @@
                         @if($userAlreadyJoined)
                             <div class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-1">
                                 <span class="text-xs font-black text-emerald-800 block">
-                                    ✅ You are in this team!
+                                    আপনি এই গ্রুপে যুক্ত আছেন (পেমেন্ট সম্পন্ন)
                                 </span>
                                 <p class="text-[11px] text-emerald-700">
-                                    Share the link below with friends to fill remaining slots faster.
+                                    বাকি স্লট পূরণ করতে নিচের লিংকটি বন্ধুদের সাথে শেয়ার করুন।
                                 </p>
                             </div>
+
+                            @if($session->remainingSlots() > 0)
+                                <form action="{{ route('group-buy.join', $session) }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" 
+                                            class="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-slate-900 hover:bg-slate-800 text-white transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-xs">
+                                        <span>আরও ১টি স্লট নিজে কিনুন (৳{{ number_format($session->product->group_price) }})</span>
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($canLeaderDismiss)
+                                <div class="pt-1">
+                                    <form action="{{ route('group-buy.dismiss', $session) }}" method="POST" onsubmit="return confirm('আপনি কি নিশ্চিত যে আপনি এই গ্রুপটি বাতিল করতে চান? আপনার অর্ডারটি বাতিল হবে এবং সংরক্ষিত স্টক ফেরত যাবে।')">
+                                        @csrf
+                                        <button type="submit" 
+                                                class="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition-all flex items-center justify-center space-x-1.5 cursor-pointer">
+                                            <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                            <span>গ্রুপ বাতিল করুন (Dismiss Group)</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
                         @else
-                            <form action="{{ route('group-buy.join', $session) }}" method="POST">
+                            <form action="{{ route('group-buy.join', $session) }}" method="POST" class="space-y-2">
                                 @csrf
+                                @if($session->remainingSlots() > 1)
+                                    <div class="flex items-center justify-between text-xs font-bold text-slate-700 px-1 bg-slate-50 p-2 rounded-xl border border-slate-200/80">
+                                        <span>পরিমাণ (সর্বোচ্চ {{ $session->remainingSlots() }}টি):</span>
+                                        <select name="quantity" class="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-bold focus:ring-1 focus:ring-emerald-500">
+                                            @for($q = 1; $q <= min(5, $session->remainingSlots()); $q++)
+                                                <option value="{{ $q }}">{{ $q }}টি (৳{{ number_format($session->product->group_price * $q) }})</option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                @else
+                                    <input type="hidden" name="quantity" value="1">
+                                @endif
                                 <button type="submit" 
                                         class="w-full py-3.5 px-5 rounded-2xl font-black text-sm bg-[#53a318] hover:bg-[#468c13] text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2 active:scale-[0.99] cursor-pointer">
-                                    <span>Join Team & Pay ৳{{ number_format($session->product->group_price) }}</span>
+                                    <span>গ্রুপে যোগ দিন ও অর্ডার করুন</span>
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                 </button>
                             </form>
