@@ -560,7 +560,7 @@
                             </div>
                         </div>
 
-                        <!-- Action Buttons: Join Group (Left) & Share Invite (Right) - Strictly Horizontal -->
+                        <!-- Action Buttons: Join Group (Left), Add to Cart (Middle), Share Pool (Right) -->
                         <div class="p-2.5 pt-0 flex items-center gap-1.5" style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 6px !important; width: 100% !important;">
                             <a href="{{ route('products.show', $product->slug) }}" 
                                style="flex: 1 !important; display: flex !important; align-items: center !important; justify-content: center !important;"
@@ -568,6 +568,15 @@
                                 <span>Join Group</span>
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </a>
+
+                            <!-- Add to Cart Button -->
+                            <button type="button" 
+                                    @click="window.addToCart({ id: {{ $product->id }}, title: '{{ addslashes($product->title) }}', price: {{ $product->group_price }}, image: '{{ $product->image_url }}', slug: '{{ $product->slug }}' })" 
+                                    title="কার্টে যোগ করুন (Add to Cart)"
+                                    style="width: 34px !important; height: 30px !important; min-width: 34px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important;"
+                                    class="rounded-lg bg-[#53a318] hover:bg-[#468c13] text-white transition-colors shrink-0 cursor-pointer shadow-2xs border border-[#468c13]/30">
+                                <svg style="width: 14px !important; height: 14px !important;" class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            </button>
 
                             <button type="button" @click="openShare('{{ $group->group_code }}', '{{ addslashes($product->title) }}')" 
                                     title="Share Pool"

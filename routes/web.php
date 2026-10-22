@@ -46,6 +46,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::middleware('auth')->group(function () {
     Route::post('/group-buy/start/{product}', [GroupBuyController::class, 'start'])->name('group-buy.start');
     Route::post('/group-buy/join/{session}', [GroupBuyController::class, 'join'])->name('group-buy.join');
+    Route::post('/group-buy/dismiss/{session}', [GroupBuyController::class, 'dismiss'])->name('group-buy.dismiss');
     
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
     Route::post('/checkout', [OrderController::class, 'processCheckout'])->name('checkout.process');
@@ -56,6 +57,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
+    Route::post('/product/{product}/reviews', [ProductController::class, 'storeReview'])->name('products.reviews.store');
 });
 
 /*

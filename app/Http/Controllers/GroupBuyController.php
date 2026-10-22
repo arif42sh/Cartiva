@@ -12,25 +12,47 @@ class GroupBuyController extends Controller
 {
     public function show(GroupBuySession $session)
     {
-        $session->load(['product.seller', 'leader', 'members.user']);
+        // Auto-expire outdated sessions in real-time
+        GroupBuySession::checkAndExpireSessions();
+
+        $session->load(['product.seller', 'leader', 'members.user', 'orders.user']);
 
         $userAlreadyJoined = Auth::check() && $session->hasUserJoined(Auth::id());
         $isExpired = $session->isExpired();
         $isCompleted = $session->isCompleted();
 
-        // Calculate seconds remaining for Alpine countdown timer (cast to int to avoid floating decimals)
+        // Calculate seconds remaining for Alpine countdown timer
         $secondsRemaining = max(0, (int) round(now()->diffInSeconds($session->expires_at, false)));
 
-        return view('group-buy.show', compact('session', 'userAlreadyJoined', 'isExpired', 'isCompleted', 'secondsRemaining'));
+        // Can the leader dismiss this session? (Only if no other members have joined/paid)
+        $canLeaderDismiss = Auth::check() 
+            && Auth::id() === $session->leader_user_id 
+            && !$isCompleted 
+            && !$isExpired 
+            && $session->orders()->where('user_id', '!=', Auth::id())->count() === 0;
+
+        return view('group-buy.show', compact('session', 'userAlreadyJoined', 'isExpired', 'isCompleted', 'secondsRemaining', 'canLeaderDismiss'));
     }
 
     public function start(Request $request, Product $product)
     {
         if (!Auth::check()) {
-            return redirect()->route('login')->with('info', 'Please log in to start a Group Buy team.');
+            return redirect()->route('login')->with('info', 'গ্রুপ শুরু করতে অনুগ্রহ করে লগইন করুন।');
         }
 
-        $quantity = max(1, (int) $request->input('quantity', 1));
+        // Check if user already has an active, running group for this product
+        $existingActiveSession = GroupBuySession::where('product_id', $product->id)
+            ->where('leader_user_id', Auth::id())
+            ->where('status', 'active')
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if ($existingActiveSession) {
+            return redirect()->route('group-buy.show', $existingActiveSession->group_code)
+                ->with('info', 'আপনার এই প্রোডাক্টের জন্য ইতোমধ্যে একটি সক্রিয় টিম রয়েছে। লিংক শেয়ার করে বন্ধুদের আমন্ত্রণ জানান!');
+        }
+
+        $quantity = max(1, min((int) $request->input('quantity', 1), max(1, $product->stock)));
 
         // Redirect to checkout with order_type = group_buy, start_new = 1, and quantity
         return redirect()->route('checkout', [
@@ -44,25 +66,27 @@ class GroupBuyController extends Controller
     public function join(Request $request, GroupBuySession $session)
     {
         if (!Auth::check()) {
-            return redirect()->route('login')->with('info', 'Please log in to join this Team Buy.');
+            return redirect()->route('login')->with('info', 'গ্রুপে যুক্ত হতে অনুগ্রহ করে লগইন করুন।');
         }
 
         if ($session->isExpired()) {
-            return redirect()->route('group-buy.show', $session)
-                ->with('error', 'This Group Buy session has expired.');
+            return redirect()->route('group-buy.show', $session->group_code)
+                ->with('error', 'এই গ্রুপের সময়সীমা শেষ হয়ে গেছে।');
         }
 
         if ($session->isCompleted()) {
-            return redirect()->route('group-buy.show', $session)
-                ->with('error', 'This Group Buy team is already full!');
+            return redirect()->route('group-buy.show', $session->group_code)
+                ->with('error', 'এই গ্রুপটির কোটা ইতোমধ্যে সম্পূর্ণ হয়েছে!');
         }
 
-        if ($session->hasUserJoined(Auth::id())) {
-            return redirect()->route('group-buy.show', $session)
-                ->with('info', 'You are already a member of this team.');
+        $remaining = $session->remainingSlots();
+        if ($remaining <= 0) {
+            return redirect()->route('group-buy.show', $session->group_code)
+                ->with('error', 'এই গ্রুপে কোনো খালি স্লট নেই।');
         }
 
-        $quantity = max(1, (int) $request->input('quantity', 1));
+        // Cap requested quantity to remaining slots
+        $quantity = max(1, min((int) $request->input('quantity', 1), $remaining));
 
         // Redirect to checkout with group session ID and quantity
         return redirect()->route('checkout', [
@@ -72,5 +96,41 @@ class GroupBuyController extends Controller
             'action' => 'join_existing',
             'quantity' => $quantity,
         ]);
+    }
+
+    public function dismiss(GroupBuySession $session)
+    {
+        if (!Auth::check() || Auth::id() !== $session->leader_user_id) {
+            abort(403, 'অননুমোদিত অনুরোধ।');
+        }
+
+        if ($session->isCompleted()) {
+            return redirect()->route('group-buy.show', $session->group_code)
+                ->with('error', 'গ্রুপটি ইতোমধ্যে সম্পন্ন হয়েছে, বাতিল করা সম্ভব নয়।');
+        }
+
+        // Check if other members have joined and paid
+        $otherOrdersCount = $session->orders()->where('user_id', '!=', Auth::id())->count();
+        if ($otherOrdersCount > 0) {
+            return redirect()->route('group-buy.show', $session->group_code)
+                ->with('error', 'এই গ্রুপে অন্যান্য ক্রেতা যুক্ত হয়ে পেমেন্ট সম্পন্ন করেছেন, তাই এটি বাতিল করা যাবে না।');
+        }
+
+        // Cancel leader's pending order and release reserved stock
+        $leaderOrders = $session->orders()->where('user_id', Auth::id())->get();
+        foreach ($leaderOrders as $order) {
+            $order->update([
+                'order_status' => 'cancelled',
+                'payment_status' => 'refunded'
+            ]);
+            foreach ($order->items as $item) {
+                Product::where('id', $item->product_id)->increment('stock', $item->quantity);
+            }
+        }
+
+        $session->update(['status' => 'expired']);
+
+        return redirect()->route('products.show', $session->product->slug)
+            ->with('success', 'আপনার গ্রুপটি সফলভাবে বাতিল করা হয়েছে।');
     }
 }

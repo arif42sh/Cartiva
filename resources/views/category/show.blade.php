@@ -71,14 +71,8 @@
                     {{ $displayDesc }}
                 </p>
 
-                <!-- Assurance Pills -->
-                <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
-                    <span class="px-2.5 py-1 rounded-xl bg-white/10 backdrop-blur-xs border border-white/10 text-emerald-300 font-bold">
-                        🛡️ 100% Genuine Products
-                    </span>
-                    <span class="px-2.5 py-1 rounded-xl bg-white/10 backdrop-blur-xs border border-white/10 text-cyan-300 font-bold">
-                        ⚡ Direct Importer / Wholesale Pool
-                    </span>
+                
+                </span>
                     <span class="px-2.5 py-1 rounded-xl bg-white/10 backdrop-blur-xs border border-white/10 text-amber-300 font-bold">
                         🔒 100% Refund Guarantee
                     </span>
@@ -149,7 +143,7 @@
                 <div class="flex items-center space-x-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
                     <h2 class="text-sm sm:text-base font-black text-amber-950 tracking-tight">
-                        ⚡ Active Running Pools in {{ $displayTitle }}
+                         Running Pools in {{ $displayTitle }}
                     </h2>
                 </div>
                 <span class="text-xs font-bold text-amber-800">
@@ -230,19 +224,19 @@
             </a>
             <a href="{{ request()->fullUrlWithQuery(['sort' => 'popular']) }}" 
                class="px-3 py-1.5 rounded-xl transition-all {{ $sort === 'popular' ? 'bg-[#53a318] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
-                ⚡ Most Popular
+                Most Popular
             </a>
             <a href="{{ request()->fullUrlWithQuery(['sort' => 'discount']) }}" 
                class="px-3 py-1.5 rounded-xl transition-all {{ $sort === 'discount' ? 'bg-[#53a318] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
-                🔥 Max Discount
+                Max Discount
             </a>
             <a href="{{ request()->fullUrlWithQuery(['sort' => 'price_low']) }}" 
                class="px-3 py-1.5 rounded-xl transition-all {{ $sort === 'price_low' ? 'bg-[#53a318] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
-                ৳ Low to High
+                Low to High (Price)
             </a>
             <a href="{{ request()->fullUrlWithQuery(['sort' => 'price_high']) }}" 
                class="px-3 py-1.5 rounded-xl transition-all {{ $sort === 'price_high' ? 'bg-[#53a318] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
-                ৳ High to Low
+                High to Low (Price)
             </a>
         </div>
     </div>
@@ -333,7 +327,7 @@
                     </div>
                 </div>
 
-                <!-- Dual Action Buttons: Join Group (Left) & Share Invite (Right) - Strictly Horizontal -->
+                <!-- Action Buttons: Join Group (Left), Add to Cart (Middle), Share Invite (Right) - Strictly Horizontal -->
                 <div class="p-5 pt-0 flex items-center gap-2" style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 8px !important; width: 100% !important;">
                     <a href="{{ route('products.show', $product) }}" 
                        style="flex: 1 !important; display: flex !important; align-items: center !important; justify-content: center !important;"
@@ -341,6 +335,15 @@
                         <span>Join Group</span>
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
+
+                    <!-- Add to Cart Button -->
+                    <button type="button" 
+                            @click="window.addToCart({ id: {{ $product->id }}, title: '{{ addslashes($product->title) }}', price: {{ $product->group_price }}, image: '{{ $product->image_url }}', slug: '{{ $product->slug }}' })" 
+                            title="কার্টে যোগ করুন (Add to Cart)"
+                            style="width: 42px !important; height: 38px !important; min-width: 42px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important;"
+                            class="rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white transition-colors cursor-pointer border border-[#468c13]/30 shadow-xs">
+                        <svg style="width: 16px !important; height: 16px !important;" class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    </button>
 
                     <button type="button" @click="openShare('GRP-PROD{{ $product->id }}', '{{ addslashes($product->title) }}')" 
                             title="Share Invite"

@@ -69,4 +69,33 @@ class GroupBuySession extends Model
     {
         return $this->members()->where('user_id', $userId)->exists();
     }
+
+    /**
+     * Check and expire inactive/timed-out sessions, refund pending orders, and release stock
+     */
+    public static function checkAndExpireSessions(): void
+    {
+        $expiredSessions = self::where('status', 'active')
+            ->where('expires_at', '<=', now())
+            ->get();
+
+        foreach ($expiredSessions as $session) {
+            $session->update(['status' => 'expired']);
+
+            $pendingOrders = Order::where('group_buy_session_id', $session->id)
+                ->where('order_status', 'pending_group')
+                ->get();
+
+            foreach ($pendingOrders as $order) {
+                $order->update([
+                    'order_status' => 'cancelled',
+                    'payment_status' => 'refunded'
+                ]);
+
+                foreach ($order->items as $item) {
+                    Product::where('id', $item->product_id)->increment('stock', $item->quantity);
+                }
+            }
+        }
+    }
 }

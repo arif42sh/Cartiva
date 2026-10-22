@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\GroupBuySession;
 use App\Models\Product;
+use App\Models\Review;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -12,7 +13,14 @@ class ProductController extends Controller
     {
         abort_unless($product->is_active, 404);
 
-        $product->load(['seller', 'category']);
+        // Auto-expire any outdated sessions and release inventory
+        GroupBuySession::checkAndExpireSessions();
+
+        $product->load(['seller', 'category', 'reviews.user']);
+
+        $userReview = auth()->check() 
+            ? $product->reviews->where('user_id', auth()->id())->first() 
+            : null;
 
         // Active groups for this specific product that have slots available
         $activeGroups = GroupBuySession::with(['leader', 'members.user'])
@@ -30,6 +38,36 @@ class ProductController extends Controller
             ->take(4)
             ->get();
 
-        return view('products.show', compact('product', 'activeGroups', 'relatedProducts'));
+        return view('products.show', compact('product', 'activeGroups', 'relatedProducts', 'userReview'));
+    }
+
+    public function storeReview(Request $request, Product $product)
+    {
+        $validated = $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'required|string|min:3|max:1000',
+        ]);
+
+        Review::updateOrCreate(
+            [
+                'product_id' => $product->id,
+                'user_id' => auth()->id(),
+            ],
+            [
+                'rating' => $validated['rating'],
+                'comment' => $validated['comment'],
+            ]
+        );
+
+        // Auto-update product average rating
+        $avgRating = $product->reviews()->avg('rating');
+        if ($avgRating) {
+            $product->update([
+                'rating' => round($avgRating, 1),
+            ]);
+        }
+
+        return redirect()->to(route('products.show', $product->slug) . '#customer-reviews')
+            ->with('success', 'Your review has been submitted successfully!');
     }
 }
