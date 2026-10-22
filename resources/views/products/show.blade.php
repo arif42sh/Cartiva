@@ -219,10 +219,18 @@
                             <span class="text-sm font-black text-slate-900">৳<span x-text="Number(qty * singleUnitPrice).toLocaleString()"></span></span>
                         </div>
 
-                        <a :href="'{{ route('checkout', ['product_id' => $product->id, 'type' => 'single', 'action' => 'buy_single']) }}' + '&quantity=' + qty" 
-                           class="w-full py-3 px-4 rounded-xl font-bold text-xs sm:text-sm bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-all flex items-center justify-center space-x-2 active:scale-[0.99] text-center">
-                            <span>Purchase</span>
-                        </a>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button"
+                                    @click="window.addToCart({ id: {{ $product->id }}, title: '{{ addslashes($product->title) }}', price: {{ $product->single_price }}, image: '{{ $product->image_url }}', slug: '{{ $product->slug }}' })"
+                                    class="w-full py-3 px-3 rounded-xl font-bold text-xs bg-slate-100 hover:bg-slate-200 text-slate-800 transition-all flex items-center justify-center space-x-1.5 active:scale-[0.99] cursor-pointer border border-slate-200">
+                                <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                <span>Add to Cart</span>
+                            </button>
+                            <a :href="'{{ route('checkout', ['product_id' => $product->id, 'type' => 'single', 'action' => 'buy_single']) }}' + '&quantity=' + qty" 
+                               class="w-full py-3 px-3 rounded-xl font-bold text-xs bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-all flex items-center justify-center space-x-1.5 active:scale-[0.99] text-center">
+                                <span>Buy Now</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
 

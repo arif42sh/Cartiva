@@ -325,12 +325,18 @@
                                     @endif
                                 </div>
 
-                                <!-- Action Button: Clean and Neutral ("ডিল দেখুন") -->
-                                <div class="pt-1.5 border-t border-slate-100">
+                                <!-- Action Buttons: "ডিল দেখুন" & "Add to Cart" -->
+                                <div class="pt-1.5 border-t border-slate-100 flex items-center gap-1.5">
                                     <a href="{{ route('products.show', $product->slug) }}" 
-                                       class="w-full inline-flex items-center justify-center py-1.5 px-2 rounded-lg bg-slate-900 hover:bg-[#53a318] text-white font-bold text-xs transition-colors shadow-2xs">
+                                       class="flex-1 inline-flex items-center justify-center py-1.5 px-2 rounded-lg bg-[#53a318] hover:bg-[#468c13] text-white font-bold text-xs transition-colors shadow-2xs">
                                         <span>ডিল দেখুন</span>
                                     </a>
+                                    <button type="button" 
+                                            @click="window.addToCart({ id: {{ $product->id }}, title: '{{ addslashes($product->title) }}', price: {{ $product->group_price }}, image: '{{ $product->image_url }}', slug: '{{ $product->slug }}' })"
+                                            title="কার্টে যোগ করুন (Add to Cart)"
+                                            class="w-8 h-7.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center transition-colors cursor-pointer shadow-2xs shrink-0">
+                                        <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                    </button>
                                 </div>
                             </div>
 

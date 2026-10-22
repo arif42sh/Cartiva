@@ -79,9 +79,54 @@
                 searchQuery: '{{ request('q') }}',
                 categoriesDropdownOpen: false,
                 wishlistCount: 3,
-                cartCount: 1,
+                cartItems: JSON.parse(localStorage.getItem('cartiva_cart') || '[]'),
+                get cartCount() {
+                    return this.cartItems.reduce((acc, i) => acc + (i.quantity || 1), 0);
+                },
+                get cartTotal() {
+                    return this.cartItems.reduce((acc, i) => acc + ((i.price || 0) * (i.quantity || 1)), 0);
+                },
                 cartModalOpen: false,
-                wishlistModalOpen: false
+                wishlistModalOpen: false,
+                toastMessage: '',
+                showCartToast: false,
+                init() {
+                    window.addToCart = (item) => {
+                        const existing = this.cartItems.find(i => i.id == item.id);
+                        if (existing) {
+                            existing.quantity = (existing.quantity || 1) + 1;
+                        } else {
+                            this.cartItems.push({
+                                id: item.id,
+                                title: item.title,
+                                price: item.price,
+                                quantity: 1,
+                                image: item.image || '',
+                                slug: item.slug || ''
+                            });
+                        }
+                        localStorage.setItem('cartiva_cart', JSON.stringify(this.cartItems));
+                        this.toastMessage = '🛍️ ' + item.title + ' কার্টে যোগ করা হয়েছে!';
+                        this.showCartToast = true;
+                        setTimeout(() => this.showCartToast = false, 3500);
+                    };
+                },
+                removeFromCart(id) {
+                    this.cartItems = this.cartItems.filter(i => i.id != id);
+                    localStorage.setItem('cartiva_cart', JSON.stringify(this.cartItems));
+                },
+                updateQty(id, delta) {
+                    const item = this.cartItems.find(i => i.id == id);
+                    if (item) {
+                        const newQ = (item.quantity || 1) + delta;
+                        if (newQ <= 0) {
+                            this.removeFromCart(id);
+                        } else {
+                            item.quantity = newQ;
+                            localStorage.setItem('cartiva_cart', JSON.stringify(this.cartItems));
+                        }
+                    }
+                }
             }">
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
             <div class="flex items-center justify-between h-16 sm:h-[68px] gap-3 sm:gap-6 lg:gap-8">
@@ -242,25 +287,25 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Wishlist Icon with Count -->
-                        <button @click="wishlistModalOpen = true" 
-                                class="p-2.5 text-slate-600 hover:text-rose-600 rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer"
-                                title="My Wishlist">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                            <span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
-                                  x-text="wishlistCount">3</span>
-                        </button>
-
-                        <!-- Cart Icon with Count -->
-                        <button @click="cartModalOpen = true" 
-                                class="p-2.5 text-slate-600 hover:text-[#53a318] rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer"
-                                title="My Shopping Cart">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                            <span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#53a318] text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
-                                  x-text="cartCount">1</span>
-                        </button>
                     @endauth
+
+                    <!-- Wishlist Icon with Count -->
+                    <button @click="wishlistModalOpen = true" 
+                            class="p-2.5 text-slate-600 hover:text-rose-600 rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer"
+                            title="My Wishlist">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        <span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
+                              x-text="wishlistCount">3</span>
+                    </button>
+
+                    <!-- Cart Icon with Dynamic Count -->
+                    <button @click="cartModalOpen = true" 
+                            class="p-2.5 text-slate-600 hover:text-[#53a318] rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer group"
+                            title="My Shopping Cart">
+                        <svg class="w-5 h-5 group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        <span class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-[#53a318] text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
+                              x-text="cartCount"></span>
+                    </button>
 
                     <!-- User Account Dropdown / Sign In -->
                     @auth
@@ -583,74 +628,133 @@
 
         </div>
 
-        @auth
-            <!-- Wishlist Mini Modal -->
-            <div x-show="wishlistModalOpen" x-cloak 
-                 class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-                <div @click.outside="wishlistModalOpen = false" 
-                     class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
-                    <div class="flex items-center justify-between border-b pb-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xl">❤️</span>
-                            <h3 class="text-base font-black text-slate-900">My Saved Wishlist</h3>
-                        </div>
-                        <button @click="wishlistModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
+        <!-- Wishlist Mini Modal (Available to all) -->
+        <div x-show="wishlistModalOpen" x-cloak 
+             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+            <div @click.outside="wishlistModalOpen = false" 
+                 class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xl">❤️</span>
+                        <h3 class="text-base font-black text-slate-900">My Saved Wishlist</h3>
                     </div>
-                    <div class="space-y-3 text-xs max-h-72 overflow-y-auto">
-                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                            <div>
-                                <p class="font-bold text-slate-800">Premium Fleece Winter Hoodie</p>
-                                <p class="text-emerald-700 font-bold">Group Price: ৳750 (Save ৳250)</p>
-                            </div>
-                            <a href="{{ route('group-buy.show', 'GRP-HOODIE05') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
-                        </div>
-                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                            <div>
-                                <p class="font-bold text-slate-800">SoundCore ANC Headphones</p>
-                                <p class="text-emerald-700 font-bold">Group Price: ৳3,150 (Save ৳1,350)</p>
-                            </div>
-                            <a href="{{ route('group-buy.show', 'GRP-SOUND99') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
-                        </div>
-                    </div>
-                    <button @click="wishlistModalOpen = false" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Close</button>
+                    <button @click="wishlistModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
                 </div>
+                <div class="space-y-3 text-xs max-h-72 overflow-y-auto">
+                    <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-slate-800">Premium Fleece Winter Hoodie</p>
+                            <p class="text-emerald-700 font-bold">Group Price: ৳750 (Save ৳250)</p>
+                        </div>
+                        <a href="{{ route('group-buy.show', 'GRP-HOODIE05') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-slate-800">SoundCore ANC Headphones</p>
+                            <p class="text-emerald-700 font-bold">Group Price: ৳3,150 (Save ৳1,350)</p>
+                        </div>
+                        <a href="{{ route('group-buy.show', 'GRP-SOUND99') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
+                    </div>
+                </div>
+                <button @click="wishlistModalOpen = false" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Close</button>
             </div>
+        </div>
 
-            <!-- Quick Cart Mini Modal -->
-            <div x-show="cartModalOpen" x-cloak 
-                 class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-                <div @click.outside="cartModalOpen = false" 
-                     class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
-                    <div class="flex items-center justify-between border-b pb-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xl">🛍️</span>
-                            <h3 class="text-base font-black text-slate-900">Your Cart & Active Reservations</h3>
+        <!-- Quick Cart Mini Modal (Dynamic & Fully Functional) -->
+        <div x-show="cartModalOpen" x-cloak 
+             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+            <div @click.outside="cartModalOpen = false" 
+                 class="bg-white rounded-3xl p-5 sm:p-6 max-w-md w-full shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3 flex-shrink-0">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xl">🛍️</span>
+                        <h3 class="text-base font-black text-slate-900">
+                            Shopping Cart (<span x-text="cartCount"></span>)
+                        </h3>
+                    </div>
+                    <button @click="cartModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-xl cursor-pointer">&times;</button>
+                </div>
+
+                <!-- Cart Item List -->
+                <div class="space-y-2.5 overflow-y-auto flex-1 pr-1" style="scrollbar-width: thin;">
+                    <template x-for="item in cartItems" :key="item.id">
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs flex items-center justify-between gap-3">
+                            <div class="flex items-center space-x-2.5 min-w-0">
+                                <template x-if="item.image">
+                                    <img :src="item.image" :alt="item.title" class="w-10 h-10 rounded-lg object-cover bg-white border border-slate-200 flex-shrink-0">
+                                </template>
+                                <template x-if="!item.image">
+                                    <div class="w-10 h-10 rounded-lg bg-emerald-50 text-[#53a318] flex items-center justify-center font-bold text-xs flex-shrink-0">
+                                        🛒
+                                    </div>
+                                </template>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-slate-800 truncate text-xs" x-text="item.title"></h4>
+                                    <span class="font-extrabold text-[#53a318] text-xs">৳<span x-text="Number(item.price * item.quantity).toLocaleString()"></span></span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-2 flex-shrink-0">
+                                <!-- Quantity buttons -->
+                                <div class="flex items-center border border-slate-200 rounded-lg bg-white overflow-hidden">
+                                    <button type="button" @click="updateQty(item.id, -1)" class="px-2 py-0.5 text-slate-600 hover:bg-slate-100 font-bold text-xs cursor-pointer">-</button>
+                                    <span class="px-2 text-xs font-bold text-slate-800" x-text="item.quantity"></span>
+                                    <button type="button" @click="updateQty(item.id, 1)" class="px-2 py-0.5 text-slate-600 hover:bg-slate-100 font-bold text-xs cursor-pointer">+</button>
+                                </div>
+                                <!-- Remove button -->
+                                <button type="button" @click="removeFromCart(item.id)" title="Remove item" class="p-1 text-slate-400 hover:text-rose-600 cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
                         </div>
-                        <button @click="cartModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
+                    </template>
+
+                    <div x-show="cartItems.length === 0" class="py-8 text-center text-slate-400 space-y-2">
+                        <span class="text-3xl block">🛒</span>
+                        <p class="text-xs font-semibold">Your Cart is Empty</p>
                     </div>
-                    <div class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="font-black text-slate-800">Keyforge K8 Pro Wireless RGB</span>
-                            <span class="font-black text-[#53a318]">৳2,700</span>
-                        </div>
-                        <p class="text-[11px] text-slate-600">Reserved in Active Group. 10-Minute Checkout Lock Active.</p>
+                </div>
+
+                <!-- Cart Footer / Total & Checkout -->
+                <div class="pt-2 border-t border-slate-100 flex-shrink-0 space-y-3">
+                    <div class="flex items-center justify-between text-xs font-bold">
+                        <span class="text-slate-600">Total Price:</span>
+                        <span class="text-lg font-black text-[#53a318]">৳<span x-text="Number(cartTotal).toLocaleString()"></span></span>
                     </div>
-                    <div class="flex items-center justify-between text-xs font-bold pt-2">
-                        <span>Estimated Total:</span>
-                        <span class="text-base font-black text-[#53a318]">৳2,700</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 pt-2">
-                        <button @click="cartModalOpen = false" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Keep Shopping</button>
-                        <a href="{{ route('orders.index') }}" class="py-2.5 text-center bg-[#53a318] hover:bg-[#468c13] text-white font-bold rounded-xl text-xs">View Orders</a>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button @click="cartModalOpen = false" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs cursor-pointer">Keep Shopping</button>
+                        <a :href="cartItems.length > 0 ? '{{ route('checkout') }}?product_id=' + cartItems[0].id + '&quantity=' + cartItems[0].quantity : '{{ route('home') }}'" 
+                           class="py-2.5 text-center bg-[#53a318] hover:bg-[#468c13] text-white font-bold rounded-xl text-xs cursor-pointer shadow-xs">
+                            Checkout &rarr;
+                        </a>
                     </div>
                 </div>
             </div>
-        @endauth
+        </div>
 
     </header>
 
     <!-- Global Toast Notifications (Minimalist Floating UI) -->
     <div id="toast-container" class="fixed bottom-6 right-6 z-[9999] pointer-events-none flex flex-col space-y-2.5 max-w-sm w-full px-4 sm:px-0">
+        <!-- Live Cart Toast Notification -->
+        <div x-show="showCartToast" 
+             x-cloak
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="opacity-0 translate-y-3 scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+             x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+             class="pointer-events-auto flex items-center justify-between space-x-3 px-4 py-3 rounded-2xl bg-slate-900/95 backdrop-blur-md text-white shadow-2xl border border-slate-800/80">
+            <div class="flex items-center space-x-2.5 min-w-0">
+                <span class="w-2 h-2 rounded-full bg-[#53a318] flex-shrink-0 animate-ping"></span>
+                <span class="text-xs sm:text-sm font-semibold tracking-tight truncate" x-text="toastMessage"></span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button type="button" @click="cartModalOpen = true; showCartToast = false" class="text-xs font-bold text-emerald-400 hover:underline cursor-pointer">কার্ট দেখুন</button>
+                <button @click="showCartToast = false" class="text-slate-400 hover:text-white transition-colors ml-1 text-base leading-none font-bold flex-shrink-0">&times;</button>
+            </div>
+        </div>
         @if(session('success'))
             <div x-data="{ show: true }" 
                  x-show="show" 
@@ -792,24 +896,6 @@
                         <li><a href="#cartiva-guarantee" class="hover:text-white hover:translate-x-1 transition-all inline-block">100% Refund Policy</a></li>
                         <li><a href="#cartiva-guarantee" class="hover:text-white hover:translate-x-1 transition-all inline-block">Replacement Warranty</a></li>
                         <li><a href="{{ route('orders.index') }}" class="hover:text-white hover:translate-x-1 transition-all inline-block">Track Your Order</a></li>
-                    </ul>
-                </div>
-
-                <!-- Col 4: Account & Groups (lg:col-span-2) -->
-                <div class="lg:col-span-2 space-y-2">
-                    <h4 class="font-extrabold text-white text-xs tracking-wider uppercase">Account & Deals</h4>
-                    <div class="w-6 h-0.5 bg-[#53a318] rounded-full mt-1.5 mb-3"></div>
-                    <ul class="space-y-2.5 text-slate-400">
-                        @auth
-                            <li><a href="{{ route('profile.index') }}" class="hover:text-white hover:translate-x-1 transition-all inline-block">My Account & Profile</a></li>
-                            <li><a href="{{ route('orders.index') }}" class="hover:text-white hover:translate-x-1 transition-all inline-block">My Orders</a></li>
-                            <li><a href="{{ route('orders.index') }}" class="hover:text-white hover:translate-x-1 transition-all inline-block">My Active Groups</a></li>
-                        @else
-                            <li><a href="{{ route('login') }}" class="hover:text-white hover:translate-x-1 transition-all inline-block">Login to Account</a></li>
-                            <li><a href="{{ route('register') }}" class="hover:text-white hover:translate-x-1 transition-all inline-block">Register as Customer</a></li>
-                        @endauth
-                        <li><a href="#start-own-group" class="hover:text-white hover:translate-x-1 transition-all inline-block">Create a Buying Pool</a></li>
-                        <li><a href="{{ route('register') }}" class="text-[#53a318] font-bold hover:underline inline-block">Become a Merchant</a></li>
                     </ul>
                 </div>
 
