@@ -588,7 +588,7 @@
                 এই স্লট বা ফিল্টারে বর্তমানে কোনো প্রোডাক্ট নেই। সব ডিল দেখতে ফিল্টার রিসেট করুন।
             </p>
             <button type="button" id="reset-filter-btn" class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white text-xs font-bold transition-all shadow-xs cursor-pointer">
-                <span>সব ডিল দেখুন (All)</span>
+                <span>All Deal</span>
             </button>
         </div>
     </div>

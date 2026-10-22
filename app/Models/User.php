@@ -83,6 +83,11 @@ class User extends Authenticatable
         return $this->hasMany(GroupBuyMember::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
     public function ledGroupSessions(): HasMany
     {
         return $this->hasMany(GroupBuySession::class, 'leader_user_id');

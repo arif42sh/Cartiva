@@ -67,6 +67,11 @@ class Product extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class)->latest();
+    }
+
     public function getDiscountPercentAttribute(): int
     {
         if ($this->single_price > 0 && $this->single_price > $this->group_price) {
