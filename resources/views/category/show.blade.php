@@ -71,14 +71,8 @@
                     {{ $displayDesc }}
                 </p>
 
-                <!-- Assurance Pills -->
-                <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
-                    <span class="px-2.5 py-1 rounded-xl bg-white/10 backdrop-blur-xs border border-white/10 text-emerald-300 font-bold">
-                        🛡️ 100% Genuine Products
-                    </span>
-                    <span class="px-2.5 py-1 rounded-xl bg-white/10 backdrop-blur-xs border border-white/10 text-cyan-300 font-bold">
-                        ⚡ Direct Importer / Wholesale Pool
-                    </span>
+                
+                </span>
                     <span class="px-2.5 py-1 rounded-xl bg-white/10 backdrop-blur-xs border border-white/10 text-amber-300 font-bold">
                         🔒 100% Refund Guarantee
                     </span>
@@ -149,7 +143,7 @@
                 <div class="flex items-center space-x-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
                     <h2 class="text-sm sm:text-base font-black text-amber-950 tracking-tight">
-                        ⚡ Active Running Pools in {{ $displayTitle }}
+                         Running Pools in {{ $displayTitle }}
                     </h2>
                 </div>
                 <span class="text-xs font-bold text-amber-800">
@@ -230,19 +224,19 @@
             </a>
             <a href="{{ request()->fullUrlWithQuery(['sort' => 'popular']) }}" 
                class="px-3 py-1.5 rounded-xl transition-all {{ $sort === 'popular' ? 'bg-[#53a318] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
-                ⚡ Most Popular
+                Most Popular
             </a>
             <a href="{{ request()->fullUrlWithQuery(['sort' => 'discount']) }}" 
                class="px-3 py-1.5 rounded-xl transition-all {{ $sort === 'discount' ? 'bg-[#53a318] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
-                🔥 Max Discount
+                Max Discount
             </a>
             <a href="{{ request()->fullUrlWithQuery(['sort' => 'price_low']) }}" 
                class="px-3 py-1.5 rounded-xl transition-all {{ $sort === 'price_low' ? 'bg-[#53a318] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
-                ৳ Low to High
+                Low to High (Price)
             </a>
             <a href="{{ request()->fullUrlWithQuery(['sort' => 'price_high']) }}" 
                class="px-3 py-1.5 rounded-xl transition-all {{ $sort === 'price_high' ? 'bg-[#53a318] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
-                ৳ High to Low
+                High to Low (Price)
             </a>
         </div>
     </div>

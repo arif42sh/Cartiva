@@ -294,7 +294,7 @@
                                 </svg>
                             </button>
 
-                            <!-- Modern Dropdown Card -->
+                            <!-- Classic & Professional Compact Dropdown Card -->
                             <div x-show="userMenuOpen" 
                                  x-cloak 
                                  x-transition:enter="transition ease-out duration-200"
@@ -303,192 +303,157 @@
                                  x-transition:leave="transition ease-in duration-150"
                                  x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                                  x-transition:leave-end="opacity-0 translate-y-2 scale-95"
-                                 class="absolute right-0 mt-2.5 w-80 bg-white rounded-3xl shadow-2xl border border-slate-100 py-0 z-50 overflow-hidden transform origin-top-right divide-y divide-slate-100/90">
+                                 class="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-0 z-50 overflow-hidden transform origin-top-right divide-y divide-slate-100">
                                 
-                                <!-- 1. User Header & Status Card -->
-                                <div class="bg-slate-900 p-4 text-white relative overflow-hidden">
-                                    <div class="relative z-10">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-11 h-11 rounded-2xl overflow-hidden bg-slate-800 text-white flex items-center justify-center text-sm font-black ring-1 ring-white/10 shadow-md flex-shrink-0">
-                                                @if(auth()->user()->avatar)
-                                                    <img src="{{ auth()->user()->avatar }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
-                                                @else
-                                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                <!-- 1. Compact User Header Card -->
+                                <div class="bg-slate-900 px-3.5 py-3 text-white relative">
+                                    <div class="flex items-center space-x-2.5">
+                                        <div class="w-9 h-9 rounded-full overflow-hidden bg-slate-800 text-white flex items-center justify-center text-xs font-bold ring-1.5 ring-white/10 shadow-xs flex-shrink-0">
+                                            @if(auth()->user()->avatar)
+                                                <img src="{{ auth()->user()->avatar }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
+                                            @else
+                                                <span class="text-emerald-400 font-bold">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                                            @endif
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center space-x-1.5">
+                                                <h4 class="text-xs font-bold text-white truncate tracking-tight">{{ auth()->user()->name }}</h4>
+                                                @if(auth()->user()->isAdmin())
+                                                    <span class="px-1 py-0.2 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 uppercase">Admin</span>
+                                                @elseif(auth()->user()->isSeller())
+                                                    <span class="px-1 py-0.2 rounded text-[8px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30 uppercase">Merchant</span>
                                                 @endif
                                             </div>
-                                            <div class="flex-1 min-w-0">
-                                                <h4 class="text-sm font-black text-white truncate tracking-tight">{{ auth()->user()->name }}</h4>
-                                                <p class="text-[11px] text-slate-400 truncate font-medium">{{ auth()->user()->email }}</p>
-                                                <div class="mt-1 flex items-center gap-1.5">
-                                                    @if(auth()->user()->isAdmin())
-                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 uppercase tracking-wider">
-                                                            <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                                            Administrator
-                                                        </span>
-                                                    @elseif(auth()->user()->isSeller())
-                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30 uppercase tracking-wider">
-                                                            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                                                            Merchant Partner
-                                                        </span>
-                                                    @else
-                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase tracking-wider">
-                                                            <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                                                            Verified Customer
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                            </div>
+                                            <p class="text-[11px] text-slate-400 truncate font-normal leading-tight mt-0.5">{{ auth()->user()->email }}</p>
                                         </div>
+                                    </div>
 
-                                        <!-- Savings Counter -->
-                                        <div class="mt-3.5 grid grid-cols-2 gap-2 bg-white/5 rounded-2xl p-2.5 border border-white/10 text-center">
-                                            <div class="border-r border-white/10 pr-2">
-                                                <span class="text-[9px] uppercase tracking-wider text-slate-400 font-bold block">Group Savings</span>
-                                                <span class="text-xs font-black text-emerald-400 block mt-0.5">৳1,450 Saved</span>
-                                            </div>
-                                            <div class="pl-2">
-                                                <span class="text-[9px] uppercase tracking-wider text-slate-400 font-bold block">Wallet Balance</span>
-                                                <span class="text-xs font-black text-slate-300 block mt-0.5">৳0.00 Credits</span>
-                                            </div>
+                                    <!-- Compact Savings & Balance Strip -->
+                                    <div class="mt-2.5 grid grid-cols-2 gap-1.5 bg-white/5 rounded-lg py-1.5 px-2 border border-white/10 text-center">
+                                        <div class="border-r border-white/10 pr-1.5">
+                                            <span class="text-[8px] uppercase tracking-wider text-slate-400 font-semibold block leading-none">Group Savings</span>
+                                            <span class="text-[11px] font-bold text-emerald-400 block mt-0.5 leading-tight">৳1,450 Saved</span>
+                                        </div>
+                                        <div class="pl-1.5">
+                                            <span class="text-[8px] uppercase tracking-wider text-slate-400 font-semibold block leading-none">Wallet Balance</span>
+                                            <span class="text-[11px] font-bold text-slate-200 block mt-0.5 leading-tight">৳0.00 Credits</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- 2. Core Shopping & Pools -->
-                                <div class="p-2 space-y-0.5">
-                                    <div class="px-3 py-1 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                                <div class="p-1.5 space-y-0.5">
+                                    <div class="px-2.5 pt-1.5 pb-0.5 text-[9px] font-bold tracking-wider text-slate-400 uppercase">
                                         Account & Orders
                                     </div>
 
                                     <a href="{{ route('profile.index') }}" 
-                                       class="flex items-center justify-between px-3 py-2 rounded-2xl hover:bg-slate-50 group transition-colors">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 group-hover:bg-emerald-50 group-hover:text-[#53a318] flex items-center justify-center transition-colors">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                       class="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-slate-50 group transition-colors">
+                                        <div class="flex items-center space-x-2.5">
+                                            <div class="w-6 h-6 rounded-md bg-slate-100 text-slate-500 group-hover:bg-emerald-50 group-hover:text-[#53a318] flex items-center justify-center transition-colors flex-shrink-0">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                             </div>
-                                            <div>
-                                                <p class="text-xs font-bold text-slate-800 group-hover:text-[#53a318] transition-colors">My Profile & Address</p>
-                                                <p class="text-[10px] text-slate-400">Settings, map address & security</p>
-                                            </div>
+                                            <span class="text-xs font-semibold text-slate-800 group-hover:text-[#53a318] transition-colors">My Profile & Address</span>
                                         </div>
-                                        <svg class="w-4 h-4 text-slate-300 group-hover:text-[#53a318] transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                        <svg class="w-3.5 h-3.5 text-slate-300 group-hover:text-[#53a318] transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                     </a>
 
                                     <a href="{{ route('orders.index') }}" 
-                                       class="flex items-center justify-between px-3 py-2 rounded-2xl hover:bg-slate-50 group transition-colors">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 group-hover:bg-emerald-50 group-hover:text-[#53a318] flex items-center justify-center transition-colors">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                       class="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-slate-50 group transition-colors">
+                                        <div class="flex items-center space-x-2.5">
+                                            <div class="w-6 h-6 rounded-md bg-slate-100 text-slate-500 group-hover:bg-emerald-50 group-hover:text-[#53a318] flex items-center justify-center transition-colors flex-shrink-0">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                                             </div>
-                                            <div>
-                                                <p class="text-xs font-bold text-slate-800 group-hover:text-[#53a318] transition-colors">My Purchases</p>
-                                                <p class="text-[10px] text-slate-400">Order tracking & history</p>
-                                            </div>
+                                            <span class="text-xs font-semibold text-slate-800 group-hover:text-[#53a318] transition-colors">My Purchases</span>
                                         </div>
-                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 group-hover:bg-emerald-100 group-hover:text-emerald-800 transition-colors">
+                                        <span class="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600 group-hover:bg-emerald-100 group-hover:text-emerald-800 transition-colors">
                                             {{ auth()->user()->orders()->count() }}
                                         </span>
                                     </a>
 
                                     <a href="{{ route('orders.index') }}" 
-                                       class="flex items-center justify-between px-3 py-2 rounded-2xl hover:bg-slate-50 group transition-colors">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 group-hover:bg-teal-50 group-hover:text-teal-600 flex items-center justify-center transition-colors">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                       class="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-slate-50 group transition-colors">
+                                        <div class="flex items-center space-x-2.5">
+                                            <div class="w-6 h-6 rounded-md bg-slate-100 text-slate-500 group-hover:bg-teal-50 group-hover:text-teal-600 flex items-center justify-center transition-colors flex-shrink-0">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                                             </div>
-                                            <div>
-                                                <p class="text-xs font-bold text-slate-800 group-hover:text-teal-600 transition-colors">Active Team Pools</p>
-                                                <p class="text-[10px] text-slate-400">Ongoing team countdowns</p>
-                                            </div>
+                                            <span class="text-xs font-semibold text-slate-800 group-hover:text-teal-600 transition-colors">Active Team Pools</span>
                                         </div>
-                                        <span class="inline-flex items-center space-x-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200">
-                                            <span>Active</span>
+                                        <span class="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-teal-50 text-teal-700 border border-teal-200">
+                                            Active
                                         </span>
                                     </a>
                                 </div>
 
                                 <!-- 3. Portals, Referrals & Privileges -->
-                                <div class="p-2 space-y-0.5">
-                                    <div class="px-3 py-1 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                                <div class="p-1.5 space-y-0.5">
+                                    <div class="px-2.5 pt-1.5 pb-0.5 text-[9px] font-bold tracking-wider text-slate-400 uppercase">
                                         Privileges
                                     </div>
 
                                     <!-- Refer & Earn Link -->
-                                    <div class="mx-1 my-1 p-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                                    <div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200/80">
                                         <div class="flex items-center space-x-2.5">
-                                            <div class="w-7 h-7 rounded-lg bg-emerald-50 text-[#53a318] flex items-center justify-center">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 01-2-2V7a2 2 0 012-2h14a2 2 0 012 2v3a2 2 0 01-2 2M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>
+                                            <div class="w-6 h-6 rounded-md bg-emerald-50 text-[#53a318] flex items-center justify-center flex-shrink-0">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 01-2-2V7a2 2 0 012-2h14a2 2 0 012 2v3a2 2 0 01-2 2M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>
                                             </div>
-                                            <div>
-                                                <p class="text-xs font-bold text-slate-800">Refer & Earn ৳100</p>
-                                                <p class="text-[10px] text-slate-500">Invite friends to your pool</p>
-                                            </div>
+                                            <span class="text-xs font-semibold text-slate-800">Refer & Earn ৳100</span>
                                         </div>
                                         <button type="button" 
                                                 @click="navigator.clipboard.writeText('{{ url('/') }}'); alert('Referral link copied! Share with friends to get discount.')" 
-                                                class="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-[10px] font-bold transition-colors cursor-pointer">
+                                                class="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-900 text-white text-[9px] font-bold transition-colors cursor-pointer shadow-2xs">
                                             Copy
                                         </button>
                                     </div>
 
                                     @if(auth()->user()->isAdmin())
                                         <a href="{{ route('admin.dashboard') }}" 
-                                           class="flex items-center justify-between px-3 py-2 rounded-2xl hover:bg-purple-50 group transition-colors">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                           class="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-purple-50 group transition-colors">
+                                            <div class="flex items-center space-x-2.5">
+                                                <div class="w-6 h-6 rounded-md bg-purple-100 text-purple-700 flex items-center justify-center flex-shrink-0">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                                                 </div>
-                                                <div>
-                                                    <p class="text-xs font-bold text-purple-900">Admin Control Panel</p>
-                                                    <p class="text-[10px] text-purple-600">Users, pools, products & analytics</p>
-                                                </div>
+                                                <span class="text-xs font-semibold text-purple-900">Admin Control Panel</span>
                                             </div>
-                                            <span class="text-[10px] font-black px-1.5 py-0.5 rounded bg-purple-200 text-purple-900">Admin</span>
+                                            <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-purple-200 text-purple-900">Admin</span>
                                         </a>
                                     @endif
 
                                     @if(auth()->user()->isSeller())
                                         <a href="{{ route('seller.dashboard') }}" 
-                                           class="flex items-center justify-between px-3 py-2 rounded-2xl hover:bg-teal-50 group transition-colors">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                           class="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-teal-50 group transition-colors">
+                                            <div class="flex items-center space-x-2.5">
+                                                <div class="w-6 h-6 rounded-md bg-teal-100 text-teal-700 flex items-center justify-center flex-shrink-0">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                                                 </div>
-                                                <div>
-                                                    <p class="text-xs font-bold text-teal-900">Merchant Dashboard</p>
-                                                    <p class="text-[10px] text-teal-600">Manage catalog, group pricing & orders</p>
-                                                </div>
+                                                <span class="text-xs font-semibold text-teal-900">Merchant Dashboard</span>
                                             </div>
-                                            <span class="text-[10px] font-black px-1.5 py-0.5 rounded bg-teal-200 text-teal-900">Seller</span>
+                                            <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-teal-200 text-teal-900">Seller</span>
                                         </a>
                                     @elseif(!auth()->user()->isAdmin())
                                         <a href="{{ route('register') }}?role=seller" 
-                                           class="flex items-center justify-between px-3 py-2 rounded-2xl hover:bg-slate-50 group transition-colors">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 group-hover:bg-slate-200 flex items-center justify-center transition-colors">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                           class="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-slate-50 group transition-colors">
+                                            <div class="flex items-center space-x-2.5">
+                                                <div class="w-6 h-6 rounded-md bg-slate-100 text-slate-600 group-hover:bg-slate-200 flex items-center justify-center flex-shrink-0 transition-colors">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                                 </div>
-                                                <div>
-                                                    <p class="text-xs font-bold text-slate-800">Become a Merchant</p>
-                                                    <p class="text-[10px] text-slate-400">Sell at scale with group buying</p>
-                                                </div>
+                                                <span class="text-xs font-semibold text-slate-800">Become a Merchant</span>
                                             </div>
-                                            <span class="text-[10px] font-black text-[#53a318] group-hover:underline">Join &rarr;</span>
+                                            <span class="text-xs font-bold text-[#53a318] group-hover:translate-x-0.5 transition-transform flex items-center">
+                                                Join <span class="ml-0.5">→</span>
+                                            </span>
                                         </a>
                                     @endif
                                 </div>
 
-                                <!-- 4. Support & Sign Out Footer -->
-                                <div class="p-2 bg-slate-50/70">
+                                <!-- 4. Sign Out Footer -->
+                                <div class="p-1.5 bg-slate-50/70 border-t border-slate-100">
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
                                         <button type="submit" 
-                                                class="w-full flex items-center justify-between px-3 py-2 rounded-2xl text-xs font-bold text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer group">
-                                            <div class="flex items-center space-x-2.5">
-                                                <svg class="w-4 h-4 text-rose-400 group-hover:text-rose-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                                                <span>Sign Out from Cartiva</span>
-                                            </div>
-                                            <span class="text-[10px] text-slate-400 font-normal">Secure logout</span>
+                                                class="w-full flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer group">
+                                            <svg class="w-3.5 h-3.5 text-rose-500 group-hover:text-rose-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                            <span>Sign Out</span>
                                         </button>
                                     </form>
                                 </div>
