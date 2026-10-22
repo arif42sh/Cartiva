@@ -222,9 +222,9 @@
                         <div class="flex items-center justify-between">
                             <span class="text-[10px] font-bold px-2 py-0.5 rounded-md"
                                   :class="qty >= 3 ? 'bg-emerald-100 text-emerald-800' : (qty === 2 ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600')">
-                                <span x-show="qty === 1">খুচরা মূল্য</span>
-                                <span x-show="qty === 2">মিনি বাল্ক রেট</span>
-                                <span x-show="qty >= 3">হোলসেল রেট</span>
+                                <span x-show="qty === 1">Single Unit Price</span>
+                                <span x-show="qty === 2">Mini Bulk Rate</span>
+                                <span x-show="qty >= 3">Wholesale Rate</span>
                             </span>
                         </div>
 
