@@ -517,9 +517,7 @@
 
             <!-- 3. Category & Core Navigation Bar -->
             @if(!request()->routeIs('login', 'register'))
-            <div class="hidden md:flex items-center justify-center relative border-t border-slate-200/80 py-2.5 text-sm font-semibold text-slate-700 min-h-[46px]"
-                 x-data="{ catDropdownOpen: false }"
-                 @keydown.escape.window="catDropdownOpen = false">
+            <div class="hidden md:flex items-center justify-center relative border-t border-slate-200/80 py-2.5 text-sm font-semibold text-slate-700 min-h-[46px]">
                 
                 <!-- Center: Clean Primary Navigation Links -->
                 <nav class="flex items-center justify-center space-x-1 lg:space-x-2 text-xs sm:text-sm font-semibold">
@@ -531,24 +529,11 @@
 
                     <span class="text-slate-300 font-light select-none">•</span>
 
-                    <!-- Mega-Dropdown: Categories (Daraz / Amazon Style) -->
-                    <div class="relative" 
-                         @mouseenter="catDropdownOpen = true" 
-                         @mouseleave="catDropdownOpen = false">
-                        <a href="{{ route('categories.index') }}" 
-                           class="px-3 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 cursor-pointer select-none {{ request()->routeIs('categories.*') || request()->routeIs('category.show') ? 'text-[#53a318] bg-emerald-50/80 font-black' : 'text-slate-700 hover:text-[#53a318] hover:bg-slate-50' }}"
-                           :class="catDropdownOpen ? 'text-[#53a318] bg-emerald-50/80 shadow-2xs' : ''">
-                            <svg class="w-4 h-4 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                            </svg>
-                            <span>Categories</span>
-                            <svg class="w-3.5 h-3.5 transition-transform duration-200" 
-                                 :class="catDropdownOpen ? 'rotate-180 text-[#53a318]' : 'text-slate-400'" 
-                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </a>
-                    </div>
+                    <!-- Categories (Direct link to /categories) -->
+                    <a href="{{ route('categories.index') }}" 
+                       class="px-3 py-1.5 rounded-xl transition-all {{ request()->routeIs('categories.*') || request()->routeIs('category.show') ? 'text-[#53a318] bg-emerald-50/80 font-black' : 'text-slate-700 hover:text-[#53a318] hover:bg-slate-50' }}">
+                        Categories
+                    </a>
 
                     <span class="text-slate-300 font-light select-none">•</span>
 
@@ -603,110 +588,6 @@
                     @endif
                 </div>
 
-                <!-- Mega-Dropdown Box (Daraz / Amazon Style) -->
-                <div x-show="catDropdownOpen" 
-                     x-cloak
-                     x-transition:enter="transition ease-out duration-200"
-                     x-transition:enter-start="opacity-0 -translate-y-2 scale-[0.99]"
-                     x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                     x-transition:leave="transition ease-in duration-150"
-                     x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                     x-transition:leave-end="opacity-0 -translate-y-2 scale-[0.99]"
-                     @mouseenter="catDropdownOpen = true"
-                     @mouseleave="catDropdownOpen = false"
-                     @click.outside="catDropdownOpen = false"
-                     class="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-[920px] lg:w-[1040px] xl:w-[1140px] max-w-[96vw] bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 text-left">
-                    
-                    <!-- 1. Header Bar: Title, Subtitle, and All Products CTA -->
-                    <div class="bg-gradient-to-r from-emerald-50/70 via-slate-50 to-white px-5 py-3.5 border-b border-slate-200/80 flex items-center justify-between gap-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-9 h-9 rounded-xl bg-[#53a318] text-white flex items-center justify-center font-bold text-base shadow-sm">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-black text-slate-900 tracking-tight flex items-center space-x-2">
-                                    <span>ক্যাটাগরি সমূহ (Shop By Category)</span>
-                                    <span class="text-[10px] font-black text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full uppercase tracking-wider">Mega Menu</span>
-                                </h3>
-                                <p class="text-[11px] text-slate-500 font-medium">এক ক্লিকেই পছন্দের ক্যাটাগরির সমস্ত প্রোডাক্ট ও গ্রুপ বাই ডিল দেখুন</p>
-                            </div>
-                        </div>
-
-                        <!-- All Products & Categories Hub CTA Button -->
-                        <a href="{{ route('categories.index') }}" 
-                           class="inline-flex items-center space-x-2 text-xs font-bold text-white bg-[#53a318] hover:bg-emerald-700 px-4 py-2 rounded-xl transition-all shadow-sm hover:shadow group shrink-0">
-                            <span>সকল ক্যাটাগরি ও প্রোডাক্ট দেখুন ({{ $navTotalProducts ?? 21 }}+)</span>
-                            <svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                            </svg>
-                        </a>
-                    </div>
-
-                    <!-- 2. Clean Category Grid (Daraz / Amazon Style) -->
-                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 p-4 bg-slate-50/70 max-h-[460px] overflow-y-auto">
-                        @foreach($megaCategories ?? [] as $mCat)
-                            <a href="{{ route('categories.index', ['category' => $mCat['slug']]) }}" 
-                               class="group flex items-center space-x-3 p-2.5 rounded-xl bg-white hover:bg-emerald-50/80 border border-slate-200/80 hover:border-emerald-400 transition-all hover:shadow-xs cursor-pointer relative overflow-hidden">
-                                
-                                <!-- Icon Box -->
-                                <div class="w-10 h-10 rounded-xl bg-slate-100/90 group-hover:bg-white flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform duration-200 border border-slate-200/60 group-hover:border-emerald-200 shadow-2xs">
-                                    {{ $mCat['icon'] }}
-                                </div>
-
-                                <!-- Content -->
-                                <div class="min-w-0 flex-1">
-                                    <div class="flex items-center justify-between gap-1">
-                                        <h4 class="text-xs sm:text-[13px] font-bold text-slate-800 group-hover:text-emerald-700 truncate leading-tight">
-                                            {{ $mCat['name_bn'] }}
-                                        </h4>
-                                        @if(!empty($mCat['badge']))
-                                            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md {{ $mCat['badge_color'] ?? 'bg-emerald-100 text-emerald-700' }} shrink-0">
-                                                {{ $mCat['badge'] }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                    <p class="text-[11px] text-slate-500 group-hover:text-slate-700 truncate mt-0.5 font-medium flex items-center">
-                                        <span>{{ $mCat['count'] }}টি প্রোডাক্ট</span>
-                                        <span class="text-slate-300 mx-1">•</span>
-                                        <span class="font-bold text-rose-600">{{ $mCat['discount'] }}</span>
-                                    </p>
-                                </div>
-
-                                <!-- Active Hover Stripe Indicator -->
-                                <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#53a318] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            </a>
-                        @endforeach
-                    </div>
-
-                    <!-- 3. Bottom Value Strip (Trust & Promotions) -->
-                    <div class="px-5 py-2.5 bg-white border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
-                        <div class="flex items-center space-x-4">
-                            <div class="flex items-center space-x-1.5">
-                                <span class="text-rose-500 font-bold">🔥</span>
-                                <span class="font-medium">গ্রুপ বাইয়ে সর্বোচ্চ <strong>৫০% পর্যন্ত ডিসকাউন্ট</strong></span>
-                            </div>
-                            <span class="text-slate-300 hidden sm:inline">•</span>
-                            <div class="hidden sm:flex items-center space-x-1.5">
-                                <span class="text-amber-500">⚡</span>
-                                <span>দৈনিক নতুন ফ্ল্যাশ সেলস</span>
-                            </div>
-                            <span class="text-slate-300 hidden md:inline">•</span>
-                            <div class="hidden md:flex items-center space-x-1.5">
-                                <span class="text-emerald-600">✓</span>
-                                <span>১০০% অফিসিয়াল অথেনটিক পণ্য</span>
-                            </div>
-                        </div>
-
-                        <a href="{{ route('categories.index') }}" 
-                           class="font-bold text-[#53a318] hover:text-emerald-700 flex items-center space-x-1 shrink-0">
-                            <span>ক্যাটাগরি পেজে যান →</span>
-                        </a>
-                    </div>
-
-                </div>
-
             </div>
             @endif
 
@@ -717,44 +598,7 @@
                 </form>
                 <div class="flex flex-col space-y-1.5 text-sm font-semibold text-slate-700">
                     <a href="{{ route('home') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100">Home</a>
-                    
-                    <!-- Mobile Expandable Categories -->
-                    <div x-data="{ mobileCatOpen: false }" class="border-y border-slate-100 py-1 my-1">
-                        <button type="button" 
-                                @click="mobileCatOpen = !mobileCatOpen" 
-                                class="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 text-left font-bold text-slate-800">
-                            <span class="flex items-center space-x-2">
-                                <svg class="w-4 h-4 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                                </svg>
-                                <span>Categories (ক্যাটাগরি সমূহ)</span>
-                            </span>
-                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200" 
-                                 :class="mobileCatOpen ? 'rotate-180 text-[#53a318]' : ''" 
-                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        <div x-show="mobileCatOpen" x-cloak class="p-2 bg-slate-50 rounded-xl mt-1 space-y-2">
-                            <a href="{{ route('categories.index') }}" 
-                               class="block w-full text-center py-2 px-3 rounded-lg bg-[#53a318] text-white text-xs font-bold shadow-xs">
-                                🛍️ সব ক্যাটাগরি ও প্রোডাক্ট একসাথে দেখুন →
-                            </a>
-                            <div class="grid grid-cols-2 gap-1.5 max-h-[260px] overflow-y-auto">
-                                @foreach($megaCategories ?? [] as $mCat)
-                                    <a href="{{ route('categories.index', ['category' => $mCat['slug']]) }}" 
-                                       class="flex items-center space-x-2 p-2 rounded-lg bg-white border border-slate-200 text-xs text-slate-700 hover:text-emerald-700 hover:border-emerald-300">
-                                        <span class="text-base shrink-0">{{ $mCat['icon'] }}</span>
-                                        <div class="truncate min-w-0">
-                                            <div class="font-bold truncate text-[11px]">{{ $mCat['name_bn'] }}</div>
-                                            <div class="text-[10px] text-slate-400 truncate">{{ $mCat['count'] }}টি • {{ $mCat['discount'] }}</div>
-                                        </div>
-                                    </a>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-
+                    <a href="{{ route('categories.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 {{ request()->routeIs('categories.*') ? 'text-[#53a318] font-bold bg-emerald-50' : '' }}">Categories</a>
                     <a href="{{ route('hot-deals.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-rose-600 font-bold">Hot Deals</a>
                     <a href="{{ route('flash-sales.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 {{ request()->routeIs('flash-sales.*') ? 'text-amber-600 font-bold bg-amber-50' : '' }}">⚡ Flash Sales</a>
                     <a href="{{ route('home') }}#how-it-works" class="px-3 py-2 rounded-lg hover:bg-slate-100">How It Works</a>

@@ -274,7 +274,11 @@ class HomeController extends Controller
     public function categoriesIndex(Request $request)
     {
         $selectedCategorySlug = $request->input('category', 'all');
-        $viewMode = $request->input('view', 'all');
+        $buyingMode = $request->input('buying_mode', 'all'); // 'all', 'direct', 'group'
+        $pricePreset = $request->input('price');
+        $minPrice = $request->input('min_price');
+        $maxPrice = $request->input('max_price');
+        $minDiscount = $request->input('min_discount');
         $searchQ = $request->input('q');
         $sort = $request->input('sort', 'latest');
 
@@ -290,6 +294,7 @@ class HomeController extends Controller
         $productsQuery = Product::with(['category', 'seller', 'activeGroupSessions.members.user'])
             ->where('is_active', true);
 
+        // Search Filter
         if ($request->filled('q')) {
             $q = trim($searchQ);
             $productsQuery->where(function ($sub) use ($q) {
@@ -298,6 +303,7 @@ class HomeController extends Controller
             });
         }
 
+        // Category Filter
         if ($selectedCategorySlug !== 'all') {
             $productsQuery->whereHas('category', function ($sub) use ($selectedCategorySlug) {
                 if ($selectedCategorySlug === 'smart-tech-audio' || $selectedCategorySlug === 'tech-accessories') {
@@ -314,6 +320,44 @@ class HomeController extends Controller
             });
         }
 
+        // Buying Mode Preference Filter
+        if ($buyingMode === 'group') {
+            $productsQuery->whereHas('activeGroupSessions', function ($q) {
+                $q->where('status', 'active')->where('expires_at', '>', now());
+            });
+        } elseif ($buyingMode === 'direct') {
+            $productsQuery->whereDoesntHave('activeGroupSessions', function ($q) {
+                $q->where('status', 'active')->where('expires_at', '>', now());
+            });
+        }
+
+        // Price Filter
+        if ($pricePreset) {
+            if ($pricePreset === 'under_1000') {
+                $productsQuery->where('group_price', '<', 1000);
+            } elseif ($pricePreset === '1000_3000') {
+                $productsQuery->whereBetween('group_price', [1000, 3000]);
+            } elseif ($pricePreset === '3000_7000') {
+                $productsQuery->whereBetween('group_price', [3000, 7000]);
+            } elseif ($pricePreset === 'above_7000') {
+                $productsQuery->where('group_price', '>', 7000);
+            }
+        } else {
+            if ($request->filled('min_price')) {
+                $productsQuery->where('group_price', '>=', (float) $minPrice);
+            }
+            if ($request->filled('max_price')) {
+                $productsQuery->where('group_price', '<=', (float) $maxPrice);
+            }
+        }
+
+        // Minimum Discount Filter
+        if ($request->filled('min_discount')) {
+            $discVal = (int) $minDiscount;
+            $productsQuery->whereRaw('ROUND(((single_price - group_price) / single_price) * 100) >= ?', [$discVal]);
+        }
+
+        // Sorting
         switch ($sort) {
             case 'discount':
                 $productsQuery->orderByRaw('((single_price - group_price) / single_price) DESC');
@@ -332,28 +376,20 @@ class HomeController extends Controller
                 break;
         }
 
-        $products = $productsQuery->paginate(16)->withQueryString();
-
-        $groupedCategories = Category::withCount(['products' => function ($q) {
-                $q->where('is_active', true);
-            }])
-            ->having('products_count', '>', 0)
-            ->with(['products' => function ($q) {
-                $q->where('is_active', true)
-                  ->with(['category', 'seller', 'activeGroupSessions.members.user'])
-                  ->take(8);
-            }])
-            ->get();
+        $products = $productsQuery->paginate(20)->withQueryString();
 
         $totalProductsCount = Product::where('is_active', true)->count();
 
         return view('categories.index', compact(
             'categories',
             'products',
-            'groupedCategories',
             'selectedCategorySlug',
             'selectedCategoryModel',
-            'viewMode',
+            'buyingMode',
+            'pricePreset',
+            'minPrice',
+            'maxPrice',
+            'minDiscount',
             'searchQ',
             'sort',
             'totalProductsCount'
