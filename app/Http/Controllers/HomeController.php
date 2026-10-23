@@ -1005,4 +1005,63 @@ class HomeController extends Controller
             'selectedSlot'
         ));
     }
+
+    /**
+     * Public Merchant Storefront Page
+     */
+    public function shop(User $seller, Request $request)
+    {
+        if (!$seller->isSeller() && $seller->products()->count() === 0) {
+            abort(404, 'Merchant storefront not found.');
+        }
+
+        $sellerProductIds = Product::where('seller_id', $seller->id)->pluck('id');
+
+        $query = Product::where('seller_id', $seller->id)
+            ->where('is_active', true)
+            ->with(['category', 'activeGroupSessions.members.user']);
+
+        // Search within shop
+        if ($request->filled('q')) {
+            $q = trim($request->q);
+            $query->where(function ($sub) use ($q) {
+                $sub->where('title', 'like', "%{$q}%")
+                    ->orWhere('description', 'like', "%{$q}%");
+            });
+        }
+
+        // Category filter
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+
+        $products = $query->latest()->paginate(12)->withQueryString();
+
+        $categories = Category::whereHas('products', function ($q) use ($seller) {
+            $q->where('seller_id', $seller->id)->where('is_active', true);
+        })->get();
+
+        // Active ongoing circles for this shop's items
+        $activeCircles = GroupBuySession::with(['product', 'leader', 'members.user'])
+            ->whereIn('product_id', $sellerProductIds)
+            ->where('status', 'active')
+            ->where('expires_at', '>', now())
+            ->latest()
+            ->take(4)
+            ->get();
+
+        $totalProductsCount = Product::where('seller_id', $seller->id)->where('is_active', true)->count();
+        $totalSalesCount = Product::where('seller_id', $seller->id)->sum('sales_count') ?: 150;
+        $avgRating = Product::where('seller_id', $seller->id)->avg('rating') ?: 4.9;
+
+        return view('shop.show', compact(
+            'seller',
+            'products',
+            'categories',
+            'activeCircles',
+            'totalProductsCount',
+            'totalSalesCount',
+            'avgRating'
+        ));
+    }
 }

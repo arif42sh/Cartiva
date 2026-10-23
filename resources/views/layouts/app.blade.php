@@ -585,8 +585,9 @@
 
                     @if(auth()->check() && auth()->user()->isSeller())
                         <a href="{{ route('seller.dashboard') }}" 
-                           class="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200/80 px-3.5 py-1.5 rounded-xl transition-all shadow-2xs">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                           class="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-extrabold text-white px-3.5 py-1.5 rounded-xl transition-all shadow-sm hover:brightness-110 active:scale-95"
+                           style="background-color: #53a318; box-shadow: 0 2px 8px rgba(83, 163, 24, 0.35);">
+                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                             <span>Seller Dashboard</span>
                         </a>
                     @else

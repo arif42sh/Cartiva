@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.seller')
 
 @section('title', 'Manage Products & Stock - Cartiva Seller')
 
@@ -156,7 +156,7 @@
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" 
-                                            class="px-2.5 py-0.5 rounded-full text-[10px] font-black cursor-pointer transition-all {{ $product->is_active ? 'bg-teal-100 text-teal-800 hover:bg-teal-200' : 'bg-slate-200 text-slate-600 hover:bg-slate-300' }}"
+                                            class="px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer transition-all {{ $product->is_active ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300' : 'bg-slate-200 text-slate-600 hover:bg-slate-300 border border-slate-300' }}"
                                             title="Click to toggle status">
                                         {{ $product->is_active ? '● Active' : '○ Inactive' }}
                                     </button>
@@ -167,7 +167,7 @@
                             <td class="py-4 px-6 text-right">
                                 <div class="inline-flex items-center space-x-2">
                                     <a href="{{ route('seller.products.edit', $product) }}" 
-                                       class="p-2 rounded-xl bg-slate-100 hover:bg-teal-50 text-slate-700 hover:text-teal-700 transition-colors" 
+                                       class="p-2 rounded-xl bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-[#53a318] transition-colors" 
                                        title="Edit Product & Pricing">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                     </a>
@@ -192,7 +192,9 @@
                             <td colspan="7" class="py-12 text-center text-slate-400">
                                 <span class="text-3xl block mb-2">📦</span>
                                 <p class="text-xs font-bold text-slate-600">No products found matching your criteria.</p>
-                                <a href="{{ route('seller.products.create') }}" class="mt-3 inline-block px-4 py-2 rounded-xl bg-teal-600 text-white font-bold text-xs hover:bg-teal-700 transition-all shadow-sm">
+                                <a href="{{ route('seller.products.create') }}" 
+                                   class="mt-3 inline-block px-4.5 py-2.5 rounded-xl text-white font-extrabold text-xs transition-all shadow-md hover:brightness-110"
+                                   style="background-color: #53a318; box-shadow: 0 4px 12px rgba(83, 163, 24, 0.35);">
                                     + Add Your First Product
                                 </a>
                             </td>
@@ -221,14 +223,16 @@
                 <div class="mb-4">
                     <label class="block text-xs font-bold text-slate-700 mb-1">Available Quantity Units</label>
                     <input type="number" name="stock" x-model="stockValue" min="0" required 
-                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-black focus:outline-hidden focus:ring-2 focus:ring-teal-500">
+                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-black focus:outline-hidden focus:ring-2 focus:ring-[#53a318]">
                 </div>
 
                 <div class="flex items-center justify-end space-x-2">
                     <button type="button" @click="quickStockModal = false" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 transition-colors">
                         Cancel
                     </button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-teal-600 text-white font-bold text-xs hover:bg-teal-700 transition-colors shadow-xs">
+                    <button type="submit" 
+                            class="px-4 py-2 rounded-xl text-white font-extrabold text-xs transition-all shadow-md hover:brightness-110"
+                            style="background-color: #53a318;">
                         Save Changes
                     </button>
                 </div>

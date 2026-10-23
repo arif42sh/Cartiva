@@ -170,107 +170,172 @@
                 </div>
             </div>
 
-            <!-- Dual Purchase Box (Interactive Price Calculation & Compact Layout) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-0.5">
-                
-                <!-- Option A: Group Buy -->
-                <div class="relative bg-emerald-50/70 rounded-2xl border-2 border-[#53a318] p-3.5 sm:p-4 shadow-xs flex flex-col justify-between">
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="text-[10px] font-bold text-emerald-800 bg-white/90 px-2 py-0.5 rounded-md border border-emerald-200">
-                                <span x-show="!isSelfGroup">{{ $product->group_size_required }} Buyers Pool</span>
-                                <span x-show="isSelfGroup" class="text-emerald-700 font-extrabold">Instant Group Unlocked</span>
-                            </span>
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Team Deal</span>
+            <!-- Merchant Attribution Card -->
+            @if($product->seller)
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200/90 text-xs">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs overflow-hidden flex-shrink-0">
+                            @if($product->seller->avatar)
+                                <img src="{{ $product->seller->avatar }}" alt="{{ $product->seller->shop_name ?? $product->seller->name }}" class="w-full h-full object-cover">
+                            @else
+                                {{ strtoupper(substr($product->seller->shop_name ?? $product->seller->name, 0, 1)) }}
+                            @endif
                         </div>
-
                         <div>
-                            <span class="text-[10px] uppercase font-bold text-slate-500 block">Team Pool Price</span>
-                            <div class="flex items-baseline space-x-2 mt-0.5">
-                                <span class="text-xl sm:text-2xl font-black text-[#53a318]">৳{{ number_format($product->group_price) }}</span>
-                                <span class="text-xs text-slate-400 line-through">৳{{ number_format($product->single_price) }}</span>
+                            <div class="flex items-center space-x-1.5">
+                                <span class="text-slate-400 text-[10px] uppercase font-bold">Sold by:</span>
+                                <a href="{{ route('shop.show', $product->seller) }}" class="font-extrabold text-slate-900 hover:text-teal-600 transition-colors">
+                                    {{ $product->seller->shop_name ?? $product->seller->name }}
+                                </a>
+                                <span class="text-[9px] bg-teal-100 text-teal-800 font-extrabold px-1.5 py-0.2 rounded-full">✓ Verified</span>
                             </div>
-                            <span class="text-[10px] font-bold text-emerald-700 block mt-0.5">
-                                Save ৳{{ number_format($savePerUnit) }} per unit
-                            </span>
+                            <span class="text-[10px] text-slate-500">{{ $product->seller->business_category ?? 'General Merchant' }} • ★ 4.9 Rating</span>
                         </div>
                     </div>
 
-                    <!-- Total Subtotal for Qty & Action -->
-                    <div class="pt-2.5 mt-3 border-t border-emerald-200/80 space-y-2">
-                        <div class="flex items-center justify-between text-xs">
-                            <span class="text-slate-600 font-semibold">Total (<span x-text="qty"></span> <span x-text="qty > 1 ? 'units' : 'unit'"></span>):</span>
-                            <span class="text-sm font-black text-emerald-800">৳<span x-text="Number(qty * groupUnitPrice).toLocaleString()"></span></span>
-                        </div>
-
-                        <form action="{{ route('group-buy.start', $product) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="quantity" :value="qty">
-                            <button type="submit" 
-                                    class="w-full py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm bg-[#53a318] hover:bg-[#468c13] text-white shadow-xs hover:shadow transition-all flex items-center justify-center space-x-1.5 active:scale-[0.99] cursor-pointer">
-                                <span x-show="!isSelfGroup">Group Buy</span>
-                                <span x-show="isSelfGroup">Instant Group Buy</span>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </button>
-                        </form>
-                    </div>
+                    <a href="{{ route('shop.show', $product->seller) }}" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-teal-500 text-slate-800 hover:text-teal-700 text-xs font-bold transition-all shadow-2xs flex items-center space-x-1">
+                        <span>Visit Store</span>
+                        <span>&rarr;</span>
+                    </a>
                 </div>
+            @endif
 
-                <!-- Option B: Solo Instant Buy (Method 2: Dynamic Bulk Tier) -->
-                <div class="relative bg-white rounded-2xl border border-slate-200 p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md"
-                                  :class="qty >= 3 ? 'bg-emerald-100 text-emerald-800' : (qty === 2 ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600')">
-                                <span x-show="qty === 1">Single Unit Price</span>
-                                <span x-show="qty === 2">Mini Bulk Rate</span>
-                                <span x-show="qty >= 3">Wholesale Rate</span>
-                            </span>
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Direct Buy</span>
-                        </div>
-
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-slate-500 block">Unit Price</span>
-                            <div class="flex items-baseline space-x-2 mt-0.5">
-                                <span class="text-xl sm:text-2xl font-black text-slate-900">৳<span x-text="Number(currentSingleUnitPrice).toLocaleString()"></span></span>
-                                <template x-if="qty > 1">
-                                    <span class="text-xs text-slate-400 line-through">৳{{ number_format($product->single_price) }}</span>
-                                </template>
+            <!-- Dual Purchase Box or Merchant Self-View Mode -->
+            @if(auth()->check() && auth()->id() === $product->seller_id)
+                <!-- Seller Own-Product Notice & Quick Control -->
+                <div class="p-5 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-teal-950 text-white shadow-md border border-teal-500/30">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center space-x-3.5">
+                            <div class="w-11 h-11 rounded-2xl bg-teal-500/20 text-teal-400 border border-teal-500/30 flex items-center justify-center font-bold text-xl flex-shrink-0">
+                                🏪
                             </div>
-                            <div class="mt-0.5">
-                                <template x-if="qty > 1">
-                                    <span class="text-[10px] font-bold text-emerald-700 block">Save ৳<span x-text="Number(soloSavingsPerUnit).toLocaleString()"></span> per unit</span>
-                                </template>
-                                <template x-if="qty === 1">
-                                    <span class="text-[10px] text-slate-400 font-medium block">Buy 2+ for bulk discount</span>
-                                </template>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs font-black uppercase text-teal-400 tracking-wider">Merchant Preview Mode</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-teal-400 text-slate-950">Your Listing</span>
+                                </div>
+                                <p class="text-xs text-slate-300 mt-1">
+                                    You are viewing this product in Customer Preview Mode. Under global anti-fraud policies, sellers cannot purchase their own inventory.
+                                </p>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Total Subtotal for Qty & Action -->
-                    <div class="pt-2.5 mt-3 border-t border-slate-100 space-y-2">
-                        <div class="flex items-center justify-between text-xs">
-                            <span class="text-slate-600 font-semibold">Total (<span x-text="qty"></span> <span x-text="qty > 1 ? 'units' : 'unit'"></span>):</span>
-                            <span class="text-sm font-black text-slate-900">৳<span x-text="Number(qty * currentSingleUnitPrice).toLocaleString()"></span></span>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-2">
-                            <button type="button"
-                                    @click="window.addToCart({ id: {{ $product->id }}, title: '{{ addslashes($product->title) }}', price: currentSingleUnitPrice, image: '{{ $product->image_url }}', slug: '{{ $product->slug }}' })"
-                                    class="w-full py-2.5 px-2 rounded-xl font-bold text-xs bg-emerald-50 hover:bg-emerald-100 text-[#53a318] border border-emerald-200/90 transition-all flex items-center justify-center space-x-1 active:scale-[0.99] cursor-pointer shadow-2xs">
-                                <svg class="w-3.5 h-3.5 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                                <span>Add to Cart</span>
-                            </button>
-                            <a :href="'{{ route('checkout', ['product_id' => $product->id, 'type' => 'single', 'action' => 'buy_single']) }}' + '&quantity=' + qty" 
-                               class="w-full py-2.5 px-2 rounded-xl font-bold text-xs bg-[#53a318] hover:bg-[#468c13] text-white shadow-2xs hover:shadow transition-all flex items-center justify-center space-x-1 active:scale-[0.99] text-center">
-                                <span>Buy Now</span>
+                        <div class="flex items-center space-x-2 flex-shrink-0">
+                            <a href="{{ route('seller.products.edit', $product) }}" 
+                               class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white font-extrabold text-xs shadow-md transition-all flex items-center space-x-1.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                <span>Edit Pricing & Stock</span>
+                            </a>
+                            <a href="{{ route('seller.dashboard') }}" 
+                               class="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white font-bold text-xs transition-colors">
+                                Dashboard &rarr;
                             </a>
                         </div>
                     </div>
                 </div>
+            @else
+                <!-- Normal Customer Dual Purchase Box -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-0.5">
+                    
+                    <!-- Option A: Group Buy -->
+                    <div class="relative bg-emerald-50/70 rounded-2xl border-2 border-[#53a318] p-3.5 sm:p-4 shadow-xs flex flex-col justify-between">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-bold text-emerald-800 bg-white/90 px-2 py-0.5 rounded-md border border-emerald-200">
+                                    <span x-show="!isSelfGroup">{{ $product->group_size_required }} Buyers Pool</span>
+                                    <span x-show="isSelfGroup" class="text-emerald-700 font-extrabold">Instant Group Unlocked</span>
+                                </span>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Team Deal</span>
+                            </div>
 
-            </div>
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-slate-500 block">Team Pool Price</span>
+                                <div class="flex items-baseline space-x-2 mt-0.5">
+                                    <span class="text-xl sm:text-2xl font-black text-[#53a318]">৳{{ number_format($product->group_price) }}</span>
+                                    <span class="text-xs text-slate-400 line-through">৳{{ number_format($product->single_price) }}</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-emerald-700 block mt-0.5">
+                                    Save ৳{{ number_format($savePerUnit) }} per unit
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Total Subtotal for Qty & Action -->
+                        <div class="pt-2.5 mt-3 border-t border-emerald-200/80 space-y-2">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-600 font-semibold">Total (<span x-text="qty"></span> <span x-text="qty > 1 ? 'units' : 'unit'"></span>):</span>
+                                <span class="text-sm font-black text-emerald-800">৳<span x-text="Number(qty * groupUnitPrice).toLocaleString()"></span></span>
+                            </div>
+
+                            <form action="{{ route('group-buy.start', $product) }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="quantity" :value="qty">
+                                <button type="submit" 
+                                        class="w-full py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm bg-[#53a318] hover:bg-[#468c13] text-white shadow-xs hover:shadow transition-all flex items-center justify-center space-x-1.5 active:scale-[0.99] cursor-pointer">
+                                    <span x-show="!isSelfGroup">Group Buy</span>
+                                    <span x-show="isSelfGroup">Instant Group Buy</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Option B: Solo Instant Buy -->
+                    <div class="relative bg-white rounded-2xl border border-slate-200 p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md"
+                                      :class="qty >= 3 ? 'bg-emerald-100 text-emerald-800' : (qty === 2 ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600')">
+                                    <span x-show="qty === 1">Single Unit Price</span>
+                                    <span x-show="qty === 2">Mini Bulk Rate</span>
+                                    <span x-show="qty >= 3">Wholesale Rate</span>
+                                </span>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Direct Buy</span>
+                            </div>
+
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-slate-500 block">Unit Price</span>
+                                <div class="flex items-baseline space-x-2 mt-0.5">
+                                    <span class="text-xl sm:text-2xl font-black text-slate-900">৳<span x-text="Number(currentSingleUnitPrice).toLocaleString()"></span></span>
+                                    <template x-if="qty > 1">
+                                        <span class="text-xs text-slate-400 line-through">৳{{ number_format($product->single_price) }}</span>
+                                    </template>
+                                </div>
+                                <div class="mt-0.5">
+                                    <template x-if="qty > 1">
+                                        <span class="text-[10px] font-bold text-emerald-700 block">Save ৳<span x-text="Number(soloSavingsPerUnit).toLocaleString()"></span> per unit</span>
+                                    </template>
+                                    <template x-if="qty === 1">
+                                        <span class="text-[10px] text-slate-400 font-medium block">Buy 2+ for bulk discount</span>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Subtotal for Qty & Action -->
+                        <div class="pt-2.5 mt-3 border-t border-slate-100 space-y-2">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-600 font-semibold">Total (<span x-text="qty"></span> <span x-text="qty > 1 ? 'units' : 'unit'"></span>):</span>
+                                <span class="text-sm font-black text-slate-900">৳<span x-text="Number(qty * currentSingleUnitPrice).toLocaleString()"></span></span>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button"
+                                        @click="window.addToCart({ id: {{ $product->id }}, title: '{{ addslashes($product->title) }}', price: currentSingleUnitPrice, image: '{{ $product->image_url }}', slug: '{{ $product->slug }}' })"
+                                        class="w-full py-2.5 px-2 rounded-xl font-bold text-xs bg-emerald-50 hover:bg-emerald-100 text-[#53a318] border border-emerald-200/90 transition-all flex items-center justify-center space-x-1 active:scale-[0.99] cursor-pointer shadow-2xs">
+                                    <svg class="w-3.5 h-3.5 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                    <span>Add to Cart</span>
+                                </button>
+                                <a :href="'{{ route('checkout', ['product_id' => $product->id, 'type' => 'single', 'action' => 'buy_single']) }}' + '&quantity=' + qty" 
+                                   class="w-full py-2.5 px-2 rounded-xl font-bold text-xs bg-[#53a318] hover:bg-[#468c13] text-white shadow-2xs hover:shadow transition-all flex items-center justify-center space-x-1 active:scale-[0.99] text-center">
+                                    <span>Buy Now</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            @endif
 
         </div>
 

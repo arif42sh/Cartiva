@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.seller')
 
 @section('title', 'Manage Customer Orders - Cartiva Seller')
 
@@ -27,21 +27,22 @@
         </div>
 
         <!-- Filter Tabs -->
-        <div class="flex items-center space-x-1.5 p-1 bg-white rounded-2xl border border-slate-200/90 shadow-2xs text-xs font-bold overflow-x-auto">
+        <div class="flex items-center space-x-1.5 p-1 bg-white rounded-2xl border border-slate-200 shadow-xs text-xs font-bold overflow-x-auto">
             <a href="{{ route('seller.orders') }}" 
-               class="px-3 py-1.5 rounded-xl transition-all whitespace-nowrap {{ !request('status') || request('status') === 'all' ? 'bg-teal-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+               class="px-3.5 py-2 rounded-xl transition-all whitespace-nowrap {{ !request('status') || request('status') === 'all' ? 'text-white font-black shadow-sm' : 'text-slate-600 hover:bg-slate-100' }}"
+               @if(!request('status') || request('status') === 'all') style="background-color: #53a318; box-shadow: 0 2px 8px rgba(83, 163, 24, 0.35);" @endif>
                 All ({{ $counts['all'] }})
             </a>
             <a href="{{ route('seller.orders') }}?status=processing" 
-               class="px-3 py-1.5 rounded-xl transition-all whitespace-nowrap {{ request('status') === 'processing' ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+               class="px-3.5 py-2 rounded-xl transition-all whitespace-nowrap {{ request('status') === 'processing' ? 'bg-amber-500 text-white shadow-xs font-black' : 'text-slate-600 hover:bg-slate-100' }}">
                 To Dispatch ({{ $counts['processing'] }})
             </a>
             <a href="{{ route('seller.orders') }}?status=shipped" 
-               class="px-3 py-1.5 rounded-xl transition-all whitespace-nowrap {{ request('status') === 'shipped' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+               class="px-3.5 py-2 rounded-xl transition-all whitespace-nowrap {{ request('status') === 'shipped' ? 'bg-indigo-600 text-white shadow-xs font-black' : 'text-slate-600 hover:bg-slate-100' }}">
                 In Transit ({{ $counts['shipped'] }})
             </a>
             <a href="{{ route('seller.orders') }}?status=delivered" 
-               class="px-3 py-1.5 rounded-xl transition-all whitespace-nowrap {{ request('status') === 'delivered' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+               class="px-3.5 py-2 rounded-xl transition-all whitespace-nowrap {{ request('status') === 'delivered' ? 'bg-emerald-600 text-white shadow-xs font-black' : 'text-slate-600 hover:bg-slate-100' }}">
                 Delivered ({{ $counts['delivered'] }})
             </a>
         </div>

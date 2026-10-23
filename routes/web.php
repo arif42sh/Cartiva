@@ -23,6 +23,7 @@ Route::get('/categories', [HomeController::class, 'categoriesIndex'])->name('cat
 Route::get('/category/{category:slug}', [HomeController::class, 'category'])->name('category.show');
 Route::get('/product/{product:slug}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/group-buy/{session:group_code}', [GroupBuyController::class, 'show'])->name('group-buy.show');
+Route::get('/shop/{seller}', [HomeController::class, 'shop'])->name('shop.show');
 
 /*
 |--------------------------------------------------------------------------

@@ -19,6 +19,12 @@ class OrderController extends Controller
         $productId = $request->input('product_id');
         $product = Product::findOrFail($productId);
 
+        // Global Anti-Fraud Rule: Sellers cannot checkout their own listed inventory
+        if (Auth::check() && Auth::id() === $product->seller_id) {
+            return redirect()->route('products.show', $product->slug)
+                ->with('error', '⚠️ আপনি এই প্রোডাক্টের সেলার। সেলাররা নিজের প্রোডাক্ট নিজে ক্রয় করতে পারেন না।');
+        }
+
         $orderType = $request->input('type', 'single'); // single or group_buy
         $action = $request->input('action', 'buy_single'); // buy_single, start_new, join_existing
         $sessionId = $request->input('session_id');
@@ -70,6 +76,12 @@ class OrderController extends Controller
 
         $user = Auth::user();
         $product = Product::findOrFail($request->product_id);
+
+        if ($user->id === $product->seller_id) {
+            return redirect()->route('products.show', $product->slug)
+                ->with('error', '⚠️ আপনি এই প্রোডাক্টের সেলার। সেলাররা নিজের প্রোডাক্ট নিজে ক্রয় করতে পারেন না।');
+        }
+
         $orderType = $request->order_type;
         $action = $request->action;
 
