@@ -1,9 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.seller')
 
 @section('title', 'Order #' . $order->order_number . ' - Cartiva Seller Fulfillment')
 
 @section('content')
-<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <!-- Shared Navigation -->
     @include('seller.partials.nav')

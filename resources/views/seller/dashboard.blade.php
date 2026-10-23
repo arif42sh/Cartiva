@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.seller')
 
 @section('title', 'Merchant Hub - Cartiva Seller Dashboard')
 

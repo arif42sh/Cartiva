@@ -26,10 +26,17 @@
             </a>
 
             @if(auth()->check() && auth()->id() === $seller->id)
-                <a href="{{ route('seller.profile') }}" class="absolute top-4 right-4 px-3.5 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-600 text-white font-extrabold text-xs shadow-md transition-all flex items-center space-x-1.5">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                    <span>Edit Store Branding</span>
-                </a>
+                <div class="absolute top-4 right-4 flex items-center space-x-2">
+                    <a href="{{ route('seller.dashboard') }}" class="px-3.5 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-900 text-white backdrop-blur-md text-xs font-black transition-all flex items-center space-x-1.5 shadow-md border border-white/10">
+                        <svg class="w-4 h-4 text-[#84cc16]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        <span>Seller Hub</span>
+                    </a>
+                    <a href="{{ route('seller.profile') }}" class="px-3.5 py-1.5 rounded-xl text-white font-extrabold text-xs shadow-md transition-all flex items-center space-x-1.5 hover:brightness-110"
+                       style="background-color: #53a318;">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                        <span>Edit Branding</span>
+                    </a>
+                </div>
             @endif
         </div>
 

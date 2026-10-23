@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.seller')
 
 @section('title', 'Group-Buy Sessions & Circles - Cartiva Seller')
 
