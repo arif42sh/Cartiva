@@ -625,5 +625,62 @@ class SellerController extends Controller
 
         return back()->with('success', '✨ Merchant store profile updated successfully!');
     }
+
+    /**
+     * Integrated Merchant Storefront Preview (Method A)
+     * Renders a live, interactive customer-facing store preview inside the Merchant Portal with device frames.
+     */
+    public function storefront(Request $request)
+    {
+        $seller = Auth::user();
+        $sellerProductIds = Product::where('seller_id', $seller->id)->pluck('id');
+
+        $query = Product::where('seller_id', $seller->id)
+            ->where('is_active', true)
+            ->with(['category', 'activeGroupSessions.members.user']);
+
+        // Search within shop preview
+        if ($request->filled('q')) {
+            $q = trim($request->q);
+            $query->where(function ($sub) use ($q) {
+                $sub->where('title', 'like', "%{$q}%")
+                    ->orWhere('description', 'like', "%{$q}%");
+            });
+        }
+
+        // Category filter
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+
+        $products = $query->latest()->paginate(12)->withQueryString();
+
+        $categories = Category::whereHas('products', function ($q) use ($seller) {
+            $q->where('seller_id', $seller->id)->where('is_active', true);
+        })->get();
+
+        // Active ongoing circles for this shop's items
+        $activeCircles = GroupBuySession::with(['product', 'leader', 'members.user'])
+            ->whereIn('product_id', $sellerProductIds)
+            ->where('status', 'active')
+            ->where('expires_at', '>', now())
+            ->latest()
+            ->take(4)
+            ->get();
+
+        $totalProductsCount = Product::where('seller_id', $seller->id)->where('is_active', true)->count();
+        $totalSalesCount = Product::where('seller_id', $seller->id)->sum('sales_count') ?: 150;
+        $avgRating = Product::where('seller_id', $seller->id)->avg('rating') ?: 4.9;
+
+        return view('seller.storefront.index', compact(
+            'seller',
+            'products',
+            'categories',
+            'activeCircles',
+            'totalProductsCount',
+            'totalSalesCount',
+            'avgRating'
+        ));
+    }
 }
 

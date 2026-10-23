@@ -48,21 +48,12 @@
                 </form>
             </div>
 
-            <!-- Right: Actions, Storefront View & Profile -->
+            <!-- Right: Actions & Profile -->
             <div class="flex items-center space-x-3 flex-shrink-0">
-                
-                <!-- View Public Storefront Link -->
-                <a href="{{ route('shop.show', auth()->user()) }}" target="_blank"
-                   class="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors shadow-2xs"
-                   title="Preview your public shop page as seen by customers">
-                    <svg class="w-3.5 h-3.5 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                    <span>Live Storefront ↗</span>
-                </a>
-
                 <!-- Switch to Marketplace / Shopper View -->
                 <a href="{{ route('home') }}" 
-                   class="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors hidden lg:inline-flex items-center space-x-1">
-                    <span>Marketplace</span>
+                   class="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors hidden sm:inline-flex items-center space-x-1">
+                    <span>Marketplace Home</span>
                 </a>
 
                 <div class="h-4 w-px bg-slate-200 hidden sm:block"></div>
@@ -108,8 +99,8 @@
                             <a href="{{ route('seller.profile') }}" class="block px-4 py-2 hover:bg-slate-50 hover:text-[#53a318]">
                                 Store Profile & Settings
                             </a>
-                            <a href="{{ route('shop.show', auth()->user()) }}" target="_blank" class="block px-4 py-2 hover:bg-slate-50 text-emerald-600 font-bold">
-                                View Public Storefront ↗
+                            <a href="{{ route('seller.storefront') }}" class="block px-4 py-2 hover:bg-slate-50 text-[#53a318] font-bold">
+                                Storefront Preview
                             </a>
                         </div>
 

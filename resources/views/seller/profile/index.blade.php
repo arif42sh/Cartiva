@@ -31,10 +31,10 @@
             <h1 class="text-2xl font-black text-slate-900 tracking-tight">Merchant Profile & Storefront Branding</h1>
             <p class="text-xs text-slate-500 mt-0.5">Customize your official shop identity, upload branded store visuals, and update dispatch addresses.</p>
         </div>
-        <a href="{{ route('shop.show', $user) }}" target="_blank" 
+        <a href="{{ route('seller.storefront') }}" 
            class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors flex items-center space-x-1.5 shadow-sm self-start sm:self-auto">
             <svg class="w-4 h-4 text-[#84cc16]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-            <span>View Public Storefront ↗</span>
+            <span>Preview Storefront</span>
         </a>
     </div>
 
@@ -105,9 +105,9 @@
                 </div>
 
                 <div class="mt-4">
-                    <a href="{{ route('shop.show', $user) }}" target="_blank"
+                    <a href="{{ route('seller.storefront') }}" 
                        class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-colors flex items-center justify-center space-x-1.5">
-                        <span>Check Storefront View ↗</span>
+                        <span>Check Storefront Preview</span>
                     </a>
                 </div>
             </div>

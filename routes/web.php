@@ -71,6 +71,7 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
     // 1. Dashboard & Analytics
     Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
     Route::get('/analytics', [SellerController::class, 'analytics'])->name('analytics');
+    Route::get('/storefront', [SellerController::class, 'storefront'])->name('storefront');
 
     // 2. Product Management (CRUD, Image upload, Pricing tiers, Stock)
     Route::get('/products', [SellerController::class, 'products'])->name('products');
