@@ -40,6 +40,12 @@ class GroupBuyController extends Controller
             return redirect()->route('login')->with('info', 'গ্রুপ শুরু করতে অনুগ্রহ করে লগইন করুন।');
         }
 
+        // Global Anti-Fraud Rule: Sellers cannot start or buy their own listings
+        if (Auth::id() === $product->seller_id) {
+            return redirect()->route('products.show', $product->slug)
+                ->with('error', '⚠️ আপনি এই প্রোডাক্টের সেলার। সেলাররা নিজের প্রোডাক্টের টিম-বাই শুরু করতে পারেন না।');
+        }
+
         // Check if user already has an active, running group for this product
         $existingActiveSession = GroupBuySession::where('product_id', $product->id)
             ->where('leader_user_id', Auth::id())
@@ -67,6 +73,12 @@ class GroupBuyController extends Controller
     {
         if (!Auth::check()) {
             return redirect()->route('login')->with('info', 'গ্রুপে যুক্ত হতে অনুগ্রহ করে লগইন করুন।');
+        }
+
+        // Global Anti-Fraud Rule: Sellers cannot join team buy circles on their own listings
+        if (Auth::id() === $session->product->seller_id) {
+            return redirect()->route('products.show', $session->product->slug)
+                ->with('error', '⚠️ আপনি এই প্রোডাক্টের সেলার। সেলাররা নিজের প্রোডাক্টের টিম-বাই সার্কেলে জয়েন করতে পারেন না।');
         }
 
         if ($session->isExpired()) {
