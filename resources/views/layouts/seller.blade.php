@@ -22,36 +22,28 @@
 <body class="min-h-full flex flex-col font-sans bg-[#f8f9fa] text-slate-800 selection:bg-[#53a318] selection:text-white"
       x-data="{ userMenuOpen: false, notifMenuOpen: false }">
 
-    <!-- Dedicated Executive Merchant Header (No Consumer Shopping Elements) -->
-    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 text-white shadow-md">
+    <!-- Dedicated Executive Merchant Header (Crisp White Executive Bar with Official Brand Logo) -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 text-slate-800 shadow-xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
             
-            <!-- Left: Logo & Portal Badge -->
+            <!-- Left: Official Cartiva Logo & Merchant Badge -->
             <div class="flex items-center space-x-3.5 flex-shrink-0">
                 <a href="{{ route('seller.dashboard') }}" class="flex items-center space-x-2.5 group">
-                    <!-- Cartiva Mark -->
-                    <div class="w-9 h-9 rounded-xl flex items-center justify-center font-black text-lg text-white shadow-md transition-transform group-hover:scale-105"
-                         style="background: linear-gradient(135deg, #53a318 0%, #10b981 100%);">
-                        C
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-black text-lg tracking-tight text-white leading-none">cartiva</span>
-                        <span class="text-[9px] font-black tracking-widest text-[#84cc16] uppercase mt-0.5">Merchant Hub</span>
-                    </div>
+                    <img src="{{ asset('images/cartiva-logo.png') }}" 
+                         alt="Cartiva" 
+                         class="h-7 sm:h-8 w-auto object-contain transition-transform group-hover:scale-105">
+                    <div class="hidden sm:block h-5 w-px bg-slate-200"></div>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black bg-emerald-50 text-[#53a318] border border-emerald-200 uppercase tracking-wider">
+                        Merchant Hub
+                    </span>
                 </a>
-
-                <div class="hidden sm:block h-5 w-px bg-slate-800"></div>
-
-                <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black bg-slate-800 text-slate-300 border border-slate-700">
-                    Seller Central
-                </span>
             </div>
 
             <!-- Middle: Internal Merchant Search Bar -->
             <div class="hidden md:flex flex-1 max-w-md mx-4">
                 <form action="{{ route('seller.products') }}" method="GET" class="w-full relative">
                     <input type="text" name="q" placeholder="Search product SKU, title, or keywords..." 
-                           class="w-full pl-9 pr-4 py-2 rounded-xl text-xs bg-slate-800/80 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#53a318] focus:bg-slate-800 transition-all font-medium">
+                           class="w-full pl-9 pr-4 py-2 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#53a318] focus:bg-white transition-all font-medium">
                     <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </form>
             </div>
@@ -61,25 +53,25 @@
                 
                 <!-- View Public Storefront Link -->
                 <a href="{{ route('shop.show', auth()->user()) }}" target="_blank"
-                   class="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-colors shadow-2xs"
+                   class="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors shadow-2xs"
                    title="Preview your public shop page as seen by customers">
-                    <svg class="w-3.5 h-3.5 text-[#84cc16]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    <svg class="w-3.5 h-3.5 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                     <span>Live Storefront ↗</span>
                 </a>
 
                 <!-- Switch to Marketplace / Shopper View -->
                 <a href="{{ route('home') }}" 
-                   class="text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors hidden lg:inline-flex items-center space-x-1">
+                   class="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors hidden lg:inline-flex items-center space-x-1">
                     <span>Marketplace</span>
                 </a>
 
-                <div class="h-4 w-px bg-slate-800 hidden sm:block"></div>
+                <div class="h-4 w-px bg-slate-200 hidden sm:block"></div>
 
                 <!-- Merchant Profile Dropdown -->
                 <div class="relative" @click.outside="userMenuOpen = false">
                     <button type="button" @click="userMenuOpen = !userMenuOpen"
-                            class="flex items-center space-x-2.5 p-1 rounded-xl hover:bg-slate-800 transition-colors cursor-pointer">
-                        <div class="w-8 h-8 rounded-lg overflow-hidden bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-black text-white flex-shrink-0"
+                            class="flex items-center space-x-2.5 p-1 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer">
+                        <div class="w-8 h-8 rounded-lg overflow-hidden bg-slate-800 border border-slate-200 flex items-center justify-center text-xs font-black text-white flex-shrink-0"
                              style="background: linear-gradient(135deg, #53a318 0%, #10b981 100%);">
                             @if(auth()->user()->avatar)
                                 <img src="{{ auth()->user()->avatar }}" alt="{{ auth()->user()->shop_name ?? auth()->user()->name }}" class="w-full h-full object-cover">
@@ -88,10 +80,10 @@
                             @endif
                         </div>
                         <div class="hidden sm:block text-left">
-                            <span class="block text-xs font-bold text-white leading-tight truncate max-w-[120px]">
+                            <span class="block text-xs font-bold text-slate-900 leading-tight truncate max-w-[120px]">
                                 {{ auth()->user()->shop_name ?? auth()->user()->name }}
                             </span>
-                            <span class="block text-[10px] text-emerald-400 font-semibold leading-tight">Verified Seller</span>
+                            <span class="block text-[10px] text-emerald-600 font-semibold leading-tight">Verified Seller</span>
                         </div>
                         <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
