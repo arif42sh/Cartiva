@@ -11,7 +11,7 @@
     <!-- Page Header -->
     <div class="mb-6">
         <h1 class="text-2xl font-black text-slate-900 tracking-tight">Sales Analytics & Campaign Performance</h1>
-        <p class="text-xs text-slate-500 mt-0.5">High-density revenue metrics, viral team-buy success rates, and top revenue drivers.</p>
+        <p class="text-xs text-slate-500 mt-0.5">High-density revenue metrics, viral team-buy success rates and top revenue drivers.</p>
     </div>
 
     <!-- Top Summary Cards -->

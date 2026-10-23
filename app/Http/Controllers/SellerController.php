@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\GroupBuyMember;
 use App\Models\GroupBuySession;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -22,8 +23,12 @@ class SellerController extends Controller
      */
     public function dashboard()
     {
-        $sellerId = Auth::id();
+        $user = Auth::user();
+        $sellerId = $user->id;
         $sellerProductIds = Product::where('seller_id', $sellerId)->pluck('id');
+        if ($user->isAdmin() && $sellerProductIds->isEmpty()) {
+            $sellerProductIds = Product::pluck('id');
+        }
 
         $myProductsCount = $sellerProductIds->count();
 
@@ -97,8 +102,17 @@ class SellerController extends Controller
      */
     public function products(Request $request)
     {
-        $sellerId = Auth::id();
-        $query = Product::with('category')->where('seller_id', $sellerId);
+        $user = Auth::user();
+        $sellerId = $user->id;
+        $query = Product::with('category');
+        if (!$user->isAdmin()) {
+            $query->where('seller_id', $sellerId);
+        } else {
+            $hasOwn = Product::where('seller_id', $sellerId)->exists();
+            if ($hasOwn) {
+                $query->where('seller_id', $sellerId);
+            }
+        }
 
         // Search filter
         if ($request->filled('q')) {
@@ -185,7 +199,7 @@ class SellerController extends Controller
 
         $slug = Str::slug($validated['title']) . '-' . Str::random(5);
 
-        Product::create([
+        $product = Product::create([
             'seller_id' => Auth::id(),
             'category_id' => $validated['category_id'],
             'title' => $validated['title'],
@@ -203,8 +217,29 @@ class SellerController extends Controller
             'is_active' => true,
         ]);
 
+        // Automatically launch initial active Group-Buy campaign session
+        $durationHours = (int) ($validated['group_duration_hours'] ?? 48);
+        if ($durationHours <= 0) $durationHours = 48;
+
+        $session = GroupBuySession::create([
+            'product_id' => $product->id,
+            'leader_user_id' => Auth::id(),
+            'group_code' => 'GRP-' . strtoupper(Str::random(6)),
+            'required_members' => $product->group_size_required ?: 2,
+            'current_members' => 1,
+            'status' => 'active',
+            'expires_at' => Carbon::now()->addHours($durationHours),
+        ]);
+
+        GroupBuyMember::create([
+            'group_buy_session_id' => $session->id,
+            'user_id' => Auth::id(),
+            'is_leader' => true,
+            'joined_at' => Carbon::now(),
+        ]);
+
         return redirect()->route('seller.products')
-            ->with('success', '🎉 Product listed successfully with Group-Buy campaign enabled!');
+            ->with('success', '🎉 Product listed successfully with Group-Buy campaign live!');
     }
 
     /**
@@ -212,7 +247,7 @@ class SellerController extends Controller
      */
     public function editProduct(Product $product)
     {
-        if ($product->seller_id !== Auth::id()) {
+        if ($product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized product access.');
         }
 
@@ -225,7 +260,7 @@ class SellerController extends Controller
      */
     public function updateProduct(Request $request, Product $product)
     {
-        if ($product->seller_id !== Auth::id()) {
+        if ($product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized product access.');
         }
 
@@ -286,7 +321,7 @@ class SellerController extends Controller
      */
     public function destroyProduct(Product $product)
     {
-        if ($product->seller_id !== Auth::id()) {
+        if ($product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized.');
         }
 
@@ -310,7 +345,7 @@ class SellerController extends Controller
      */
     public function toggleProductStatus(Product $product)
     {
-        if ($product->seller_id !== Auth::id()) {
+        if ($product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized.');
         }
 
@@ -326,7 +361,7 @@ class SellerController extends Controller
      */
     public function quickStockUpdate(Request $request, Product $product)
     {
-        if ($product->seller_id !== Auth::id()) {
+        if ($product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized.');
         }
 
@@ -345,7 +380,21 @@ class SellerController extends Controller
      */
     public function groups(Request $request)
     {
-        $sellerProductIds = Product::where('seller_id', Auth::id())->pluck('id');
+        $user = Auth::user();
+        $isAdmin = $user && $user->isAdmin();
+
+        $sellerProductsQuery = Product::where('is_active', true);
+        if (!$isAdmin) {
+            $sellerProductsQuery->where('seller_id', $user->id);
+            $sellerProductIds = Product::where('seller_id', $user->id)->pluck('id');
+        } else {
+            $adminProducts = Product::where('seller_id', $user->id)->pluck('id');
+            $sellerProductIds = $adminProducts->isNotEmpty() ? $adminProducts : Product::pluck('id');
+        }
+
+        $sellerProducts = $sellerProductsQuery->orderBy('title')->get([
+            'id', 'title', 'group_size_required', 'group_duration_hours', 'single_price', 'group_price', 'image_url'
+        ]);
 
         $query = GroupBuySession::with(['product', 'leader', 'members.user'])
             ->whereIn('product_id', $sellerProductIds);
@@ -384,9 +433,77 @@ class SellerController extends Controller
         $completedCount = GroupBuySession::whereIn('product_id', $sellerProductIds)
             ->where('status', 'completed')->count();
         $expiredCount = GroupBuySession::whereIn('product_id', $sellerProductIds)
-            ->where('status', 'expired')->count();
+            ->where(function ($q) {
+                $q->where('status', 'expired')
+                    ->orWhere(function ($sub) {
+                        $sub->where('status', 'active')->where('expires_at', '<=', now());
+                    });
+            })->count();
 
-        return view('seller.groups.index', compact('groups', 'activeCount', 'completedCount', 'expiredCount'));
+        return view('seller.groups.index', compact('groups', 'activeCount', 'completedCount', 'expiredCount', 'sellerProducts'));
+    }
+
+    /**
+     * Launch a new Group Buy Session / Campaign Pool manually
+     */
+    public function storeGroup(Request $request)
+    {
+        $validated = $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'required_members' => 'nullable|integer|min:2|max:100',
+            'duration_hours' => 'nullable|integer|min:1|max:720',
+        ]);
+
+        $product = Product::findOrFail($validated['product_id']);
+
+        if ($product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized product campaign launch.');
+        }
+
+        $requiredMembers = !empty($validated['required_members']) ? (int) $validated['required_members'] : ($product->group_size_required ?: 2);
+        $durationHours = !empty($validated['duration_hours']) ? (int) $validated['duration_hours'] : ($product->group_duration_hours ?: 48);
+
+        $code = 'GRP-' . strtoupper(Str::random(6));
+
+        $session = GroupBuySession::create([
+            'product_id' => $product->id,
+            'leader_user_id' => Auth::id(),
+            'group_code' => $code,
+            'required_members' => $requiredMembers,
+            'current_members' => 1,
+            'status' => 'active',
+            'expires_at' => Carbon::now()->addHours($durationHours),
+        ]);
+
+        GroupBuyMember::create([
+            'group_buy_session_id' => $session->id,
+            'user_id' => Auth::id(),
+            'is_leader' => true,
+            'joined_at' => Carbon::now(),
+        ]);
+
+        return redirect()->route('seller.groups')
+            ->with('success', "🚀 Group-Buy Pool {$code} for '{$product->title}' has been successfully launched!");
+    }
+
+    /**
+     * Relaunch an expired Group Buy Session with refreshed timer
+     */
+    public function relaunchGroup(GroupBuySession $session)
+    {
+        if ($session->product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $durationHours = $session->product->group_duration_hours ?: 48;
+
+        $session->update([
+            'status' => 'active',
+            'expires_at' => Carbon::now()->addHours($durationHours),
+        ]);
+
+        return redirect()->route('seller.groups')
+            ->with('success', "🔄 Group-Buy Circle {$session->group_code} relaunched successfully with a fresh {$durationHours}h timer!");
     }
 
     /**
@@ -394,7 +511,7 @@ class SellerController extends Controller
      */
     public function showGroup(GroupBuySession $session)
     {
-        if ($session->product->seller_id !== Auth::id()) {
+        if ($session->product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized.');
         }
 
@@ -408,7 +525,11 @@ class SellerController extends Controller
      */
     public function orders(Request $request)
     {
-        $sellerProductIds = Product::where('seller_id', Auth::id())->pluck('id');
+        $user = Auth::user();
+        $sellerProductIds = Product::where('seller_id', $user->id)->pluck('id');
+        if ($user->isAdmin() && $sellerProductIds->isEmpty()) {
+            $sellerProductIds = Product::pluck('id');
+        }
 
         $query = OrderItem::with(['order.user', 'product'])
             ->whereIn('product_id', $sellerProductIds);
@@ -467,7 +588,11 @@ class SellerController extends Controller
         // Check if any items belong to seller
         $sellerItems = $order->items()->whereIn('product_id', $sellerProductIds)->get();
         if ($sellerItems->isEmpty()) {
-            abort(403, 'Unauthorized order access.');
+            if (Auth::user()->isAdmin()) {
+                $sellerItems = $order->items;
+            } else {
+                abort(403, 'Unauthorized order access.');
+            }
         }
 
         $order->load(['user', 'groupSession.members.user']);
@@ -483,7 +608,7 @@ class SellerController extends Controller
         $sellerProductIds = Product::where('seller_id', Auth::id())->pluck('id');
         $hasItem = $order->items()->whereIn('product_id', $sellerProductIds)->exists();
 
-        if (!$hasItem) {
+        if (!$hasItem && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized.');
         }
 

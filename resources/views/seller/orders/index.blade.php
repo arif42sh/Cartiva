@@ -88,14 +88,14 @@
             <table class="w-full text-left text-xs">
                 <thead class="bg-slate-50 text-slate-400 uppercase tracking-wider text-[10px]">
                     <tr>
-                        <th class="py-3.5 px-6">Product Ordered</th>
-                        <th class="py-3.5 px-6">Order ID & Date</th>
-                        <th class="py-3.5 px-6">Customer & Phone</th>
-                        <th class="py-3.5 px-6">Delivery Address</th>
-                        <th class="py-3.5 px-6">Subtotal</th>
-                        <th class="py-3.5 px-6">Order Type</th>
-                        <th class="py-3.5 px-6">Status & Courier</th>
-                        <th class="py-3.5 px-6 text-right">Fulfillment</th>
+                        <th class="py-3 px-3.5 min-w-[190px] max-w-[240px]">Product Ordered</th>
+                        <th class="py-3 px-3.5 whitespace-nowrap">Order ID & Date</th>
+                        <th class="py-3 px-3.5 whitespace-nowrap">Customer</th>
+                        <th class="py-3 px-3.5 max-w-[140px]">Delivery Address</th>
+                        <th class="py-3 px-3.5 whitespace-nowrap">Subtotal</th>
+                        <th class="py-3 px-3.5 whitespace-nowrap">Type</th>
+                        <th class="py-3 px-3.5 whitespace-nowrap">Status</th>
+                        <th class="py-3 px-3.5 text-right whitespace-nowrap">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -106,75 +106,105 @@
                         <tr class="hover:bg-slate-50/60 transition-colors">
                             
                             <!-- Product -->
-                            <td class="py-4 px-6 flex items-center space-x-3">
-                                <img src="{{ $item->product->image_url }}" alt="{{ $item->product->title }}" class="w-10 h-10 rounded-xl object-cover bg-slate-100 border border-slate-200 flex-shrink-0">
-                                <div class="max-w-xs">
-                                    <span class="font-extrabold text-slate-900 block line-clamp-1">{{ $item->product->title }}</span>
-                                    <span class="text-[10px] text-slate-400 font-semibold">Qty: {{ $item->quantity }} × ${{ number_format($item->unit_price, 2) }}</span>
+                            <td class="py-3 px-3.5 min-w-[190px] max-w-[240px]">
+                                <div class="flex items-center space-x-2.5">
+                                    <img src="{{ $item->product->image_url }}" alt="{{ $item->product->title }}" class="w-10 h-10 rounded-xl object-contain bg-slate-50 border border-slate-200 p-0.5 flex-shrink-0">
+                                    <div class="min-w-0 flex-1">
+                                        <span class="font-extrabold text-slate-900 block text-xs leading-snug line-clamp-2" title="{{ $item->product->title }}">
+                                            {{ $item->product->title }}
+                                        </span>
+                                        <span class="text-[10px] text-slate-400 font-semibold mt-0.5 block">Qty: {{ $item->quantity }} × ${{ number_format($item->unit_price, 2) }}</span>
+                                    </div>
                                 </div>
                             </td>
 
                             <!-- Order ID & Date -->
-                            <td class="py-4 px-6">
-                                <a href="{{ route('seller.orders.show', $order) }}" class="font-mono font-bold text-teal-600 hover:text-teal-800 hover:underline block">
+                            <td class="py-3 px-3.5 whitespace-nowrap">
+                                <a href="{{ route('seller.orders.show', $order) }}" class="font-mono font-bold text-teal-600 hover:text-teal-800 hover:underline block text-xs">
                                     {{ $order->order_number }}
                                 </a>
-                                <span class="text-[10px] text-slate-400 font-medium">{{ $order->created_at->format('M d, Y H:i') }}</span>
+                                <span class="text-[10px] text-slate-400 font-medium block">{{ $order->created_at->format('M d, Y H:i') }}</span>
                             </td>
 
                             <!-- Customer -->
-                            <td class="py-4 px-6">
-                                <span class="font-bold text-slate-800 block">{{ $order->shipping_name }}</span>
-                                <span class="text-[10px] text-slate-500 font-mono">{{ $order->shipping_phone }}</span>
+                            <td class="py-3 px-3.5 whitespace-nowrap">
+                                <span class="font-bold text-slate-800 block text-xs truncate max-w-[120px]" title="{{ $order->shipping_name }}">{{ $order->shipping_name }}</span>
+                                <span class="text-[10px] text-slate-500 font-mono block">{{ $order->shipping_phone }}</span>
                             </td>
 
                             <!-- Delivery Address -->
-                            <td class="py-4 px-6 max-w-xs text-slate-600 truncate" title="{{ $order->shipping_address }}">
-                                {{ $order->shipping_address }}
+                            <td class="py-3 px-3.5 max-w-[140px]">
+                                <span class="text-slate-600 truncate block text-[11px]" title="{{ $order->shipping_address }}">
+                                    {{ $order->shipping_address }}
+                                </span>
                             </td>
 
                             <!-- Subtotal -->
-                            <td class="py-4 px-6 font-black text-emerald-600">
+                            <td class="py-3 px-3.5 font-black text-emerald-600 whitespace-nowrap text-xs">
                                 ${{ number_format($item->subtotal, 2) }}
                             </td>
 
                             <!-- Order Type -->
-                            <td class="py-4 px-6">
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $order->order_type === 'group_buy' ? 'bg-teal-100 text-teal-800' : 'bg-slate-100 text-slate-700' }}">
-                                    {{ $order->order_type === 'group_buy' ? 'Team Buy' : 'Solo' }}
+                            <td class="py-3 px-3.5 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold whitespace-nowrap {{ $order->order_type === 'group_buy' ? 'bg-teal-50 text-teal-800 border border-teal-200/90 shadow-2xs' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
+                                    @if($order->order_type === 'group_buy')
+                                        <span class="w-1.5 h-1.5 rounded-full bg-teal-500 mr-1 flex-shrink-0"></span>
+                                        <span>Team Buy</span>
+                                    @else
+                                        <span>Solo</span>
+                                    @endif
                                 </span>
                             </td>
 
                             <!-- Status & Tracking -->
-                            <td class="py-4 px-6">
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black block w-fit
-                                    {{ $order->order_status === 'processing' ? 'bg-amber-100 text-amber-800' : 
-                                      ($order->order_status === 'shipped' ? 'bg-indigo-100 text-indigo-800' : 
-                                      ($order->order_status === 'delivered' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700')) }}">
-                                    {{ ucfirst(str_replace('_', ' ', $order->order_status)) }}
+                            <td class="py-3 px-3.5 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold whitespace-nowrap
+                                    {{ $order->order_status === 'pending_group' ? 'bg-amber-50 text-amber-800 border border-amber-200 shadow-2xs' : 
+                                      ($order->order_status === 'processing' ? 'bg-blue-50 text-blue-800 border border-blue-200 shadow-2xs' : 
+                                      ($order->order_status === 'shipped' ? 'bg-indigo-50 text-indigo-800 border border-indigo-200 shadow-2xs' : 
+                                      ($order->order_status === 'delivered' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs' : 
+                                      ($order->order_status === 'cancelled' ? 'bg-rose-50 text-rose-800 border border-rose-200 shadow-2xs' : 'bg-slate-100 text-slate-700 border border-slate-200')))) }}">
+                                    @if($order->order_status === 'pending_group')
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1 flex-shrink-0 animate-pulse"></span>
+                                        <span>Pending Group</span>
+                                    @elseif($order->order_status === 'processing')
+                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mr-1 flex-shrink-0"></span>
+                                        <span>Processing</span>
+                                    @elseif($order->order_status === 'shipped')
+                                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mr-1 flex-shrink-0"></span>
+                                        <span>Shipped</span>
+                                    @elseif($order->order_status === 'delivered')
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 flex-shrink-0"></span>
+                                        <span>Delivered</span>
+                                    @elseif($order->order_status === 'cancelled')
+                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1 flex-shrink-0"></span>
+                                        <span>Cancelled</span>
+                                    @else
+                                        <span>{{ ucfirst(str_replace('_', ' ', $order->order_status)) }}</span>
+                                    @endif
                                 </span>
 
                                 @if($order->courier_name || $order->tracking_number)
-                                    <span class="text-[10px] text-slate-500 mt-1 block">
+                                    <span class="text-[9px] text-slate-500 mt-1 block">
                                         🚚 {{ $order->courier_name ?? 'Courier' }}: <strong class="font-mono text-slate-700">{{ $order->tracking_number ?? 'N/A' }}</strong>
                                     </span>
                                 @endif
                             </td>
 
                             <!-- Actions -->
-                            <td class="py-4 px-6 text-right">
-                                <div class="inline-flex items-center space-x-2">
+                            <td class="py-3 px-3.5 text-right whitespace-nowrap">
+                                <div class="inline-flex items-center space-x-1.5">
                                     <button type="button" 
                                             @click="quickStatusModal = true; selectedOrder = {{ $order->toJson() }}; newStatus = '{{ $order->order_status }}'; courier = '{{ $order->courier_name ?? '' }}'; tracking = '{{ $order->tracking_number ?? '' }}';" 
-                                            class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+                                            class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
                                             title="Update fulfillment status">
                                         Update
                                     </button>
 
                                     <a href="{{ route('seller.orders.show', $order) }}" 
-                                       class="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-teal-600 text-white font-bold text-xs transition-colors"
+                                       class="px-3 py-1 rounded-xl bg-slate-900 hover:bg-[#53a318] text-white font-black text-xs transition-colors shadow-2xs"
                                        title="View full invoice & order details">
-                                        View &rarr;
+                                        View
                                     </a>
                                 </div>
                             </td>
