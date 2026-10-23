@@ -65,6 +65,24 @@ class GroupBuySession extends Model
         return max(0, $this->required_members - $this->current_members);
     }
 
+    public function getProgressPercentAttribute(): int
+    {
+        if ($this->required_members > 0) {
+            return min(100, (int) round(($this->current_members / $this->required_members) * 100));
+        }
+        return 0;
+    }
+
+    public function getCurrentMembersCountAttribute(): int
+    {
+        return (int) $this->current_members;
+    }
+
+    public function getRequiredMembersCountAttribute(): int
+    {
+        return max(1, (int) $this->required_members);
+    }
+
     public function hasUserJoined(int $userId): bool
     {
         return $this->members()->where('user_id', $userId)->exists();

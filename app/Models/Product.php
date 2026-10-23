@@ -21,7 +21,10 @@ class Product extends Model
         'gallery',
         'single_price',
         'group_price',
+        'tier2_group_price',
+        'tier3_group_price',
         'group_size_required',
+        'max_buyers_limit',
         'group_duration_hours',
         'stock',
         'is_active',
@@ -35,8 +38,13 @@ class Product extends Model
             'gallery' => 'array',
             'single_price' => 'decimal:2',
             'group_price' => 'decimal:2',
+            'tier2_group_price' => 'decimal:2',
+            'tier3_group_price' => 'decimal:2',
             'is_active' => 'boolean',
             'rating' => 'decimal:2',
+            'group_size_required' => 'integer',
+            'max_buyers_limit' => 'integer',
+            'stock' => 'integer',
         ];
     }
 

@@ -67,11 +67,32 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->group(function () {
+    // 1. Dashboard & Analytics
     Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
+    Route::get('/analytics', [SellerController::class, 'analytics'])->name('analytics');
+
+    // 2. Product Management (CRUD, Image upload, Pricing tiers, Stock)
     Route::get('/products', [SellerController::class, 'products'])->name('products');
     Route::get('/products/create', [SellerController::class, 'createProduct'])->name('products.create');
     Route::post('/products', [SellerController::class, 'storeProduct'])->name('products.store');
+    Route::get('/products/{product}/edit', [SellerController::class, 'editProduct'])->name('products.edit');
+    Route::put('/products/{product}', [SellerController::class, 'updateProduct'])->name('products.update');
+    Route::delete('/products/{product}', [SellerController::class, 'destroyProduct'])->name('products.destroy');
+    Route::patch('/products/{product}/toggle-status', [SellerController::class, 'toggleProductStatus'])->name('products.toggle-status');
+    Route::patch('/products/{product}/quick-stock', [SellerController::class, 'quickStockUpdate'])->name('products.quick-stock');
+
+    // 3. Group Buy Campaigns & Active Groups Monitoring (x, xi)
+    Route::get('/groups', [SellerController::class, 'groups'])->name('groups');
+    Route::get('/groups/{session}', [SellerController::class, 'showGroup'])->name('groups.show');
+
+    // 4. Order Management & Fulfillment (xii, xiii)
     Route::get('/orders', [SellerController::class, 'orders'])->name('orders');
+    Route::get('/orders/{order}', [SellerController::class, 'showOrder'])->name('orders.show');
+    Route::patch('/orders/{order}/status', [SellerController::class, 'updateOrderStatus'])->name('orders.update-status');
+
+    // 5. Merchant Store Profile & Settings (i)
+    Route::get('/profile', [SellerController::class, 'profile'])->name('profile');
+    Route::put('/profile', [SellerController::class, 'updateProfile'])->name('profile.update');
 });
 
 /*
