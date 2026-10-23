@@ -19,7 +19,7 @@
         
         <div class="bg-white rounded-3xl border border-slate-200 p-5.5 shadow-sm">
             <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Gross Sales Revenue</span>
-            <div class="text-3xl font-black text-slate-900 tracking-tight mt-1.5">${{ number_format($totalRevenue, 2) }}</div>
+            <div class="text-3xl font-black text-slate-900 tracking-tight mt-1.5">৳{{ number_format($totalRevenue) }}</div>
             <span class="text-[11px] font-bold text-[#53a318] mt-1 block">From confirmed & shipped orders</span>
         </div>
 

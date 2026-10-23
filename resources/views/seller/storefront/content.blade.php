@@ -14,11 +14,7 @@
                 <div class="absolute left-1/3 top-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
             @endif
 
-            <!-- Live Customer View Badge -->
-            <div class="absolute top-4 left-4 px-3 py-1.5 rounded-xl bg-slate-900/80 text-white backdrop-blur-md text-[11px] font-bold flex items-center space-x-1.5 shadow-sm border border-white/10">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Customer Storefront View</span>
-            </div>
+            
 
             <!-- Edit Branding Shortcut -->
             <a href="{{ route('seller.profile') }}" 
@@ -54,7 +50,7 @@
                             </h2>
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-teal-100 text-teal-800 border border-teal-200 shadow-2xs">
                                 <svg class="w-3 h-3 mr-1 text-teal-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                Verified Brand
+                                Verified 
                             </span>
                         </div>
 
@@ -64,7 +60,7 @@
                             <span>Member since {{ $seller->created_at->format('M Y') }}</span>
                             @if($seller->address)
                                 <span>•</span>
-                                <span class="truncate max-w-xs">📍 {{ $seller->address }}</span>
+                                <span class="truncate max-w-xs"> {{ $seller->address }}</span>
                             @endif
                         </p>
                     </div>
@@ -117,7 +113,7 @@
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-slate-100 text-xs">
                 <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100">
                     <span class="text-[10px] uppercase font-bold text-slate-400 block">Inventory</span>
-                    <span class="text-sm font-black text-slate-900 mt-0.5 block">{{ $totalProductsCount }} Active Items</span>
+                    <span class="text-sm font-black text-slate-900 mt-0.5 block">{{ $totalProductsCount }} </span>
                 </div>
 
                 <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100">
@@ -127,13 +123,13 @@
 
                 <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100">
                     <span class="text-[10px] uppercase font-bold text-slate-400 block">Satisfaction</span>
-                    <span class="text-sm font-black text-emerald-600 mt-0.5 block">★ {{ number_format($avgRating, 1) }} (100% Positive)</span>
+                    <span class="text-sm font-black text-emerald-600 mt-0.5 block">★ {{ number_format($avgRating, 1) }} </span>
                 </div>
 
                 <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100">
                     <span class="text-[10px] uppercase font-bold text-slate-400 block">Dispatch Speed</span>
-                    <span class="text-sm font-black text-teal-600 mt-0.5 block truncate" title="{{ $seller->dispatch_time ?: '⚡ 24h Express Dispatch' }}">
-                        {{ $seller->dispatch_time ?: '⚡ 24h Express Dispatch' }}
+                    <span class="text-sm font-black text-teal-600 mt-0.5 block truncate" title="{{ $seller->dispatch_time ?: ' Within 24 hours' }}">
+                        24 H
                     </span>
                 </div>
             </div>
@@ -141,7 +137,7 @@
             <!-- Shop Description / About Store -->
             @if($seller->shop_description)
                 <div class="mt-4 p-4 rounded-2xl bg-teal-50/60 border border-teal-200/80 text-xs text-slate-700 leading-relaxed">
-                    <span class="font-extrabold text-teal-950 block mb-1">About This Store:</span>
+                    <span class="font-extrabold text-teal-950 block mb-1">About Store:</span>
                     {{ $seller->shop_description }}
                 </div>
             @endif
@@ -150,7 +146,6 @@
             @if($seller->return_policy)
                 <div class="mt-3 p-4 rounded-2xl bg-amber-50/70 border border-amber-200 text-xs text-slate-700 leading-relaxed">
                     <div class="flex items-center space-x-1.5 mb-1">
-                        <span class="text-sm">🛡️</span>
                         <strong class="font-black text-amber-950">Store Return & Replacement Policy:</strong>
                     </div>
                     {{ $seller->return_policy }}
@@ -166,12 +161,11 @@
         <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-3xl border border-amber-200 p-5 shadow-xs">
             <div class="flex items-center justify-between mb-3.5 flex-wrap gap-2">
                 <div class="flex items-center space-x-2">
-                    <span class="text-base">🔥</span>
+        
                     <h3 class="text-sm font-black text-amber-950 tracking-tight">
-                        Live Ongoing Buying Circles from {{ $seller->shop_name ?? $seller->name }}
+                        Buying Circle from {{ $seller->shop_name ?? $seller->name }}
                     </h3>
                 </div>
-                <span class="text-xs text-amber-800 font-bold">Buyers can join to lock wholesale team discounts!</span>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
@@ -209,8 +203,8 @@
         <!-- Search and Filter Bar -->
         <div class="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h3 class="text-base font-black text-slate-900 tracking-tight">Available Products ({{ $products->total() }})</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Test how search and category browsing behaves for shoppers in your store.</p>
+                <h3 class="text-base font-black text-slate-900 tracking-tight">Available Products</h3>
+               
             </div>
 
             <form action="{{ route('seller.storefront') }}" method="GET" class="flex items-center space-x-2 flex-wrap gap-y-2">

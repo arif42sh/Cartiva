@@ -20,15 +20,31 @@
     @endif
 
     @if($lowStockCount > 0)
-        <div class="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 text-xs font-bold flex items-center justify-between shadow-xs">
+        <div x-data="{ dismissed: sessionStorage.getItem('cartiva_dismiss_low_stock') === 'true' }" 
+             x-show="!dismissed"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             class="mb-6 p-3.5 sm:p-4 rounded-2xl bg-amber-50/90 border border-amber-200 text-amber-950 text-xs font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
             <div class="flex items-center space-x-2.5">
-                <span class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center font-black text-xs flex-shrink-0">!</span>
-                <span class="text-sm font-semibold">Inventory Warning: You have <strong class="text-amber-800">{{ $lowStockCount }} product(s)</strong> with 5 or fewer items remaining in stock.</span>
+                <span class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center font-black text-xs flex-shrink-0 shadow-xs">!</span>
+                <span class="text-xs sm:text-sm font-semibold text-amber-900">
+                    Inventory Alert: You have <strong class="text-amber-950 font-black">{{ $lowStockCount }} product(s)</strong> with 5 or fewer items remaining in stock.
+                </span>
             </div>
-            <a href="{{ route('seller.products') }}?status=low_stock" 
-               class="px-3.5 py-1.5 bg-amber-600 text-white font-bold rounded-xl hover:bg-amber-700 transition-colors shadow-xs text-xs">
-                Restock Now &rarr;
-            </a>
+            <div class="flex items-center space-x-2 self-end sm:self-auto flex-shrink-0">
+                <a href="{{ route('seller.products') }}?status=low_stock" 
+                   class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl transition-colors shadow-xs text-xs flex items-center space-x-1">
+                    <span>Restock Now</span>
+                    <span>&rarr;</span>
+                </a>
+                <button type="button" 
+                        @click="dismissed = true; sessionStorage.setItem('cartiva_dismiss_low_stock', 'true')" 
+                        title="Dismiss alert for this session"
+                        class="w-7 h-7 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 flex items-center justify-center font-black text-base transition-colors cursor-pointer leading-none">
+                    &times;
+                </button>
+            </div>
         </div>
     @endif
 
@@ -36,63 +52,73 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         
         <!-- Total Revenue -->
-        <div class="bg-white rounded-3xl border border-slate-200/90 p-5.5 shadow-sm relative overflow-hidden group hover:shadow-md hover:border-emerald-300 transition-all">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Gross Sales</span>
-                <span class="w-10 h-10 rounded-2xl text-white flex items-center justify-center font-black text-lg shadow-md"
-                      style="background: linear-gradient(135deg, #53a318 0%, #10b981 100%); box-shadow: 0 4px 12px rgba(83, 163, 24, 0.35);">
-                    ৳
-                </span>
+        <div class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-sm relative overflow-hidden group hover:shadow-md hover:border-emerald-300 transition-all flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Gross Sales</span>
+                    <span class="w-9 h-9 rounded-2xl text-white flex items-center justify-center font-black text-base shadow-sm"
+                          style="background: linear-gradient(135deg, #53a318 0%, #10b981 100%);">
+                        ৳
+                    </span>
+                </div>
+                <div class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight truncate" title="৳{{ number_format($totalEarnings, 2) }}">
+                    ৳{{ number_format($totalEarnings) }}
+                </div>
             </div>
-            <div class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">${{ number_format($totalEarnings, 2) }}</div>
-            <div class="flex items-center space-x-1.5 text-xs font-bold text-emerald-700 mt-2">
-                <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                <span>Solo + completed group revenue</span>
+            <div class="flex items-center space-x-1.5 text-[11px] sm:text-xs font-bold text-emerald-700 mt-3 pt-2.5 border-t border-slate-100">
+                <svg class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                <span class="truncate">Solo + completed group revenue</span>
             </div>
         </div>
 
         <!-- Active Group Sessions -->
-        <div class="bg-white rounded-3xl border border-slate-200/90 p-5.5 shadow-sm relative overflow-hidden group hover:shadow-md hover:border-purple-300 transition-all">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Active Group Buys</span>
-                <span class="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center font-bold text-base shadow-md shadow-purple-600/30">
-                    👥
-                </span>
+        <div class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-sm relative overflow-hidden group hover:shadow-md hover:border-purple-300 transition-all flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Active Group Buys</span>
+                    <span class="w-9 h-9 rounded-2xl bg-purple-600 text-white flex items-center justify-center font-bold text-base shadow-md shadow-purple-600/30">
+                        👥
+                    </span>
+                </div>
+                <div class="text-2xl sm:text-3xl font-black text-purple-700 tracking-tight">{{ $activeGroupBuys }}</div>
             </div>
-            <div class="text-3xl sm:text-4xl font-black text-purple-700 tracking-tight">{{ $activeGroupBuys }}</div>
-            <div class="flex items-center space-x-1.5 text-xs font-bold text-purple-700 mt-2">
-                <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
-                <span>Circles pooling buyers right now</span>
+            <div class="flex items-center space-x-1.5 text-[11px] sm:text-xs font-bold text-purple-700 mt-3 pt-2.5 border-t border-slate-100">
+                <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse flex-shrink-0"></span>
+                <span class="truncate">Circles pooling buyers right now</span>
             </div>
         </div>
 
         <!-- Completed Team Campaigns -->
-        <div class="bg-white rounded-3xl border border-slate-200/90 p-5.5 shadow-sm relative overflow-hidden group hover:shadow-md hover:border-teal-300 transition-all">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Fulfilled Teams</span>
-                <span class="w-10 h-10 rounded-2xl bg-teal-600 text-white flex items-center justify-center font-black text-base shadow-md shadow-teal-600/30">
-                    ✓
-                </span>
+        <div class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-sm relative overflow-hidden group hover:shadow-md hover:border-teal-300 transition-all flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Fulfilled Teams</span>
+                    <span class="w-9 h-9 rounded-2xl bg-teal-600 text-white flex items-center justify-center font-black text-base shadow-md shadow-teal-600/30">
+                        ✓
+                    </span>
+                </div>
+                <div class="text-2xl sm:text-3xl font-black text-teal-700 tracking-tight">{{ $completedGroupBuys }}</div>
             </div>
-            <div class="text-3xl sm:text-4xl font-black text-teal-700 tracking-tight">{{ $completedGroupBuys }}</div>
-            <div class="flex items-center space-x-1.5 text-xs font-bold text-teal-700 mt-2">
-                <span>Successful completed team deals</span>
+            <div class="flex items-center space-x-1.5 text-[11px] sm:text-xs font-bold text-teal-700 mt-3 pt-2.5 border-t border-slate-100">
+                <span class="truncate">Successful completed team deals</span>
             </div>
         </div>
 
         <!-- Pending Order Dispatch -->
-        <div class="bg-white rounded-3xl border border-slate-200/90 p-5.5 shadow-sm relative overflow-hidden group hover:shadow-md hover:border-amber-300 transition-all">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Awaiting Dispatch</span>
-                <span class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-bold text-base shadow-md shadow-amber-500/30">
-                    📦
-                </span>
+        <div class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-sm relative overflow-hidden group hover:shadow-md hover:border-amber-300 transition-all flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Awaiting Dispatch</span>
+                    <span class="w-9 h-9 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-bold text-base shadow-md shadow-amber-500/30">
+                        📦
+                    </span>
+                </div>
+                <div class="text-2xl sm:text-3xl font-black text-amber-600 tracking-tight">{{ $pendingOrdersCount }}</div>
             </div>
-            <div class="text-3xl sm:text-4xl font-black text-amber-600 tracking-tight">{{ $pendingOrdersCount }}</div>
-            <div class="flex items-center space-x-1.5 text-xs font-bold text-slate-600 mt-2">
-                <span class="text-indigo-600">{{ $shippedOrdersCount }} Shipped</span>
+            <div class="flex items-center space-x-1.5 text-[11px] sm:text-xs font-bold text-slate-600 mt-3 pt-2.5 border-t border-slate-100">
+                <span class="text-indigo-600 font-extrabold">{{ $shippedOrdersCount }} Shipped</span>
                 <span>•</span>
-                <span class="text-emerald-600">{{ $deliveredOrdersCount }} Delivered</span>
+                <span class="text-emerald-600 font-extrabold">{{ $deliveredOrdersCount }} Delivered</span>
             </div>
         </div>
 
