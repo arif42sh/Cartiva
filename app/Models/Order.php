@@ -24,12 +24,18 @@ class Order extends Model
         'shipping_phone',
         'shipping_address',
         'order_notes',
+        'courier_name',
+        'tracking_number',
+        'shipped_at',
+        'delivered_at',
     ];
 
     protected function casts(): array
     {
         return [
             'total_amount' => 'decimal:2',
+            'shipped_at' => 'datetime',
+            'delivered_at' => 'datetime',
         ];
     }
 
