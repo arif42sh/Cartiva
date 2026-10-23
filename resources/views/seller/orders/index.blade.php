@@ -33,8 +33,12 @@
                @if(!request('status') || request('status') === 'all') style="background-color: #53a318; box-shadow: 0 2px 8px rgba(83, 163, 24, 0.35);" @endif>
                 All ({{ $counts['all'] }})
             </a>
+            <a href="{{ route('seller.orders') }}?status=pending_group" 
+               class="px-3.5 py-2 rounded-xl transition-all whitespace-nowrap {{ request('status') === 'pending_group' ? 'bg-amber-600 text-white shadow-xs font-black' : 'text-slate-600 hover:bg-slate-100' }}">
+                Pending Group ({{ $counts['pending_group'] }})
+            </a>
             <a href="{{ route('seller.orders') }}?status=processing" 
-               class="px-3.5 py-2 rounded-xl transition-all whitespace-nowrap {{ request('status') === 'processing' ? 'bg-amber-500 text-white shadow-xs font-black' : 'text-slate-600 hover:bg-slate-100' }}">
+               class="px-3.5 py-2 rounded-xl transition-all whitespace-nowrap {{ request('status') === 'processing' ? 'bg-blue-600 text-white shadow-xs font-black' : 'text-slate-600 hover:bg-slate-100' }}">
                 To Dispatch ({{ $counts['processing'] }})
             </a>
             <a href="{{ route('seller.orders') }}?status=shipped" 
@@ -44,6 +48,10 @@
             <a href="{{ route('seller.orders') }}?status=delivered" 
                class="px-3.5 py-2 rounded-xl transition-all whitespace-nowrap {{ request('status') === 'delivered' ? 'bg-emerald-600 text-white shadow-xs font-black' : 'text-slate-600 hover:bg-slate-100' }}">
                 Delivered ({{ $counts['delivered'] }})
+            </a>
+            <a href="{{ route('seller.orders') }}?status=cancelled" 
+               class="px-3.5 py-2 rounded-xl transition-all whitespace-nowrap {{ request('status') === 'cancelled' ? 'bg-rose-600 text-white shadow-xs font-black' : 'text-slate-600 hover:bg-slate-100' }}">
+                Cancelled ({{ $counts['cancelled'] }})
             </a>
         </div>
     </div>

@@ -139,15 +139,29 @@
 
                             <!-- Stock Level -->
                             <td class="py-4 px-6">
-                                <button type="button" 
-                                        @click="quickStockModal = true; selectedProduct = {{ $product->toJson() }}; stockValue = {{ $product->stock }};" 
-                                        class="group inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl text-xs font-bold border transition-all cursor-pointer
-                                        {{ $product->stock <= 0 ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' : 
-                                          ($product->stock <= 5 ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100') }}"
-                                        title="Click to quickly update stock">
-                                    <span>{{ $product->stock }} in stock</span>
-                                    <svg class="w-3 h-3 opacity-60 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                </button>
+                                <div class="space-y-1">
+                                    <button type="button" 
+                                            @click="quickStockModal = true; selectedProduct = {{ $product->toJson() }}; stockValue = {{ $product->stock }};" 
+                                            class="group inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl text-xs font-bold border transition-all cursor-pointer
+                                            {{ $product->stock <= 0 ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' : 
+                                              ($product->stock <= 5 ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100') }}"
+                                            title="Click to quickly update available stock">
+                                        <span>{{ $product->stock }} in stock</span>
+                                        <svg class="w-3 h-3 opacity-60 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                    </button>
+
+                                    <div class="text-[10px] text-slate-500 font-medium">
+                                        <span>Total: <strong>{{ $product->stock + $product->sales_count }}</strong></span>
+                                        <span class="text-slate-300">•</span>
+                                        <span class="text-emerald-700 font-bold">{{ $product->sales_count }} sold</span>
+                                    </div>
+
+                                    @if($product->stock < $product->group_size_required && $product->stock > 0)
+                                        <span class="inline-block px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-900 text-[9px] font-black">
+                                            ⚠️ Below Min Team ({{ $product->group_size_required }})
+                                        </span>
+                                    @endif
+                                </div>
                             </td>
 
                             <!-- Active / Inactive Status -->
@@ -221,9 +235,24 @@
                 @method('PATCH')
                 
                 <div class="mb-4">
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Available Quantity Units</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Available Stock to Sell (Remaining Units)</label>
                     <input type="number" name="stock" x-model="stockValue" min="0" required 
                            class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-black focus:outline-hidden focus:ring-2 focus:ring-[#53a318]">
+                    
+                    <div class="mt-2.5 p-2.5 bg-slate-50 rounded-xl border border-slate-100 text-[11px] space-y-1">
+                        <div class="flex items-center justify-between text-slate-600">
+                            <span>Already Sold:</span>
+                            <span class="font-bold text-emerald-700" x-text="(selectedProduct ? selectedProduct.sales_count : 0) + ' units'"></span>
+                        </div>
+                        <div class="flex items-center justify-between text-slate-600">
+                            <span>Total Inventory:</span>
+                            <span class="font-black text-slate-900" x-text="((parseInt(stockValue) || 0) + (selectedProduct ? parseInt(selectedProduct.sales_count) : 0)) + ' units'"></span>
+                        </div>
+                    </div>
+
+                    <p class="text-[10px] text-amber-700 font-bold mt-1.5" x-show="selectedProduct && stockValue < selectedProduct.group_size_required && stockValue > 0">
+                        ⚠️ Note: Minimum group size for this product is <span x-text="selectedProduct ? selectedProduct.group_size_required : 2"></span> buyers.
+                    </p>
                 </div>
 
                 <div class="flex items-center justify-end space-x-2">
@@ -233,7 +262,7 @@
                     <button type="submit" 
                             class="px-4 py-2 rounded-xl text-white font-extrabold text-xs transition-all shadow-md hover:brightness-110"
                             style="background-color: #53a318;">
-                        Save Changes
+                        Save Stock Changes
                     </button>
                 </div>
             </form>

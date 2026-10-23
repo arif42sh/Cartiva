@@ -65,12 +65,15 @@ class SellerController extends Controller
             })
             ->count();
 
-        $lowStockCount = Product::where('seller_id', $sellerId)
+        $lowStockCount = Product::whereIn('id', $sellerProductIds)
             ->where('stock', '<=', 5)
             ->count();
 
         $recentSales = OrderItem::with(['order.user', 'product'])
             ->whereIn('product_id', $sellerProductIds)
+            ->whereHas('order', function ($q) {
+                $q->whereIn('order_status', ['processing', 'shipped', 'delivered']);
+            })
             ->latest()
             ->take(6)
             ->get();
@@ -186,6 +189,18 @@ class SellerController extends Controller
             'max_buyers_limit.gte' => 'Maximum buyer limit cannot be lower than minimum required buyers.',
         ]);
 
+        // Inventory consistency validation:
+        if ($validated['stock'] < $validated['group_size_required']) {
+            return back()->withInput()->withErrors([
+                'stock' => "Available stock ({$validated['stock']}) cannot be less than the Minimum Group Size ({$validated['group_size_required']} buyers). Buyers will not be able to complete a group buy."
+            ]);
+        }
+        if (!empty($validated['max_buyers_limit']) && $validated['stock'] < $validated['max_buyers_limit']) {
+            return back()->withInput()->withErrors([
+                'stock' => "Available stock ({$validated['stock']}) cannot be less than the Max Buyers Cap ({$validated['max_buyers_limit']} buyers). Increase initial stock to match or exceed the team capacity limit."
+            ]);
+        }
+
         // Require either file or URL
         if (!$request->hasFile('image_file') && empty($validated['image_url'])) {
             return back()->withInput()->withErrors(['image_file' => 'Please either upload an image file or provide an image URL.']);
@@ -217,25 +232,18 @@ class SellerController extends Controller
             'is_active' => true,
         ]);
 
-        // Automatically launch initial active Group-Buy campaign session
+        // Automatically launch initial open Group-Buy campaign pool (waiting for customers)
         $durationHours = (int) ($validated['group_duration_hours'] ?? 48);
         if ($durationHours <= 0) $durationHours = 48;
 
-        $session = GroupBuySession::create([
+        GroupBuySession::create([
             'product_id' => $product->id,
-            'leader_user_id' => Auth::id(),
+            'leader_user_id' => null,
             'group_code' => 'GRP-' . strtoupper(Str::random(6)),
             'required_members' => $product->group_size_required ?: 2,
-            'current_members' => 1,
+            'current_members' => 0,
             'status' => 'active',
             'expires_at' => Carbon::now()->addHours($durationHours),
-        ]);
-
-        GroupBuyMember::create([
-            'group_buy_session_id' => $session->id,
-            'user_id' => Auth::id(),
-            'is_leader' => true,
-            'joined_at' => Carbon::now(),
         ]);
 
         return redirect()->route('seller.products')
@@ -287,6 +295,12 @@ class SellerController extends Controller
             'tier3_group_price.lt' => 'Tier 3 price must be lower than Tier 2 price.',
             'max_buyers_limit.gte' => 'Maximum buyer limit cannot be lower than minimum required buyers.',
         ]);
+
+        if ($validated['stock'] < $validated['group_size_required']) {
+            return back()->withInput()->withErrors([
+                'stock' => "Available stock ({$validated['stock']}) cannot be less than the Minimum Group Size ({$validated['group_size_required']} buyers)."
+            ]);
+        }
 
         $imageUrl = $product->image_url;
         if ($request->hasFile('image_file')) {
@@ -467,19 +481,12 @@ class SellerController extends Controller
 
         $session = GroupBuySession::create([
             'product_id' => $product->id,
-            'leader_user_id' => Auth::id(),
+            'leader_user_id' => null,
             'group_code' => $code,
             'required_members' => $requiredMembers,
-            'current_members' => 1,
+            'current_members' => 0,
             'status' => 'active',
             'expires_at' => Carbon::now()->addHours($durationHours),
-        ]);
-
-        GroupBuyMember::create([
-            'group_buy_session_id' => $session->id,
-            'user_id' => Auth::id(),
-            'is_leader' => true,
-            'joined_at' => Carbon::now(),
         ]);
 
         return redirect()->route('seller.groups')
@@ -569,6 +576,7 @@ class SellerController extends Controller
         // Status Counts for Tabs
         $counts = [
             'all' => OrderItem::whereIn('product_id', $sellerProductIds)->count(),
+            'pending_group' => OrderItem::whereIn('product_id', $sellerProductIds)->whereHas('order', fn($q) => $q->where('order_status', 'pending_group'))->count(),
             'processing' => OrderItem::whereIn('product_id', $sellerProductIds)->whereHas('order', fn($q) => $q->where('order_status', 'processing'))->count(),
             'shipped' => OrderItem::whereIn('product_id', $sellerProductIds)->whereHas('order', fn($q) => $q->where('order_status', 'shipped'))->count(),
             'delivered' => OrderItem::whereIn('product_id', $sellerProductIds)->whereHas('order', fn($q) => $q->where('order_status', 'delivered'))->count(),
@@ -619,6 +627,38 @@ class SellerController extends Controller
             'order_notes' => 'nullable|string|max:500',
         ]);
 
+        $oldStatus = $order->order_status;
+        $newStatus = $validated['order_status'];
+
+        // Guard: Do not allow shipping or delivering pending group orders if group is not completed!
+        if ($oldStatus === 'pending_group' && in_array($newStatus, ['shipped', 'delivered'])) {
+            if ($order->groupSession && !$order->groupSession->isCompleted()) {
+                return back()->withErrors([
+                    'order_status' => "⚠️ Cannot fulfill this order yet! This order belongs to an active Group-Buy pool ({$order->groupSession->group_code}) that has not fulfilled its required buyer quota."
+                ]);
+            }
+        }
+
+        // Inventory & Sales Count Restoration on Order Cancellation:
+        if ($oldStatus !== 'cancelled' && $newStatus === 'cancelled') {
+            foreach ($order->items as $item) {
+                $prod = Product::find($item->product_id);
+                if ($prod) {
+                    $prod->increment('stock', $item->quantity);
+                    $prod->decrement('sales_count', min($prod->sales_count, (int) $item->quantity));
+                }
+            }
+        } elseif ($oldStatus === 'cancelled' && $newStatus !== 'cancelled') {
+            // Re-activating previously cancelled order:
+            foreach ($order->items as $item) {
+                $prod = Product::find($item->product_id);
+                if ($prod) {
+                    $prod->decrement('stock', $item->quantity);
+                    $prod->increment('sales_count', (int) $item->quantity);
+                }
+            }
+        }
+
         $updateData = [
             'order_status' => $validated['order_status'],
             'courier_name' => $validated['courier_name'] ?? $order->courier_name,
@@ -646,8 +686,11 @@ class SellerController extends Controller
      */
     public function analytics()
     {
-        $sellerId = Auth::id();
-        $sellerProductIds = Product::where('seller_id', $sellerId)->pluck('id');
+        $user = Auth::user();
+        $sellerProductIds = Product::where('seller_id', $user->id)->pluck('id');
+        if ($user->isAdmin() && $sellerProductIds->isEmpty()) {
+            $sellerProductIds = Product::pluck('id');
+        }
 
         $totalRevenue = OrderItem::whereIn('product_id', $sellerProductIds)
             ->whereHas('order', fn($q) => $q->whereIn('order_status', ['processing', 'shipped', 'delivered']))
@@ -667,7 +710,7 @@ class SellerController extends Controller
             ->sum('subtotal');
 
         // Top Selling Products
-        $topProducts = Product::where('seller_id', $sellerId)
+        $topProducts = Product::whereIn('id', $sellerProductIds)
             ->withCount(['orderItems as total_orders' => function ($q) {
                 $q->whereHas('order', fn($o) => $o->whereIn('order_status', ['processing', 'shipped', 'delivered']));
             }])
@@ -681,7 +724,12 @@ class SellerController extends Controller
         // Group Buy Success Metrics
         $totalSessions = GroupBuySession::whereIn('product_id', $sellerProductIds)->count();
         $successfulSessions = GroupBuySession::whereIn('product_id', $sellerProductIds)->where('status', 'completed')->count();
-        $completionRate = $totalSessions > 0 ? round(($successfulSessions / $totalSessions) * 100) : 0;
+        $expiredSessions = GroupBuySession::whereIn('product_id', $sellerProductIds)->where(function ($q) {
+            $q->where('status', 'expired')->orWhere(fn($s) => $s->where('status', 'active')->where('expires_at', '<=', now()));
+        })->count();
+        $activeSessions = GroupBuySession::whereIn('product_id', $sellerProductIds)->where('status', 'active')->where('expires_at', '>', now())->count();
+        $closedSessions = $successfulSessions + $expiredSessions;
+        $completionRate = $closedSessions > 0 ? round(($successfulSessions / $closedSessions) * 100) : ($totalSessions > 0 ? 0 : 100);
 
         return view('seller.analytics.index', compact(
             'totalRevenue',
@@ -691,6 +739,8 @@ class SellerController extends Controller
             'topProducts',
             'totalSessions',
             'successfulSessions',
+            'expiredSessions',
+            'activeSessions',
             'completionRate'
         ));
     }

@@ -94,9 +94,10 @@
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Initial Stock Units <span class="text-rose-500">*</span></label>
-                                <input type="number" name="stock" value="{{ old('stock', 50) }}" min="0" required
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Available Inventory Stock Units <span class="text-rose-500">*</span></label>
+                                <input type="number" name="stock" value="{{ old('stock', 50) }}" min="2" required
                                        class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#53a318]">
+                                <span class="text-[10px] text-slate-400 mt-0.5 block">Total quantity available for sale (must be &ge; group size)</span>
                             </div>
                         </div>
 
@@ -214,10 +215,10 @@
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Max Buyers Cap (Limit)</label>
-                                <input type="number" name="max_buyers_limit" value="{{ old('max_buyers_limit') }}" min="2" max="100" placeholder="e.g. 10 (Optional)"
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Max Buyers Cap (Per Circle)</label>
+                                <input type="number" name="max_buyers_limit" value="{{ old('max_buyers_limit') }}" min="2" max="100" placeholder="e.g. 8 (Optional)"
                                        class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#53a318]">
-                                <span class="text-[10px] text-slate-400 mt-0.5 block">Leave empty for unlimited slots</span>
+                                <span class="text-[10px] text-slate-400 mt-0.5 block">Maximum buyers allowed in a single circle</span>
                             </div>
 
                             <div>

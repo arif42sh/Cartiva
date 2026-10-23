@@ -143,13 +143,20 @@ class OrderController extends Controller
                         throw new \Exception('এই গ্রুপটি সম্পন্ন করতে আর মাত্র ' . $remaining . 'টি স্লট বাকি আছে।');
                     }
 
+                    $isFirstBuyer = ($existingSession->current_members == 0 || $existingSession->leader_user_id === null);
+
                     $newTotalUnits = $existingSession->current_members + $quantity;
                     $isCompleted = ($newTotalUnits >= $existingSession->required_members);
 
-                    $existingSession->update([
+                    $updateData = [
                         'current_members' => $newTotalUnits,
                         'status' => $isCompleted ? 'completed' : 'active',
-                    ]);
+                    ];
+                    if ($isFirstBuyer) {
+                        $updateData['leader_user_id'] = $user->id;
+                    }
+
+                    $existingSession->update($updateData);
 
                     $sessionId = $existingSession->id;
                     $createdSession = $existingSession;
@@ -159,7 +166,7 @@ class OrderController extends Controller
                         'group_buy_session_id' => $existingSession->id,
                         'user_id' => $user->id,
                     ], [
-                        'is_leader' => false,
+                        'is_leader' => $isFirstBuyer,
                         'joined_at' => now(),
                     ]);
 
