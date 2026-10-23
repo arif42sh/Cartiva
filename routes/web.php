@@ -71,6 +71,7 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
     // 1. Dashboard & Analytics
     Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
     Route::get('/analytics', [SellerController::class, 'analytics'])->name('analytics');
+    Route::get('/storefront', [SellerController::class, 'storefront'])->name('storefront');
 
     // 2. Product Management (CRUD, Image upload, Pricing tiers, Stock)
     Route::get('/products', [SellerController::class, 'products'])->name('products');
@@ -84,7 +85,9 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
 
     // 3. Group Buy Campaigns & Active Groups Monitoring (x, xi)
     Route::get('/groups', [SellerController::class, 'groups'])->name('groups');
+    Route::post('/groups', [SellerController::class, 'storeGroup'])->name('groups.store');
     Route::get('/groups/{session}', [SellerController::class, 'showGroup'])->name('groups.show');
+    Route::post('/groups/{session}/relaunch', [SellerController::class, 'relaunchGroup'])->name('groups.relaunch');
 
     // 4. Order Management & Fulfillment (xii, xiii)
     Route::get('/orders', [SellerController::class, 'orders'])->name('orders');

@@ -111,7 +111,11 @@ class GroupBuySession extends Model
                 ]);
 
                 foreach ($order->items as $item) {
-                    Product::where('id', $item->product_id)->increment('stock', $item->quantity);
+                    $prod = Product::find($item->product_id);
+                    if ($prod) {
+                        $prod->increment('stock', $item->quantity);
+                        $prod->decrement('sales_count', min($prod->sales_count, (int) $item->quantity));
+                    }
                 }
             }
         }

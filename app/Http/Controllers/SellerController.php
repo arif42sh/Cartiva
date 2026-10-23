@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\GroupBuyMember;
 use App\Models\GroupBuySession;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -22,8 +23,12 @@ class SellerController extends Controller
      */
     public function dashboard()
     {
-        $sellerId = Auth::id();
+        $user = Auth::user();
+        $sellerId = $user->id;
         $sellerProductIds = Product::where('seller_id', $sellerId)->pluck('id');
+        if ($user->isAdmin() && $sellerProductIds->isEmpty()) {
+            $sellerProductIds = Product::pluck('id');
+        }
 
         $myProductsCount = $sellerProductIds->count();
 
@@ -60,12 +65,15 @@ class SellerController extends Controller
             })
             ->count();
 
-        $lowStockCount = Product::where('seller_id', $sellerId)
+        $lowStockCount = Product::whereIn('id', $sellerProductIds)
             ->where('stock', '<=', 5)
             ->count();
 
         $recentSales = OrderItem::with(['order.user', 'product'])
             ->whereIn('product_id', $sellerProductIds)
+            ->whereHas('order', function ($q) {
+                $q->whereIn('order_status', ['processing', 'shipped', 'delivered']);
+            })
             ->latest()
             ->take(6)
             ->get();
@@ -97,8 +105,17 @@ class SellerController extends Controller
      */
     public function products(Request $request)
     {
-        $sellerId = Auth::id();
-        $query = Product::with('category')->where('seller_id', $sellerId);
+        $user = Auth::user();
+        $sellerId = $user->id;
+        $query = Product::with('category');
+        if (!$user->isAdmin()) {
+            $query->where('seller_id', $sellerId);
+        } else {
+            $hasOwn = Product::where('seller_id', $sellerId)->exists();
+            if ($hasOwn) {
+                $query->where('seller_id', $sellerId);
+            }
+        }
 
         // Search filter
         if ($request->filled('q')) {
@@ -172,6 +189,18 @@ class SellerController extends Controller
             'max_buyers_limit.gte' => 'Maximum buyer limit cannot be lower than minimum required buyers.',
         ]);
 
+        // Inventory consistency validation:
+        if ($validated['stock'] < $validated['group_size_required']) {
+            return back()->withInput()->withErrors([
+                'stock' => "Available stock ({$validated['stock']}) cannot be less than the Minimum Group Size ({$validated['group_size_required']} buyers). Buyers will not be able to complete a group buy."
+            ]);
+        }
+        if (!empty($validated['max_buyers_limit']) && $validated['stock'] < $validated['max_buyers_limit']) {
+            return back()->withInput()->withErrors([
+                'stock' => "Available stock ({$validated['stock']}) cannot be less than the Max Buyers Cap ({$validated['max_buyers_limit']} buyers). Increase initial stock to match or exceed the team capacity limit."
+            ]);
+        }
+
         // Require either file or URL
         if (!$request->hasFile('image_file') && empty($validated['image_url'])) {
             return back()->withInput()->withErrors(['image_file' => 'Please either upload an image file or provide an image URL.']);
@@ -185,7 +214,7 @@ class SellerController extends Controller
 
         $slug = Str::slug($validated['title']) . '-' . Str::random(5);
 
-        Product::create([
+        $product = Product::create([
             'seller_id' => Auth::id(),
             'category_id' => $validated['category_id'],
             'title' => $validated['title'],
@@ -203,8 +232,22 @@ class SellerController extends Controller
             'is_active' => true,
         ]);
 
+        // Automatically launch initial open Group-Buy campaign pool (waiting for customers)
+        $durationHours = (int) ($validated['group_duration_hours'] ?? 48);
+        if ($durationHours <= 0) $durationHours = 48;
+
+        GroupBuySession::create([
+            'product_id' => $product->id,
+            'leader_user_id' => null,
+            'group_code' => 'GRP-' . strtoupper(Str::random(6)),
+            'required_members' => $product->group_size_required ?: 2,
+            'current_members' => 0,
+            'status' => 'active',
+            'expires_at' => Carbon::now()->addHours($durationHours),
+        ]);
+
         return redirect()->route('seller.products')
-            ->with('success', '🎉 Product listed successfully with Group-Buy campaign enabled!');
+            ->with('success', '🎉 Product listed successfully with Group-Buy campaign live!');
     }
 
     /**
@@ -212,7 +255,7 @@ class SellerController extends Controller
      */
     public function editProduct(Product $product)
     {
-        if ($product->seller_id !== Auth::id()) {
+        if ($product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized product access.');
         }
 
@@ -225,7 +268,7 @@ class SellerController extends Controller
      */
     public function updateProduct(Request $request, Product $product)
     {
-        if ($product->seller_id !== Auth::id()) {
+        if ($product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized product access.');
         }
 
@@ -252,6 +295,12 @@ class SellerController extends Controller
             'tier3_group_price.lt' => 'Tier 3 price must be lower than Tier 2 price.',
             'max_buyers_limit.gte' => 'Maximum buyer limit cannot be lower than minimum required buyers.',
         ]);
+
+        if ($validated['stock'] < $validated['group_size_required']) {
+            return back()->withInput()->withErrors([
+                'stock' => "Available stock ({$validated['stock']}) cannot be less than the Minimum Group Size ({$validated['group_size_required']} buyers)."
+            ]);
+        }
 
         $imageUrl = $product->image_url;
         if ($request->hasFile('image_file')) {
@@ -286,7 +335,7 @@ class SellerController extends Controller
      */
     public function destroyProduct(Product $product)
     {
-        if ($product->seller_id !== Auth::id()) {
+        if ($product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized.');
         }
 
@@ -310,7 +359,7 @@ class SellerController extends Controller
      */
     public function toggleProductStatus(Product $product)
     {
-        if ($product->seller_id !== Auth::id()) {
+        if ($product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized.');
         }
 
@@ -326,7 +375,7 @@ class SellerController extends Controller
      */
     public function quickStockUpdate(Request $request, Product $product)
     {
-        if ($product->seller_id !== Auth::id()) {
+        if ($product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized.');
         }
 
@@ -345,7 +394,21 @@ class SellerController extends Controller
      */
     public function groups(Request $request)
     {
-        $sellerProductIds = Product::where('seller_id', Auth::id())->pluck('id');
+        $user = Auth::user();
+        $isAdmin = $user && $user->isAdmin();
+
+        $sellerProductsQuery = Product::where('is_active', true);
+        if (!$isAdmin) {
+            $sellerProductsQuery->where('seller_id', $user->id);
+            $sellerProductIds = Product::where('seller_id', $user->id)->pluck('id');
+        } else {
+            $adminProducts = Product::where('seller_id', $user->id)->pluck('id');
+            $sellerProductIds = $adminProducts->isNotEmpty() ? $adminProducts : Product::pluck('id');
+        }
+
+        $sellerProducts = $sellerProductsQuery->orderBy('title')->get([
+            'id', 'title', 'group_size_required', 'group_duration_hours', 'single_price', 'group_price', 'image_url'
+        ]);
 
         $query = GroupBuySession::with(['product', 'leader', 'members.user'])
             ->whereIn('product_id', $sellerProductIds);
@@ -384,9 +447,70 @@ class SellerController extends Controller
         $completedCount = GroupBuySession::whereIn('product_id', $sellerProductIds)
             ->where('status', 'completed')->count();
         $expiredCount = GroupBuySession::whereIn('product_id', $sellerProductIds)
-            ->where('status', 'expired')->count();
+            ->where(function ($q) {
+                $q->where('status', 'expired')
+                    ->orWhere(function ($sub) {
+                        $sub->where('status', 'active')->where('expires_at', '<=', now());
+                    });
+            })->count();
 
-        return view('seller.groups.index', compact('groups', 'activeCount', 'completedCount', 'expiredCount'));
+        return view('seller.groups.index', compact('groups', 'activeCount', 'completedCount', 'expiredCount', 'sellerProducts'));
+    }
+
+    /**
+     * Launch a new Group Buy Session / Campaign Pool manually
+     */
+    public function storeGroup(Request $request)
+    {
+        $validated = $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'required_members' => 'nullable|integer|min:2|max:100',
+            'duration_hours' => 'nullable|integer|min:1|max:720',
+        ]);
+
+        $product = Product::findOrFail($validated['product_id']);
+
+        if ($product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized product campaign launch.');
+        }
+
+        $requiredMembers = !empty($validated['required_members']) ? (int) $validated['required_members'] : ($product->group_size_required ?: 2);
+        $durationHours = !empty($validated['duration_hours']) ? (int) $validated['duration_hours'] : ($product->group_duration_hours ?: 48);
+
+        $code = 'GRP-' . strtoupper(Str::random(6));
+
+        $session = GroupBuySession::create([
+            'product_id' => $product->id,
+            'leader_user_id' => null,
+            'group_code' => $code,
+            'required_members' => $requiredMembers,
+            'current_members' => 0,
+            'status' => 'active',
+            'expires_at' => Carbon::now()->addHours($durationHours),
+        ]);
+
+        return redirect()->route('seller.groups')
+            ->with('success', "🚀 Group-Buy Pool {$code} for '{$product->title}' has been successfully launched!");
+    }
+
+    /**
+     * Relaunch an expired Group Buy Session with refreshed timer
+     */
+    public function relaunchGroup(GroupBuySession $session)
+    {
+        if ($session->product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $durationHours = $session->product->group_duration_hours ?: 48;
+
+        $session->update([
+            'status' => 'active',
+            'expires_at' => Carbon::now()->addHours($durationHours),
+        ]);
+
+        return redirect()->route('seller.groups')
+            ->with('success', "🔄 Group-Buy Circle {$session->group_code} relaunched successfully with a fresh {$durationHours}h timer!");
     }
 
     /**
@@ -394,7 +518,7 @@ class SellerController extends Controller
      */
     public function showGroup(GroupBuySession $session)
     {
-        if ($session->product->seller_id !== Auth::id()) {
+        if ($session->product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized.');
         }
 
@@ -408,7 +532,11 @@ class SellerController extends Controller
      */
     public function orders(Request $request)
     {
-        $sellerProductIds = Product::where('seller_id', Auth::id())->pluck('id');
+        $user = Auth::user();
+        $sellerProductIds = Product::where('seller_id', $user->id)->pluck('id');
+        if ($user->isAdmin() && $sellerProductIds->isEmpty()) {
+            $sellerProductIds = Product::pluck('id');
+        }
 
         $query = OrderItem::with(['order.user', 'product'])
             ->whereIn('product_id', $sellerProductIds);
@@ -448,6 +576,7 @@ class SellerController extends Controller
         // Status Counts for Tabs
         $counts = [
             'all' => OrderItem::whereIn('product_id', $sellerProductIds)->count(),
+            'pending_group' => OrderItem::whereIn('product_id', $sellerProductIds)->whereHas('order', fn($q) => $q->where('order_status', 'pending_group'))->count(),
             'processing' => OrderItem::whereIn('product_id', $sellerProductIds)->whereHas('order', fn($q) => $q->where('order_status', 'processing'))->count(),
             'shipped' => OrderItem::whereIn('product_id', $sellerProductIds)->whereHas('order', fn($q) => $q->where('order_status', 'shipped'))->count(),
             'delivered' => OrderItem::whereIn('product_id', $sellerProductIds)->whereHas('order', fn($q) => $q->where('order_status', 'delivered'))->count(),
@@ -467,7 +596,11 @@ class SellerController extends Controller
         // Check if any items belong to seller
         $sellerItems = $order->items()->whereIn('product_id', $sellerProductIds)->get();
         if ($sellerItems->isEmpty()) {
-            abort(403, 'Unauthorized order access.');
+            if (Auth::user()->isAdmin()) {
+                $sellerItems = $order->items;
+            } else {
+                abort(403, 'Unauthorized order access.');
+            }
         }
 
         $order->load(['user', 'groupSession.members.user']);
@@ -483,7 +616,7 @@ class SellerController extends Controller
         $sellerProductIds = Product::where('seller_id', Auth::id())->pluck('id');
         $hasItem = $order->items()->whereIn('product_id', $sellerProductIds)->exists();
 
-        if (!$hasItem) {
+        if (!$hasItem && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized.');
         }
 
@@ -493,6 +626,38 @@ class SellerController extends Controller
             'tracking_number' => 'nullable|string|max:100',
             'order_notes' => 'nullable|string|max:500',
         ]);
+
+        $oldStatus = $order->order_status;
+        $newStatus = $validated['order_status'];
+
+        // Guard: Do not allow shipping or delivering pending group orders if group is not completed!
+        if ($oldStatus === 'pending_group' && in_array($newStatus, ['shipped', 'delivered'])) {
+            if ($order->groupSession && !$order->groupSession->isCompleted()) {
+                return back()->withErrors([
+                    'order_status' => "⚠️ Cannot fulfill this order yet! This order belongs to an active Group-Buy pool ({$order->groupSession->group_code}) that has not fulfilled its required buyer quota."
+                ]);
+            }
+        }
+
+        // Inventory & Sales Count Restoration on Order Cancellation:
+        if ($oldStatus !== 'cancelled' && $newStatus === 'cancelled') {
+            foreach ($order->items as $item) {
+                $prod = Product::find($item->product_id);
+                if ($prod) {
+                    $prod->increment('stock', $item->quantity);
+                    $prod->decrement('sales_count', min($prod->sales_count, (int) $item->quantity));
+                }
+            }
+        } elseif ($oldStatus === 'cancelled' && $newStatus !== 'cancelled') {
+            // Re-activating previously cancelled order:
+            foreach ($order->items as $item) {
+                $prod = Product::find($item->product_id);
+                if ($prod) {
+                    $prod->decrement('stock', $item->quantity);
+                    $prod->increment('sales_count', (int) $item->quantity);
+                }
+            }
+        }
 
         $updateData = [
             'order_status' => $validated['order_status'],
@@ -521,8 +686,11 @@ class SellerController extends Controller
      */
     public function analytics()
     {
-        $sellerId = Auth::id();
-        $sellerProductIds = Product::where('seller_id', $sellerId)->pluck('id');
+        $user = Auth::user();
+        $sellerProductIds = Product::where('seller_id', $user->id)->pluck('id');
+        if ($user->isAdmin() && $sellerProductIds->isEmpty()) {
+            $sellerProductIds = Product::pluck('id');
+        }
 
         $totalRevenue = OrderItem::whereIn('product_id', $sellerProductIds)
             ->whereHas('order', fn($q) => $q->whereIn('order_status', ['processing', 'shipped', 'delivered']))
@@ -542,7 +710,7 @@ class SellerController extends Controller
             ->sum('subtotal');
 
         // Top Selling Products
-        $topProducts = Product::where('seller_id', $sellerId)
+        $topProducts = Product::whereIn('id', $sellerProductIds)
             ->withCount(['orderItems as total_orders' => function ($q) {
                 $q->whereHas('order', fn($o) => $o->whereIn('order_status', ['processing', 'shipped', 'delivered']));
             }])
@@ -556,7 +724,12 @@ class SellerController extends Controller
         // Group Buy Success Metrics
         $totalSessions = GroupBuySession::whereIn('product_id', $sellerProductIds)->count();
         $successfulSessions = GroupBuySession::whereIn('product_id', $sellerProductIds)->where('status', 'completed')->count();
-        $completionRate = $totalSessions > 0 ? round(($successfulSessions / $totalSessions) * 100) : 0;
+        $expiredSessions = GroupBuySession::whereIn('product_id', $sellerProductIds)->where(function ($q) {
+            $q->where('status', 'expired')->orWhere(fn($s) => $s->where('status', 'active')->where('expires_at', '<=', now()));
+        })->count();
+        $activeSessions = GroupBuySession::whereIn('product_id', $sellerProductIds)->where('status', 'active')->where('expires_at', '>', now())->count();
+        $closedSessions = $successfulSessions + $expiredSessions;
+        $completionRate = $closedSessions > 0 ? round(($successfulSessions / $closedSessions) * 100) : ($totalSessions > 0 ? 0 : 100);
 
         return view('seller.analytics.index', compact(
             'totalRevenue',
@@ -566,6 +739,8 @@ class SellerController extends Controller
             'topProducts',
             'totalSessions',
             'successfulSessions',
+            'expiredSessions',
+            'activeSessions',
             'completionRate'
         ));
     }
@@ -624,6 +799,63 @@ class SellerController extends Controller
         $user->update($updateData);
 
         return back()->with('success', '✨ Merchant store profile updated successfully!');
+    }
+
+    /**
+     * Integrated Merchant Storefront Preview (Method A)
+     * Renders a live, interactive customer-facing store preview inside the Merchant Portal with device frames.
+     */
+    public function storefront(Request $request)
+    {
+        $seller = Auth::user();
+        $sellerProductIds = Product::where('seller_id', $seller->id)->pluck('id');
+
+        $query = Product::where('seller_id', $seller->id)
+            ->where('is_active', true)
+            ->with(['category', 'activeGroupSessions.members.user']);
+
+        // Search within shop preview
+        if ($request->filled('q')) {
+            $q = trim($request->q);
+            $query->where(function ($sub) use ($q) {
+                $sub->where('title', 'like', "%{$q}%")
+                    ->orWhere('description', 'like', "%{$q}%");
+            });
+        }
+
+        // Category filter
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+
+        $products = $query->latest()->paginate(12)->withQueryString();
+
+        $categories = Category::whereHas('products', function ($q) use ($seller) {
+            $q->where('seller_id', $seller->id)->where('is_active', true);
+        })->get();
+
+        // Active ongoing circles for this shop's items
+        $activeCircles = GroupBuySession::with(['product', 'leader', 'members.user'])
+            ->whereIn('product_id', $sellerProductIds)
+            ->where('status', 'active')
+            ->where('expires_at', '>', now())
+            ->latest()
+            ->take(4)
+            ->get();
+
+        $totalProductsCount = Product::where('seller_id', $seller->id)->where('is_active', true)->count();
+        $totalSalesCount = Product::where('seller_id', $seller->id)->sum('sales_count') ?: 150;
+        $avgRating = Product::where('seller_id', $seller->id)->avg('rating') ?: 4.9;
+
+        return view('seller.storefront.index', compact(
+            'seller',
+            'products',
+            'categories',
+            'activeCircles',
+            'totalProductsCount',
+            'totalSalesCount',
+            'avgRating'
+        ));
     }
 }
 

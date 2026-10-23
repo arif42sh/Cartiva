@@ -102,6 +102,9 @@
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Available Stock Units <span class="text-rose-500">*</span></label>
                                 <input type="number" name="stock" value="{{ old('stock', $product->stock) }}" min="0" required
                                        class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#53a318]">
+                                <span class="text-[10px] text-slate-500 mt-0.5 block">
+                                    Current Remaining: <strong>{{ $product->stock }}</strong> | Sold: <strong>{{ $product->sales_count }}</strong> | Total: <strong>{{ $product->stock + $product->sales_count }}</strong>
+                                </span>
                             </div>
                         </div>
 

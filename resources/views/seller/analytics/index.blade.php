@@ -11,7 +11,7 @@
     <!-- Page Header -->
     <div class="mb-6">
         <h1 class="text-2xl font-black text-slate-900 tracking-tight">Sales Analytics & Campaign Performance</h1>
-        <p class="text-xs text-slate-500 mt-0.5">High-density revenue metrics, viral team-buy success rates, and top revenue drivers.</p>
+        <p class="text-xs text-slate-500 mt-0.5">High-density revenue metrics, viral team-buy success rates and top revenue drivers.</p>
     </div>
 
     <!-- Top Summary Cards -->
@@ -32,13 +32,13 @@
         <div class="bg-white rounded-3xl border border-slate-200 p-5.5 shadow-sm">
             <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Group Success Rate</span>
             <div class="text-3xl font-black text-emerald-600 tracking-tight mt-1.5">{{ $completionRate }}%</div>
-            <span class="text-[11px] text-slate-500 font-medium mt-1 block">{{ $successfulSessions }} of {{ $totalSessions }} circles unlocked</span>
+            <span class="text-[11px] text-slate-500 font-medium mt-1 block">{{ $successfulSessions }} of {{ $successfulSessions + ($expiredSessions ?? 0) }} resolved circles</span>
         </div>
 
         <div class="bg-white rounded-3xl border border-slate-200 p-5.5 shadow-sm">
-            <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Active Campaigns</span>
-            <div class="text-3xl font-black text-amber-500 tracking-tight mt-1.5">{{ $totalSessions - $successfulSessions }}</div>
-            <span class="text-[11px] text-slate-500 font-medium mt-1 block">Circles currently active/expired</span>
+            <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Active Pooling Circles</span>
+            <div class="text-3xl font-black text-amber-500 tracking-tight mt-1.5">{{ $activeSessions ?? 0 }}</div>
+            <span class="text-[11px] text-slate-500 font-medium mt-1 block">Live circles recruiting buyers</span>
         </div>
 
     </div>

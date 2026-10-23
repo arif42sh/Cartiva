@@ -37,32 +37,22 @@
                         <span class="text-slate-500">•</span>
                         <span class="font-bold text-[#84cc16]">{{ auth()->user()->products()->count() }} Live Products</span>
                         <span class="text-slate-500">•</span>
-                        <a href="{{ route('shop.show', auth()->user()) }}" target="_blank" 
-                           class="text-emerald-400 hover:text-white underline font-bold transition-colors inline-flex items-center space-x-1">
-                            <span>Live Storefront</span>
-                            <span class="text-[11px]">↗</span>
-                        </a>
+                        <span class="text-emerald-400 font-semibold flex items-center space-x-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+                            <span>Store Active</span>
+                        </span>
                     </p>
                 </div>
             </div>
 
             <!-- Right: Quick Executive Action Buttons with High Contrast -->
             <div class="flex items-center space-x-2.5 flex-wrap sm:flex-nowrap">
-                <!-- View Public Store -->
-                <a href="{{ route('shop.show', auth()->user()) }}" target="_blank"
-                   class="px-4 py-2.5 rounded-xl text-white font-bold text-xs transition-all flex items-center space-x-1.5 cursor-pointer shadow-md hover:bg-slate-700/80"
-                   style="background-color: rgba(30, 41, 59, 0.85); border: 1px solid rgba(255, 255, 255, 0.18);"
-                   title="View your store as seen by buyers">
-                    <svg class="w-4 h-4 text-[#84cc16]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                    <span>View Public Store</span>
-                </a>
-
                 <!-- Add Product (Primary CTA in Brand Green) -->
                 <a href="{{ route('seller.products.create') }}" 
                    class="px-4.5 py-2.5 rounded-xl text-white font-black text-xs transition-all flex items-center space-x-1.5 cursor-pointer shadow-lg hover:brightness-110 active:scale-95"
                    style="background: linear-gradient(135deg, #53a318 0%, #468c13 100%); box-shadow: 0 4px 14px rgba(83, 163, 24, 0.45); border: 1px solid rgba(255,255,255,0.2);">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                    <span>+ Add Product</span>
+                    <span>Add Product</span>
                 </a>
 
                 <!-- Store Settings -->
@@ -125,6 +115,14 @@
            @if(request()->routeIs('seller.profile')) style="background-color: #53a318; box-shadow: 0 3px 10px rgba(83, 163, 24, 0.35);" @endif>
             <svg class="w-4 h-4 {{ request()->routeIs('seller.profile') ? 'text-white' : 'text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <span>Store Profile</span>
+        </a>
+
+        <!-- 7. Storefront Preview (Integrated Method A) -->
+        <a href="{{ route('seller.storefront') }}" 
+           class="px-4 py-2.5 rounded-xl transition-all whitespace-nowrap flex items-center space-x-2 {{ request()->routeIs('seller.storefront') ? 'text-white font-black shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}"
+           @if(request()->routeIs('seller.storefront')) style="background-color: #53a318; box-shadow: 0 3px 10px rgba(83, 163, 24, 0.35);" @endif>
+            <svg class="w-4 h-4 {{ request()->routeIs('seller.storefront') ? 'text-white' : 'text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+            <span>Storefront Preview</span>
         </a>
 
     </div>
