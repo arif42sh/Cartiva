@@ -140,12 +140,15 @@
                     </div>
 
                     <!-- Compact Member Avatars Row -->
+                    @php
+                        $roomMembers = $session->members->where('user_id', '!=', $session->product->seller_id ?? 0);
+                    @endphp
                     <div class="grid grid-cols-2 sm:grid-cols-{{ min(4, $session->required_members) }} gap-2.5 pt-1">
-                        @foreach($session->members as $member)
+                        @foreach($roomMembers as $member)
                             <div class="p-3 rounded-xl bg-white border border-emerald-500/40 shadow-2xs flex flex-col items-center text-center space-y-1">
                                 <div class="relative">
                                     <div class="w-9 h-9 rounded-xl bg-slate-900 text-white font-black text-xs flex items-center justify-center shadow-xs">
-                                        {{ strtoupper(substr($member->user->name, 0, 1)) }}
+                                        {{ strtoupper(substr($member->user->name ?? 'B', 0, 1)) }}
                                     </div>
                                     @if($member->is_leader)
                                         <span class="absolute -top-1 -right-1 px-1 py-0.1 rounded bg-amber-400 text-slate-900 text-[8px] font-black uppercase">
@@ -153,7 +156,7 @@
                                         </span>
                                     @endif
                                 </div>
-                                <span class="text-[11px] font-bold text-slate-800 truncate max-w-[90px] block">{{ $member->user->name }}</span>
+                                <span class="text-[11px] font-bold text-slate-800 truncate max-w-[90px] block">{{ $member->user->name ?? 'Buyer' }}</span>
                                 <span class="text-[9px] text-emerald-600 font-bold">Joined ✓</span>
                             </div>
                         @endforeach

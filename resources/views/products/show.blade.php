@@ -385,10 +385,18 @@
                         <div class="flex items-center justify-between gap-3">
                             <div class="flex items-center space-x-3 min-w-0">
                                 <div class="w-10 h-10 rounded-xl bg-slate-900 text-white font-black flex items-center justify-center text-sm shadow-xs shrink-0">
-                                    {{ strtoupper(substr($group->leader->name ?? 'L', 0, 1)) }}
+                                    {{ strtoupper(substr($group->leader->name ?? ($group->current_members > 0 ? 'Buyer' : 'Team'), 0, 1)) }}
                                 </div>
                                 <div class="min-w-0 space-y-0.5">
-                                    <span class="text-xs font-bold text-slate-900 truncate block">{{ $group->leader->name ?? 'Anonymous Buyer' }}'s Team</span>
+                                    <span class="text-xs font-bold text-slate-900 truncate block">
+                                        @if($group->leader)
+                                            {{ $group->leader->name }}'s Team
+                                        @elseif($group->current_members > 0)
+                                            Customer Team
+                                        @else
+                                            Open Sponsored Pool
+                                        @endif
+                                    </span>
                                     <span class="font-mono text-[10px] font-bold text-slate-500 bg-white px-1.5 py-0.2 rounded border border-slate-200">{{ $group->group_code }}</span>
                                 </div>
                             </div>

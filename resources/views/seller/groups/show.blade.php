@@ -109,15 +109,19 @@
 
     </div>
 
+    @php
+        $validMembers = $session->members->where('user_id', '!=', $session->product->seller_id ?? 0);
+    @endphp
+
     <!-- Participating Buyers Roster (xi) -->
     <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
         <div class="p-6 border-b border-slate-100 flex items-center justify-between">
             <div>
-                <h3 class="text-base font-extrabold text-slate-900 tracking-tight">Participating Buyers ({{ $session->members->count() }})</h3>
+                <h3 class="text-base font-extrabold text-slate-900 tracking-tight">Participating Buyers ({{ $validMembers->count() }})</h3>
                 <p class="text-xs text-slate-500 mt-0.5">Customer members who have authorized payment and joined this group circle.</p>
             </div>
             <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-teal-50 text-teal-800 border border-teal-200">
-                {{ $session->current_members }} / {{ $session->required_members }} Slots Filled
+                {{ $validMembers->count() }} / {{ $session->required_members }} Slots Filled
             </span>
         </div>
 
@@ -134,7 +138,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                    @forelse($session->members as $member)
+                    @forelse($validMembers as $member)
                         @php
                             $user = $member->user;
                             $order = $session->orders->where('user_id', $member->user_id)->first();
@@ -213,7 +217,15 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="py-8 text-center text-slate-400">No participating buyers recorded yet.</td>
+                            <td colspan="6" class="py-12 text-center text-slate-400">
+                                <div class="max-w-sm mx-auto space-y-1.5">
+                                    <div class="w-10 h-10 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-2">
+                                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                    </div>
+                                    <p class="font-bold text-slate-700 text-xs">No Customer Buyers Joined Yet</p>
+                                    <p class="text-[11px] text-slate-400">Share your direct group-buy campaign link with shoppers or wait for organic customer orders.</p>
+                                </div>
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>

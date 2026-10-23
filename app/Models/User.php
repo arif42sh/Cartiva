@@ -24,11 +24,19 @@ class User extends Authenticatable
         'password',
         'role',
         'shop_name',
+        'shop_slug',
         'business_category',
         'shop_description',
         'shop_banner',
         'phone',
+        'whatsapp_number',
+        'facebook_page',
+        'dispatch_time',
+        'return_policy',
         'address',
+        'warehouse_address',
+        'payout_method',
+        'payout_details',
         'avatar',
     ];
 
@@ -93,5 +101,28 @@ class User extends Authenticatable
     public function ledGroupSessions(): HasMany
     {
         return $this->hasMany(GroupBuySession::class, 'leader_user_id');
+    }
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        if (empty($this->avatar)) return null;
+        if (str_starts_with($this->avatar, 'http://') || str_starts_with($this->avatar, 'https://')) {
+            return $this->avatar;
+        }
+        return asset('storage/' . ltrim($this->avatar, '/'));
+    }
+
+    public function getBannerUrlAttribute(): ?string
+    {
+        if (empty($this->shop_banner)) return null;
+        if (str_starts_with($this->shop_banner, 'http://') || str_starts_with($this->shop_banner, 'https://')) {
+            return $this->shop_banner;
+        }
+        return asset('storage/' . ltrim($this->shop_banner, '/'));
+    }
+
+    public function getShopSlugAttribute(): string
+    {
+        return $this->attributes['shop_slug'] ?? \Illuminate\Support\Str::slug($this->shop_name ?? $this->name);
     }
 }

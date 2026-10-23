@@ -11,9 +11,9 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    public function showLogin()
+    public function showLogin(Request $request)
     {
-        if (Auth::check()) {
+        if (Auth::check() && !$request->has('switch')) {
             return $this->redirectBasedOnRole(Auth::user());
         }
         return view('auth.login');
@@ -113,6 +113,36 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/')->with('info', 'You have been logged out successfully.');
+    }
+
+    public function switchUser(string $role)
+    {
+        $targetUser = null;
+        if ($role === 'seller') {
+            $targetUser = User::where('role', 'seller')->first();
+        } elseif ($role === 'customer') {
+            $targetUser = User::where('role', 'customer')->where('id', 3)->first() 
+                ?? User::where('role', 'customer')->first();
+        } elseif ($role === 'admin') {
+            $targetUser = User::where('role', 'admin')->first();
+        }
+
+        if ($targetUser) {
+            Auth::login($targetUser);
+            if (request()->hasSession()) {
+                request()->session()->regenerate();
+            }
+
+            if ($targetUser->isSeller()) {
+                return redirect()->route('seller.dashboard')->with('success', "Switched to Merchant Account: {$targetUser->name}");
+            } elseif ($targetUser->isAdmin()) {
+                return redirect()->route('admin.dashboard')->with('success', "Switched to Administrator: {$targetUser->name}");
+            } else {
+                return redirect()->route('home')->with('success', "Switched to Customer Account: {$targetUser->name}");
+            }
+        }
+
+        return redirect()->back()->with('error', 'Target user persona not found.');
     }
 
     protected function redirectBasedOnRole(User $user)

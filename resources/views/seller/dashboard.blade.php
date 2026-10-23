@@ -243,11 +243,11 @@
                     <tr>
                         <th class="py-3.5 px-6">Product</th>
                         <th class="py-3.5 px-6">Customer</th>
-                        <th class="py-3.5 px-6">Order ID</th>
-                        <th class="py-3.5 px-6">Amount</th>
-                        <th class="py-3.5 px-6">Type</th>
-                        <th class="py-3.5 px-6">Status</th>
-                        <th class="py-3.5 px-6 text-right">Action</th>
+                        <th class="py-3.5 px-6 whitespace-nowrap">Order ID</th>
+                        <th class="py-3.5 px-6 whitespace-nowrap">Amount</th>
+                        <th class="py-3.5 px-6 whitespace-nowrap">Type</th>
+                        <th class="py-3.5 px-6 whitespace-nowrap">Status</th>
+                        <th class="py-3.5 px-6 text-right whitespace-nowrap">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 font-medium">
@@ -258,22 +258,28 @@
                                 <span class="font-bold text-slate-900 line-clamp-1 max-w-xs">{{ $sale->product->title }}</span>
                             </td>
                             <td class="py-4 px-6 text-slate-700 font-semibold">{{ $sale->order->user->name ?? $sale->order->shipping_name }}</td>
-                            <td class="py-4 px-6 font-mono font-bold text-slate-600">{{ $sale->order->order_number }}</td>
-                            <td class="py-4 px-6 font-black text-slate-900 text-sm">${{ number_format($sale->subtotal, 2) }}</td>
-                            <td class="py-4 px-6">
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-black {{ $sale->order->order_type === 'group_buy' ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
-                                    {{ $sale->order->order_type === 'group_buy' ? '👥 Team Buy' : 'Solo Buy' }}
+                            <td class="py-4 px-6 font-mono font-bold text-slate-600 whitespace-nowrap">{{ $sale->order->order_number }}</td>
+                            <td class="py-4 px-6 font-black text-slate-900 text-sm whitespace-nowrap">${{ number_format($sale->subtotal, 2) }}</td>
+                            <td class="py-4 px-6 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-extrabold whitespace-nowrap {{ $sale->order->order_type === 'group_buy' ? 'bg-purple-50 text-purple-800 border border-purple-200 shadow-2xs' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
+                                    @if($sale->order->order_type === 'group_buy')
+                                        <svg class="w-3 h-3 mr-1 text-purple-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path></svg>
+                                        <span>Team Buy</span>
+                                    @else
+                                        <svg class="w-3 h-3 mr-1 text-slate-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                                        <span>Solo Buy</span>
+                                    @endif
                                 </span>
                             </td>
-                            <td class="py-4 px-6">
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-black 
+                            <td class="py-4 px-6 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black whitespace-nowrap
                                     {{ $sale->order->order_status === 'processing' ? 'bg-amber-100 text-amber-900 border border-amber-200' : 
                                       ($sale->order->order_status === 'shipped' ? 'bg-indigo-100 text-indigo-900 border border-indigo-200' : 
                                       ($sale->order->order_status === 'delivered' ? 'bg-emerald-100 text-emerald-900 border border-emerald-200' : 'bg-slate-100 text-slate-700 border border-slate-200')) }}">
                                     {{ ucfirst(str_replace('_', ' ', $sale->order->order_status)) }}
                                 </span>
                             </td>
-                            <td class="py-4 px-6 text-right">
+                            <td class="py-4 px-6 text-right whitespace-nowrap">
                                 <a href="{{ route('seller.orders.show', $sale->order) }}" 
                                    class="text-[#53a318] hover:text-[#468c13] font-black hover:underline inline-flex items-center space-x-1">
                                     <span>Fulfill</span>
