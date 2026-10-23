@@ -116,12 +116,12 @@
                         <div class="flex items-center space-x-4">
                             <div class="text-right sm:min-w-[120px]">
                                 <div class="flex items-center justify-end space-x-1 text-xs font-extrabold text-slate-800">
-                                    <span>{{ $group->current_members_count }} / {{ $group->required_members_count }}</span>
+                                    <span>{{ $group->current_members }} / {{ $group->required_members }}</span>
                                     <span class="text-[10px] text-slate-400 font-medium">Joined</span>
                                 </div>
                                 <!-- Progress Bar -->
                                 <div class="w-24 bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1.5">
-                                    <div class="bg-teal-500 h-full rounded-full" style="width: {{ min(100, round(($group->current_members_count / $group->required_members_count) * 100)) }}%"></div>
+                                    <div class="bg-teal-500 h-full rounded-full" style="width: {{ $group->progress_percent }}%"></div>
                                 </div>
                             </div>
 

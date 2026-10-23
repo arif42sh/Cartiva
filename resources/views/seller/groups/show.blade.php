@@ -117,7 +117,7 @@
                 <p class="text-xs text-slate-500 mt-0.5">Customer members who have authorized payment and joined this group circle.</p>
             </div>
             <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-teal-50 text-teal-800 border border-teal-200">
-                {{ $session->current_members_count }} / {{ $session->required_members_count }} Slots Filled
+                {{ $session->current_members }} / {{ $session->required_members }} Slots Filled
             </span>
         </div>
 

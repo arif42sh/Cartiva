@@ -30,7 +30,7 @@
     </div>
 
     <!-- Error Messages -->
-    @if ($errors->any())
+    @if (isset($errors) && $errors->any())
         <div class="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold">
             <div class="font-bold mb-1">Please fix the following issues:</div>
             <ul class="list-disc list-inside space-y-0.5">

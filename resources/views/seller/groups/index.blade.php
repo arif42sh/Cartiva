@@ -64,7 +64,7 @@
             @php
                 $isExpired = $group->status === 'expired' || ($group->status === 'active' && $group->expires_at->isPast());
                 $isCompleted = $group->status === 'completed';
-                $pct = min(100, round(($group->current_members_count / $group->required_members_count) * 100));
+                $pct = $group->progress_percent;
             @endphp
             <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-5 flex flex-col justify-between hover:border-teal-300 transition-all group">
                 
@@ -109,7 +109,7 @@
                     <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 mb-4">
                         <div class="flex items-center justify-between text-xs font-extrabold mb-1.5">
                             <span class="text-slate-600">Joined Buyers:</span>
-                            <span class="text-slate-900">{{ $group->current_members_count }} of {{ $group->required_members_count }} Slots</span>
+                            <span class="text-slate-900">{{ $group->current_members }} of {{ $group->required_members }} Slots</span>
                         </div>
                         <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
                             <div class="h-full rounded-full transition-all duration-500 {{ $isCompleted ? 'bg-emerald-500' : ($isExpired ? 'bg-rose-400' : 'bg-amber-500') }}" 
