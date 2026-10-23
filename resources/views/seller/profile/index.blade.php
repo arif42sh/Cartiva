@@ -7,6 +7,8 @@
      x-data="{ 
          avatarPreview: '{{ $user->avatar_url }}', 
          bannerPreview: '{{ $user->banner_url }}',
+         bannerFileName: '',
+         avatarFileName: '',
          removeAvatar: false,
          removeBanner: false,
          shopName: '{{ addslashes($user->shop_name ?? $user->name) }}',
@@ -115,33 +117,10 @@
                     <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">About Store</span>
                     <p class="line-clamp-3 leading-relaxed text-[11px]" x-text="description || 'Merchant has not provided a description yet.'"></p>
                 </div>
-
-
-                <!-- WhatsApp & Social Direct Buttons Preview -->
-                <div class="mt-4 space-y-2">
-                    <template x-if="whatsapp">
-                        <div class="w-full py-2 px-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-xs flex items-center justify-between">
-                            <span class="flex items-center space-x-1.5">
-                                <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.861.174.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564.289.13.332.202c.044.073.044.42-.1 1.025z"/></svg>
-                                <span>WhatsApp Support</span>
-                            </span>
-                            <span class="text-[10px] text-emerald-600 font-mono" x-text="whatsapp"></span>
-                        </div>
-                    </template>
-                </div>
+                
             </div>
 
-            <!-- Merchant Support Trust Card -->
-            <div class="p-5 rounded-3xl border border-slate-200 bg-white shadow-xs space-y-2">
-                <span class="text-[10px] font-black uppercase tracking-wider text-[#53a318] block">Program</span>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    Cartiva shields your store with automated escrow payment settlement, real-time courier API synchronizations, and genuine buyer verification.
-                </p>
-                <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-medium">
-                    <span>Merchant Tier:</span>
-                    <strong class="text-slate-900 font-bold">Gold Verified</strong>
-                </div>
-            </div>
+
         </div>
 
         <!-- Right: Settings & Branding Form (2 cols) -->
@@ -203,10 +182,17 @@
                                 </template>
                             </div>
 
-                            <input type="file" name="banner_file" accept="image/jpeg,image/png,image/webp,image/jpg" 
-                                   @change="const file = $event.target.files[0]; if (file) { removeBanner = false; const reader = new FileReader(); reader.onload = (e) => bannerPreview = e.target.result; reader.readAsDataURL(file); }"
-                                   class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:text-white file:cursor-pointer file:shadow-xs hover:file:brightness-110"
-                                   style="--tw-file-bg: #53a318;">
+                            <div class="flex items-center space-x-3">
+                                <input type="file" id="banner_file_input" name="banner_file" accept="image/jpeg,image/png,image/webp,image/jpg" class="hidden"
+                                       @change="const file = $event.target.files[0]; if (file) { removeBanner = false; bannerFileName = file.name; const reader = new FileReader(); reader.onload = (e) => bannerPreview = e.target.result; reader.readAsDataURL(file); }">
+                                <label for="banner_file_input" 
+                                       class="px-4 py-2 rounded-xl text-white font-bold text-xs cursor-pointer shadow-xs transition-all hover:brightness-110 active:scale-95 flex items-center space-x-1.5"
+                                       style="background-color: #53a318;">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                    <span>Choose File</span>
+                                </label>
+                                <span class="text-xs text-slate-700 font-semibold truncate max-w-sm" x-show="bannerFileName" x-text="bannerFileName"></span>
+                            </div>
                             <span class="text-[10px] text-slate-400 block">Accepted formats: JPG, PNG, WebP (under 4MB). Fits across laptop & mobile storefront views.</span>
                         </div>
 
@@ -217,7 +203,7 @@
                                 <div class="flex items-center justify-between">
                                     <label class="block text-xs font-bold text-slate-700">Logo / Avatar</label>
                                     <template x-if="avatarPreview && !removeAvatar">
-                                        <button type="button" @click="removeAvatar = true" 
+                                        <button type="button" @click="removeAvatar = true; avatarFileName = ''" 
                                                 class="text-[10px] font-bold text-rose-600 hover:text-rose-800 hover:underline">
                                             Remove
                                         </button>
@@ -236,9 +222,14 @@
                                         </template>
                                     </div>
                                     <div class="min-w-0 flex-1">
-                                        <input type="file" name="avatar_file" accept="image/jpeg,image/png,image/webp,image/jpg" 
-                                               @change="const file = $event.target.files[0]; if (file) { removeAvatar = false; const reader = new FileReader(); reader.onload = (e) => avatarPreview = e.target.result; reader.readAsDataURL(file); }"
-                                               class="w-full text-xs text-slate-500 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[11px] file:font-bold file:bg-slate-200 file:text-slate-800 hover:file:bg-slate-300 file:cursor-pointer">
+                                        <input type="file" id="avatar_file_input" name="avatar_file" accept="image/jpeg,image/png,image/webp,image/jpg" class="hidden"
+                                               @change="const file = $event.target.files[0]; if (file) { removeAvatar = false; avatarFileName = file.name; const reader = new FileReader(); reader.onload = (e) => avatarPreview = e.target.result; reader.readAsDataURL(file); }">
+                                        <label for="avatar_file_input" 
+                                               class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs cursor-pointer transition-colors shadow-2xs">
+                                            <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                            <span>Choose File</span>
+                                        </label>
+                                        <span class="text-[11px] text-slate-700 font-semibold truncate block mt-1" x-show="avatarFileName" x-text="avatarFileName"></span>
                                         <span class="text-[9px] text-slate-400 mt-1 block">Square 400×400 (max 2MB)</span>
                                     </div>
                                 </div>
@@ -420,20 +411,16 @@
                             </label>
                             <input type="text" name="payout_details" x-model="payoutDetails" value="{{ old('payout_details', $user->payout_details) }}" 
                                    placeholder="For Mobile Wallet: 01700000000 (Personal/Agent). For Bank: Bank Name, Branch, Account Title & A/C Number."
-                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-mono font-medium focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#53a318]">
+                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#53a318]">
                         </div>
                     </div>
 
                     <!-- Submit Button -->
-                    <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
-                        <a href="{{ route('seller.dashboard') }}" class="text-xs font-bold text-slate-500 hover:text-slate-800">
-                            &larr; Back to Dashboard
-                        </a>
+                    <div class="pt-6 border-t border-slate-100 flex items-center justify-end">
                         <button type="submit" 
-                                class="px-7 py-3 rounded-xl text-white font-black text-xs transition-all cursor-pointer shadow-lg hover:brightness-110 active:scale-95 flex items-center space-x-2"
-                                style="background-color: #53a318; box-shadow: 0 4px 14px rgba(83, 163, 24, 0.35);">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span>Save</span>
+                                class="px-7 py-2.5 rounded-xl text-white font-bold text-xs transition-all cursor-pointer shadow-md hover:brightness-110 active:scale-95"
+                                style="background-color: #53a318;">
+                            Save
                         </button>
                     </div>
 

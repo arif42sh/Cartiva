@@ -133,21 +133,13 @@
 
     <!-- Clean Executive Merchant Footer -->
     <footer class="bg-white border-t border-slate-200 mt-16 py-6 text-slate-500 text-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <div class="flex items-center space-x-2">
                 <span class="font-black text-slate-900">Cartiva Merchant Central</span>
                 <span>•</span>
                 <span>Version 2.0</span>
                 <span>•</span>
                 <span class="text-emerald-600 font-semibold">Platform Operational</span>
-            </div>
-
-            <div class="flex items-center space-x-4 text-xs font-medium text-slate-600">
-                <a href="{{ route('seller.dashboard') }}" class="hover:text-slate-900">Dashboard</a>
-                <a href="{{ route('seller.products') }}" class="hover:text-slate-900">Products</a>
-                <a href="{{ route('seller.orders') }}" class="hover:text-slate-900">Orders</a>
-                <a href="{{ route('seller.profile') }}" class="hover:text-slate-900">Store Profile</a>
-                <a href="{{ route('home') }}" class="hover:text-slate-900">Customer Marketplace</a>
             </div>
         </div>
     </footer>
