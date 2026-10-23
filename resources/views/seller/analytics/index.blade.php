@@ -17,26 +17,26 @@
     <!-- Top Summary Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         
-        <div class="bg-white rounded-3xl border border-slate-200/90 p-5 shadow-xs">
-            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Gross Sales Revenue</span>
+        <div class="bg-white rounded-3xl border border-slate-200 p-5.5 shadow-sm">
+            <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Gross Sales Revenue</span>
             <div class="text-3xl font-black text-slate-900 tracking-tight mt-1.5">${{ number_format($totalRevenue, 2) }}</div>
-            <span class="text-[11px] text-teal-600 font-semibold mt-1 block">From confirmed & shipped orders</span>
+            <span class="text-[11px] font-bold text-[#53a318] mt-1 block">From confirmed & shipped orders</span>
         </div>
 
-        <div class="bg-white rounded-3xl border border-slate-200/90 p-5 shadow-xs">
-            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Units Dispatched</span>
+        <div class="bg-white rounded-3xl border border-slate-200 p-5.5 shadow-sm">
+            <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Total Units Dispatched</span>
             <div class="text-3xl font-black text-indigo-600 tracking-tight mt-1.5">{{ number_format($totalUnitsSold) }} Units</div>
             <span class="text-[11px] text-slate-500 font-medium mt-1 block">Across all product lines</span>
         </div>
 
-        <div class="bg-white rounded-3xl border border-slate-200/90 p-5 shadow-xs">
-            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Group Success Rate</span>
+        <div class="bg-white rounded-3xl border border-slate-200 p-5.5 shadow-sm">
+            <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Group Success Rate</span>
             <div class="text-3xl font-black text-emerald-600 tracking-tight mt-1.5">{{ $completionRate }}%</div>
             <span class="text-[11px] text-slate-500 font-medium mt-1 block">{{ $successfulSessions }} of {{ $totalSessions }} circles unlocked</span>
         </div>
 
-        <div class="bg-white rounded-3xl border border-slate-200/90 p-5 shadow-xs">
-            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Active Campaigns</span>
+        <div class="bg-white rounded-3xl border border-slate-200 p-5.5 shadow-sm">
+            <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Active Campaigns</span>
             <div class="text-3xl font-black text-amber-500 tracking-tight mt-1.5">{{ $totalSessions - $successfulSessions }}</div>
             <span class="text-[11px] text-slate-500 font-medium mt-1 block">Circles currently active/expired</span>
         </div>
@@ -47,9 +47,9 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         
         <!-- Revenue Breakdown Card (1 col) -->
-        <div class="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs flex flex-col justify-between">
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
             <div>
-                <h3 class="text-sm font-extrabold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 mb-4">
+                <h3 class="text-sm font-black uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 mb-4">
                     Sales Channel Split
                 </h3>
 
@@ -57,17 +57,17 @@
                     <!-- Group Buy Share -->
                     <div>
                         <div class="flex items-center justify-between text-xs font-bold mb-1">
-                            <span class="text-teal-800 flex items-center space-x-1.5">
-                                <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
+                            <span class="text-purple-900 flex items-center space-x-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-purple-600"></span>
                                 <span>Team Buy Revenue</span>
                             </span>
-                            <span class="text-teal-700 font-black">${{ number_format($groupRevenue, 2) }}</span>
+                            <span class="text-purple-700 font-black">${{ number_format($groupRevenue, 2) }}</span>
                         </div>
                         @php
                             $groupPct = $totalRevenue > 0 ? round(($groupRevenue / $totalRevenue) * 100) : 0;
                         @endphp
                         <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                            <div class="bg-teal-500 h-full rounded-full" style="width: {{ $groupPct }}%"></div>
+                            <div class="bg-purple-600 h-full rounded-full transition-all" style="width: {{ $groupPct }}%"></div>
                         </div>
                         <span class="text-[10px] text-slate-400 mt-0.5 block">{{ $groupPct }}% of total marketplace sales</span>
                     </div>
@@ -85,14 +85,14 @@
                             $soloPct = $totalRevenue > 0 ? round(($soloRevenue / $totalRevenue) * 100) : 0;
                         @endphp
                         <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                            <div class="bg-slate-400 h-full rounded-full" style="width: {{ $soloPct }}%"></div>
+                            <div class="bg-slate-400 h-full rounded-full transition-all" style="width: {{ $soloPct }}%"></div>
                         </div>
                         <span class="text-[10px] text-slate-400 mt-0.5 block">{{ $soloPct }}% of total marketplace sales</span>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-6 p-4 rounded-2xl bg-teal-50/70 border border-teal-200/80 text-xs text-teal-900 font-medium">
+            <div class="mt-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 font-medium">
                 💡 <strong>Merchant Insight:</strong> Products with 20%+ group discounts typically achieve 3.4x faster checkout velocity than solo listings.
             </div>
         </div>

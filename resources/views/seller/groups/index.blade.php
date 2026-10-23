@@ -16,21 +16,22 @@
         </div>
 
         <!-- Status Filter Tabs -->
-        <div class="flex items-center space-x-1.5 p-1 bg-white rounded-2xl border border-slate-200/90 shadow-2xs text-xs font-bold">
+        <div class="flex items-center space-x-1.5 p-1 bg-white rounded-2xl border border-slate-200 shadow-xs text-xs font-bold overflow-x-auto">
             <a href="{{ route('seller.groups') }}" 
-               class="px-3 py-1.5 rounded-xl transition-all {{ !request('status') ? 'bg-teal-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+               class="px-3.5 py-2 rounded-xl transition-all whitespace-nowrap {{ !request('status') ? 'text-white font-black shadow-sm' : 'text-slate-600 hover:bg-slate-100' }}"
+               @if(!request('status')) style="background-color: #53a318; box-shadow: 0 2px 8px rgba(83, 163, 24, 0.35);" @endif>
                 All ({{ $activeCount + $completedCount + $expiredCount }})
             </a>
             <a href="{{ route('seller.groups') }}?status=active" 
-               class="px-3 py-1.5 rounded-xl transition-all {{ request('status') === 'active' ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+               class="px-3.5 py-2 rounded-xl transition-all whitespace-nowrap {{ request('status') === 'active' ? 'bg-amber-500 text-white shadow-xs font-black' : 'text-slate-600 hover:bg-slate-100' }}">
                 Active ({{ $activeCount }})
             </a>
             <a href="{{ route('seller.groups') }}?status=completed" 
-               class="px-3 py-1.5 rounded-xl transition-all {{ request('status') === 'completed' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+               class="px-3.5 py-2 rounded-xl transition-all whitespace-nowrap {{ request('status') === 'completed' ? 'bg-emerald-600 text-white shadow-xs font-black' : 'text-slate-600 hover:bg-slate-100' }}">
                 Completed ({{ $completedCount }})
             </a>
             <a href="{{ route('seller.groups') }}?status=expired" 
-               class="px-3 py-1.5 rounded-xl transition-all {{ request('status') === 'expired' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+               class="px-3.5 py-2 rounded-xl transition-all whitespace-nowrap {{ request('status') === 'expired' ? 'bg-rose-600 text-white shadow-xs font-black' : 'text-slate-600 hover:bg-slate-100' }}">
                 Expired ({{ $expiredCount }})
             </a>
         </div>

@@ -179,7 +179,9 @@
                                class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono font-bold focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500">
                     </div>
 
-                    <button type="submit" class="w-full py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs shadow-md shadow-teal-600/25 transition-all cursor-pointer">
+                    <button type="submit" 
+                            class="w-full py-2.5 rounded-xl text-white font-extrabold text-xs transition-all cursor-pointer shadow-lg hover:brightness-110 active:scale-95"
+                            style="background-color: #53a318; box-shadow: 0 4px 14px rgba(83, 163, 24, 0.35);">
                         Update Fulfillment Info
                     </button>
                 </form>
