@@ -10,8 +10,8 @@
         
         <!-- Top Banner (Custom uploaded or Classic Gradient) -->
         <div class="relative w-full h-44 sm:h-56 md:h-64 bg-gradient-to-r from-slate-950 via-slate-900 to-teal-950 overflow-hidden">
-            @if($seller->shop_banner)
-                <img src="{{ $seller->shop_banner }}" alt="Store Banner" class="w-full h-full object-cover">
+            @if($seller->banner_url)
+                <img src="{{ $seller->banner_url }}" alt="Store Banner" class="w-full h-full object-cover">
             @else
                 <!-- Classic Decorative Mesh -->
                 <div class="absolute inset-0 bg-[radial-gradient(#14b8a6_1px,transparent_1px)] [background-size:24px_24px] opacity-20"></div>
@@ -41,25 +41,25 @@
         </div>
 
         <!-- Store Identity Bar -->
-        <div class="p-6 sm:p-8 relative">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 -mt-16 sm:-mt-20">
+        <div class="px-6 pb-6 pt-0 sm:px-8 sm:pb-8 relative">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 
                 <!-- Store Logo & Information -->
-                <div class="flex flex-col sm:flex-row sm:items-end space-y-4 sm:space-y-0 sm:space-x-5">
-                    <!-- Logo -->
-                    <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white p-1.5 shadow-xl border border-slate-200/80 flex-shrink-0">
+                <div class="flex flex-col sm:flex-row sm:items-end space-y-3 sm:space-y-0 sm:space-x-4">
+                    <!-- Logo (Only logo overlaps the banner) -->
+                    <div class="-mt-12 sm:-mt-16 w-22 h-22 sm:w-26 sm:h-26 rounded-3xl bg-white p-1.5 shadow-xl border border-slate-200/80 flex-shrink-0 z-10 relative">
                         <div class="w-full h-full rounded-2xl overflow-hidden bg-gradient-to-tr from-slate-900 to-teal-800 text-white flex items-center justify-center text-3xl font-black">
-                            @if($seller->avatar)
-                                <img src="{{ $seller->avatar }}" alt="{{ $seller->shop_name ?? $seller->name }}" class="w-full h-full object-cover">
+                            @if($seller->avatar_url)
+                                <img src="{{ $seller->avatar_url }}" alt="{{ $seller->shop_name ?? $seller->name }}" class="w-full h-full object-cover">
                             @else
                                 {{ strtoupper(substr($seller->shop_name ?? $seller->name, 0, 1)) }}
                             @endif
                         </div>
                     </div>
 
-                    <!-- Details -->
-                    <div class="space-y-1">
-                        <div class="flex items-center space-x-2.5">
+                    <!-- Details (In the clean white area below banner) -->
+                    <div class="pt-2 sm:pt-4 space-y-1">
+                        <div class="flex items-center space-x-2.5 flex-wrap">
                             <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                                 {{ $seller->shop_name ?? $seller->name }}
                             </h1>
@@ -81,18 +81,44 @@
                     </div>
                 </div>
 
-                <!-- Store Action Buttons -->
-                <div class="flex items-center space-x-2.5 self-start md:self-end">
+                <!-- Store Action Buttons (Icon-Only Row) -->
+                <div class="flex items-center space-x-2 self-start md:self-end">
+                    <!-- Share Button (Icon Only) -->
                     <button type="button" 
                             onclick="navigator.clipboard.writeText(window.location.href); alert('Official store link copied! Share with buyers.')" 
-                            class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors flex items-center space-x-1.5 cursor-pointer shadow-2xs">
-                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-                        <span>Share Store</span>
+                            class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors flex items-center justify-center cursor-pointer shadow-2xs"
+                            title="Share Store Link">
+                        <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
                     </button>
 
-                    <a href="mailto:{{ $seller->email }}" class="px-4 py-2.5 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white text-xs font-bold transition-all shadow-md shadow-[#53a318]/20 flex items-center space-x-1.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                        <span>Contact Merchant</span>
+                    <!-- WhatsApp Button (Official WhatsApp Logo, Icon Only) -->
+                    @if($seller->whatsapp_number)
+                        @php
+                            $waNumber = preg_replace('/[^0-9]/', '', $seller->whatsapp_number);
+                        @endphp
+                        <a href="https://wa.me/{{ $waNumber }}" target="_blank" 
+                           class="w-10 h-10 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white transition-all shadow-md shadow-[#25D366]/25 flex items-center justify-center"
+                           title="Chat on WhatsApp ({{ $seller->whatsapp_number }})">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                            </svg>
+                        </a>
+                    @endif
+
+                    <!-- Facebook Button (Icon Only) -->
+                    @if($seller->facebook_page)
+                        <a href="{{ $seller->facebook_page }}" target="_blank" 
+                           class="w-10 h-10 rounded-xl bg-[#1877F2] hover:bg-[#166fe5] text-white transition-all shadow-md shadow-[#1877F2]/25 flex items-center justify-center"
+                           title="Visit Facebook Page">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8H6v4h3v12h5V12h3.642L18 8h-4V6.333C14 5.374 14.5 5 15.5 5H18V0h-3.808C10.597 0 9 1.582 9 4.615V8z"/></svg>
+                        </a>
+                    @endif
+
+                    <!-- Contact Merchant Button (Icon Only) -->
+                    <a href="mailto:{{ $seller->email }}" 
+                       class="w-10 h-10 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white transition-all shadow-md shadow-[#53a318]/25 flex items-center justify-center"
+                       title="Contact Merchant via Email ({{ $seller->email }})">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                     </a>
                 </div>
 
@@ -116,8 +142,10 @@
                 </div>
 
                 <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-                    <span class="text-[10px] uppercase font-bold text-slate-400 block">Shipping Speed</span>
-                    <span class="text-base font-black text-teal-600 mt-0.5 block">⚡ 24h Express Dispatch</span>
+                    <span class="text-[10px] uppercase font-bold text-slate-400 block">Dispatch SLA</span>
+                    <span class="text-base font-black text-teal-600 mt-0.5 block truncate" title="{{ $seller->dispatch_time ?: '⚡ 24h Express Dispatch' }}">
+                        {{ $seller->dispatch_time ?: '⚡ 24h Express Dispatch' }}
+                    </span>
                 </div>
             </div>
 
@@ -126,6 +154,17 @@
                 <div class="mt-5 p-4 rounded-2xl bg-teal-50/60 border border-teal-200/80 text-xs text-slate-700 leading-relaxed">
                     <span class="font-extrabold text-teal-950 block mb-1">About This Merchant:</span>
                     {{ $seller->shop_description }}
+                </div>
+            @endif
+
+            <!-- Warranty & Return Policy -->
+            @if($seller->return_policy)
+                <div class="mt-3.5 p-4 rounded-2xl bg-amber-50/70 border border-amber-200 text-xs text-slate-700 leading-relaxed">
+                    <div class="flex items-center space-x-1.5 mb-1">
+                        <span class="text-sm">🛡️</span>
+                        <strong class="font-black text-amber-950">Store Return & Replacement Policy:</strong>
+                    </div>
+                    {{ $seller->return_policy }}
                 </div>
             @endif
 

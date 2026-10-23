@@ -35,7 +35,7 @@
         </a>
         <span class="text-slate-300">/</span>
         <span class="text-slate-900 font-bold">Categories</span>
-        @if($selectedCategoryModel)
+        @if(!empty($selectedCategoryModel))
             <span class="text-slate-300">/</span>
             <span class="text-[#53a318] font-bold">{{ $selectedCategoryModel->name }}</span>
         @endif
@@ -260,8 +260,13 @@
                             $groupP = $product->group_price;
                             $saveP = $singleP - $groupP;
                             $discountPct = $singleP > 0 ? round(($saveP / $singleP) * 100) : 0;
-                            // Check for active group session
-                            $activePool = $product->activeGroupSessions->where('status', 'active')->first();
+                            // Check for active group session (prioritize running pool with joined buyers, then latest active)
+                            $activePool = $product->activeGroupSessions
+                                ->where('status', 'active')
+                                ->sortByDesc(function($s) {
+                                    return ($s->current_members > 0 ? 1000000 : 0) + ($s->current_members * 1000) + $s->id;
+                                })
+                                ->first();
                         @endphp
 
                         <div class="group bg-white rounded-xl border border-slate-200/90 hover:border-emerald-400 overflow-hidden shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between">
@@ -300,12 +305,19 @@
                                         </a>
                                     </h3>
 
-                                    <!-- Running Pool Indicator (Only when actually running) -->
+                                    <!-- Running Pool Indicator -->
                                     @if($activePool && $activePool->current_members < $activePool->required_members)
-                                        <div class="mt-1.5 flex items-center space-x-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded w-max">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                            <span>গ্রুপ রানিং: {{ $activePool->current_members }}/{{ $activePool->required_members }} জন</span>
-                                        </div>
+                                        @if($activePool->current_members > 0)
+                                            <div class="mt-1.5 flex items-center space-x-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded w-max">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                <span>গ্রুপ রানিং: {{ $activePool->current_members }}/{{ $activePool->required_members }} জন</span>
+                                            </div>
+                                        @else
+                                            <div class="mt-1.5 flex items-center space-x-1 text-[10px] font-bold text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded w-max">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+                                                <span>টিম বাই: {{ $activePool->required_members }} জনের গ্রুপ</span>
+                                            </div>
+                                        @endif
                                     @endif
 
                                     <!-- Dual Price Display -->

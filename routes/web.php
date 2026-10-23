@@ -30,9 +30,11 @@ Route::get('/shop/{seller}', [HomeController::class, 'shop'])->name('shop.show')
 | Authentication Routes
 |--------------------------------------------------------------------------
 */
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::get('/switch-user/{role}', [AuthController::class, 'switchUser'])->name('switch-user');
+
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 });

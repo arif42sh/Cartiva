@@ -10,76 +10,81 @@
     @include('seller.partials.nav')
 
     <!-- Interactive Simulation & Control Toolbar -->
-    <div class="bg-white rounded-3xl border border-slate-200/90 p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col xl:flex-row xl:items-center justify-between gap-3 sm:gap-4">
         
         <!-- Left: Title & Live Simulation Badge -->
-        <div>
-            <div class="flex items-center space-x-2.5">
-                <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Integrated Storefront Preview</h1>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-50 text-[#53a318] border border-emerald-200 shadow-2xs">
+        <div class="space-y-1">
+            <div class="flex items-center gap-2.5 flex-wrap">
+                <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">Integrated Storefront Preview</h1>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-[#53a318] border border-emerald-200/80 shadow-2xs shrink-0">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#53a318] mr-1.5 animate-pulse"></span>
-                    Live Customer Simulation
+                    Live Simulation
                 </span>
             </div>
-            <p class="text-xs text-slate-500 mt-1">
+            <p class="text-xs text-slate-500">
                 Explore how shoppers browse your official store page on desktop monitors and mobile smartphones.
             </p>
         </div>
 
-        <!-- Center: Device Simulation Switcher -->
-        <div class="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200/80 self-start md:self-auto">
-            <button type="button" 
-                    @click="viewMode = 'desktop'"
-                    :class="viewMode === 'desktop' ? 'bg-[#53a318] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'"
-                    class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                <span>Desktop Canvas</span>
-            </button>
+        <!-- Right: Perfectly Sized, Uniform Toolbar Controls (All unified 36px height) -->
+        <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap shrink-0">
+            
+            <!-- Segmented Device Switcher (Exact 36px height) -->
+            <div class="inline-flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80 h-9 shrink-0">
+                <button type="button" 
+                        @click="viewMode = 'desktop'"
+                        :class="viewMode === 'desktop' ? 'bg-[#53a318] text-white shadow-2xs font-extrabold' : 'text-slate-600 hover:text-slate-900 font-semibold'"
+                        class="h-7 px-3 rounded-lg text-xs transition-all flex items-center space-x-1.5 cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <span>Desktop</span>
+                </button>
 
-            <button type="button" 
-                    @click="viewMode = 'mobile'"
-                    :class="viewMode === 'mobile' ? 'bg-[#53a318] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'"
-                    class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                <span>Mobile Device (390px)</span>
-            </button>
-        </div>
+                <button type="button" 
+                        @click="viewMode = 'mobile'"
+                        :class="viewMode === 'mobile' ? 'bg-[#53a318] text-white shadow-2xs font-extrabold' : 'text-slate-600 hover:text-slate-900 font-semibold'"
+                        class="h-7 px-3 rounded-lg text-xs transition-all flex items-center space-x-1.5 cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    <span>Mobile (390px)</span>
+                </button>
+            </div>
 
-        <!-- Right: Action Pills -->
-        <div class="flex items-center space-x-2.5 flex-wrap">
-            <!-- Copy Public Storefront URL -->
+            <!-- Subtle Divider -->
+            <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
+
+            <!-- Copy Public Storefront URL (Exact 36px height) -->
             <button type="button"
                     @click="navigator.clipboard.writeText('{{ route('shop.show', $seller) }}'); copied = true; setTimeout(() => copied = false, 2500)"
-                    class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer"
-                    :class="copied ? 'bg-emerald-50 border-emerald-300 text-emerald-700' : 'bg-slate-50 hover:bg-slate-100 text-slate-700'">
+                    class="h-9 px-3 rounded-xl border text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shrink-0 shadow-2xs"
+                    :class="copied ? 'bg-emerald-50 border-emerald-300 text-emerald-700 font-extrabold' : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'">
                 <template x-if="!copied">
                     <span class="flex items-center space-x-1.5">
                         <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                        <span>Copy Store Link</span>
+                        <span>Copy Link</span>
                     </span>
                 </template>
                 <template x-if="copied">
-                    <span class="flex items-center space-x-1.5 font-extrabold">
+                    <span class="flex items-center space-x-1.5">
                         <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                        <span>Link Copied!</span>
+                        <span>Copied!</span>
                     </span>
                 </template>
             </button>
 
-            <!-- Edit Branding Shortcut -->
+            <!-- Edit Branding Shortcut (Exact 36px height) -->
             <a href="{{ route('seller.profile') }}" 
-               class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-2xs">
-                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+               class="h-9 px-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-2xs shrink-0">
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                 <span>Edit Branding</span>
             </a>
 
-            <!-- Open in Dedicated Browser Window -->
+            <!-- Open in Dedicated Browser Window (Exact 36px height) -->
             <a href="{{ route('shop.show', $seller) }}" target="_blank"
-               class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-2xs"
-               title="Open full public page in a new browser tab">
+               class="h-9 px-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-2xs shrink-0"
+               title="Open full public store page in a new browser tab">
                 <span>Open External View</span>
-                <span class="text-[10px]">↗</span>
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
             </a>
+
         </div>
 
     </div>

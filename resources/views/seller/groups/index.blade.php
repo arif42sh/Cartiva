@@ -150,9 +150,12 @@
                         </div>
 
                         <!-- Participating Buyers Avatar Roster -->
+                        @php
+                            $cardMembers = $group->members->where('user_id', '!=', $group->product->seller_id ?? 0);
+                        @endphp
                         <div class="flex items-center justify-between mt-3 pt-2.5 border-t border-slate-200/60">
                             <div class="flex -space-x-1.5 overflow-hidden">
-                                @foreach($group->members->take(5) as $member)
+                                @forelse($cardMembers->take(5) as $member)
                                     <div class="w-6 h-6 rounded-full ring-2 ring-white overflow-hidden bg-teal-500 text-white flex items-center justify-center text-[9px] font-black" title="{{ $member->user->name ?? 'Buyer' }}">
                                         @if($member->user && $member->user->avatar)
                                             <img src="{{ $member->user->avatar }}" alt="" class="w-full h-full object-cover">
@@ -160,10 +163,12 @@
                                             {{ strtoupper(substr($member->user->name ?? 'U', 0, 1)) }}
                                         @endif
                                     </div>
-                                @endforeach
+                                @empty
+                                    <span class="text-[10px] text-slate-400 italic">No buyers yet</span>
+                                @endforelse
                             </div>
                             <span class="text-[10px] text-slate-500 font-semibold">
-                                Leader: <strong>{{ $group->leader->name ?? 'Customer' }}</strong>
+                                Leader: <strong>{{ $group->leader->name ?? ($group->current_members == 0 ? 'Open Pool' : 'Customer') }}</strong>
                             </span>
                         </div>
                     </div>

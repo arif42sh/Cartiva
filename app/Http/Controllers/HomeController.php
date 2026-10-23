@@ -1009,11 +1009,33 @@ class HomeController extends Controller
     /**
      * Public Merchant Storefront Page
      */
-    public function shop(User $seller, Request $request)
+    public function shop($seller, Request $request = null)
     {
-        if (!$seller->isSeller() && $seller->products()->count() === 0) {
+        $request = $request ?? request();
+
+        if ($seller instanceof User) {
+            $sellerModel = $seller;
+        } elseif (is_numeric($seller)) {
+            $sellerModel = User::find($seller);
+        } else {
+            $sellerModel = User::where('shop_slug', $seller)->first()
+                ?? User::where('id', $seller)->first();
+
+            if (!$sellerModel) {
+                $slugClean = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '', (string) $seller));
+                $sellers = User::where('role', 'seller')->get();
+                $sellerModel = $sellers->first(function ($u) use ($slugClean, $seller) {
+                    $uClean = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '', (string) ($u->shop_name ?? $u->name)));
+                    return $uClean === $slugClean || \Illuminate\Support\Str::slug($u->shop_name ?? $u->name) === $seller;
+                });
+            }
+        }
+
+        if (!$sellerModel || (!$sellerModel->isSeller() && $sellerModel->products()->count() === 0)) {
             abort(404, 'Merchant storefront not found.');
         }
+
+        $seller = $sellerModel;
 
         $sellerProductIds = Product::where('seller_id', $seller->id)->pluck('id');
 

@@ -475,18 +475,16 @@
                                             </div>
                                             <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-teal-200 text-teal-900">Seller</span>
                                         </a>
-                                    @elseif(!auth()->user()->isAdmin())
-                                        <a href="{{ route('register') }}?role=seller" 
-                                           class="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-slate-50 group transition-colors">
+                                    @else
+                                        <a href="{{ route('switch-user', 'seller') }}" 
+                                           class="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-emerald-50 group transition-colors">
                                             <div class="flex items-center space-x-2.5">
-                                                <div class="w-6 h-6 rounded-md bg-slate-100 text-slate-600 group-hover:bg-slate-200 flex items-center justify-center flex-shrink-0 transition-colors">
-                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                                <div class="w-6 h-6 rounded-md bg-emerald-100 text-[#53a318] flex items-center justify-center flex-shrink-0">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                                                 </div>
-                                                <span class="text-xs font-semibold text-slate-800">Become a Merchant</span>
+                                                <span class="text-xs font-bold text-slate-800">Switch to Seller Hub</span>
                                             </div>
-                                            <span class="text-xs font-bold text-[#53a318] group-hover:translate-x-0.5 transition-transform flex items-center">
-                                                Join <span class="ml-0.5">→</span>
-                                            </span>
+                                            <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-[#53a318]">Apex Tech</span>
                                         </a>
                                     @endif
                                 </div>

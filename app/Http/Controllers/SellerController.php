@@ -247,7 +247,7 @@ class SellerController extends Controller
         ]);
 
         return redirect()->route('seller.products')
-            ->with('success', '🎉 Product listed successfully with Group-Buy campaign live!');
+            ->with('success', ' Product listed successfully with Group-Buy campaign live!');
     }
 
     /**
@@ -327,7 +327,7 @@ class SellerController extends Controller
         ]);
 
         return redirect()->route('seller.products')
-            ->with('success', '✅ Product details and group pricing updated successfully!');
+            ->with('success', ' Product details and group pricing updated successfully!');
     }
 
     /**
@@ -490,7 +490,7 @@ class SellerController extends Controller
         ]);
 
         return redirect()->route('seller.groups')
-            ->with('success', "🚀 Group-Buy Pool {$code} for '{$product->title}' has been successfully launched!");
+            ->with('success', "Group-Buy Circle {$code} for '{$product->title}' has been successfully launched!");
     }
 
     /**
@@ -678,7 +678,7 @@ class SellerController extends Controller
 
         $order->update($updateData);
 
-        return back()->with('success', "🚀 Order #{$order->order_number} status updated to " . ucfirst($validated['order_status']) . "!");
+        return back()->with('success', " Order #{$order->order_number} status updated to " . ucfirst($validated['order_status']) . "!");
     }
 
     /**
@@ -767,38 +767,86 @@ class SellerController extends Controller
             'shop_name' => 'required|string|max:255',
             'name' => 'required|string|max:255',
             'business_category' => 'nullable|string|max:100',
-            'phone' => 'nullable|string|max:30',
+            'phone' => ['nullable', 'string', 'max:30'],
+            'whatsapp_number' => ['nullable', 'string', 'max:30'],
+            'facebook_page' => 'nullable|string|max:255',
+            'dispatch_time' => 'nullable|string|max:255',
+            'return_policy' => 'nullable|string|max:2000',
             'address' => 'nullable|string|max:500',
+            'warehouse_address' => 'nullable|string|max:500',
+            'payout_method' => 'nullable|string|in:bkash,nagad,rocket,bank',
+            'payout_details' => 'nullable|string|max:500',
             'shop_description' => 'nullable|string|max:1500',
             'avatar_file' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'banner_file' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
+            'remove_avatar' => 'nullable|boolean',
+            'remove_banner' => 'nullable|boolean',
         ], [
             'shop_name.required' => 'Shop / Business name is required.',
             'name.required' => 'Contact person name is required.',
         ]);
 
+        // Generate unique slug for shop
+        $baseSlug = Str::slug($validated['shop_name']);
+        if (empty($baseSlug)) $baseSlug = 'shop-' . $user->id;
+        $slug = $baseSlug;
+        $slugExists = User::where('shop_slug', $slug)->where('id', '!=', $user->id)->exists();
+        if ($slugExists) {
+            $slug = $baseSlug . '-' . $user->id;
+        }
+
         $updateData = [
             'shop_name' => $validated['shop_name'],
+            'shop_slug' => $slug,
             'name' => $validated['name'],
             'business_category' => $validated['business_category'] ?? $user->business_category,
             'phone' => $validated['phone'] ?? $user->phone,
+            'whatsapp_number' => $validated['whatsapp_number'] ?? null,
+            'facebook_page' => $validated['facebook_page'] ?? null,
+            'dispatch_time' => $validated['dispatch_time'] ?? null,
+            'return_policy' => $validated['return_policy'] ?? null,
             'address' => $validated['address'] ?? $user->address,
+            'warehouse_address' => $validated['warehouse_address'] ?? null,
+            'payout_method' => $validated['payout_method'] ?? null,
+            'payout_details' => $validated['payout_details'] ?? null,
             'shop_description' => $validated['shop_description'] ?? $user->shop_description,
         ];
 
+        // Handle Avatar File Upload / Removal
         if ($request->hasFile('avatar_file')) {
+            if ($user->avatar && str_contains($user->avatar, 'sellers/avatars/')) {
+                $oldRel = substr($user->avatar, strpos($user->avatar, 'sellers/avatars/'));
+                Storage::disk('public')->delete($oldRel);
+            }
             $path = $request->file('avatar_file')->store('sellers/avatars', 'public');
-            $updateData['avatar'] = asset('storage/' . $path);
+            $updateData['avatar'] = 'sellers/avatars/' . basename($path);
+        } elseif ($request->boolean('remove_avatar')) {
+            if ($user->avatar && str_contains($user->avatar, 'sellers/avatars/')) {
+                $oldRel = substr($user->avatar, strpos($user->avatar, 'sellers/avatars/'));
+                Storage::disk('public')->delete($oldRel);
+            }
+            $updateData['avatar'] = null;
         }
 
+        // Handle Banner File Upload / Removal
         if ($request->hasFile('banner_file')) {
+            if ($user->shop_banner && str_contains($user->shop_banner, 'sellers/banners/')) {
+                $oldRel = substr($user->shop_banner, strpos($user->shop_banner, 'sellers/banners/'));
+                Storage::disk('public')->delete($oldRel);
+            }
             $path = $request->file('banner_file')->store('sellers/banners', 'public');
-            $updateData['shop_banner'] = asset('storage/' . $path);
+            $updateData['shop_banner'] = 'sellers/banners/' . basename($path);
+        } elseif ($request->boolean('remove_banner')) {
+            if ($user->shop_banner && str_contains($user->shop_banner, 'sellers/banners/')) {
+                $oldRel = substr($user->shop_banner, strpos($user->shop_banner, 'sellers/banners/'));
+                Storage::disk('public')->delete($oldRel);
+            }
+            $updateData['shop_banner'] = null;
         }
 
         $user->update($updateData);
 
-        return back()->with('success', '✨ Merchant store profile updated successfully!');
+        return back()->with('success', '✨ Merchant store profile & settings updated successfully!');
     }
 
     /**
