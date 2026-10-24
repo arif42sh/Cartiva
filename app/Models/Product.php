@@ -123,4 +123,19 @@ class Product extends Model
     {
         return $this->getSoloUnitPrice(2);
     }
+
+    /**
+     * Scope query to only products that are active, approved, and belong to approved sellers
+     */
+    public function scopeMarketplaceVisible($query)
+    {
+        return $query->where('is_active', true)
+            ->where('approval_status', 'approved')
+            ->where(function ($q) {
+                $q->whereNull('seller_id')
+                  ->orWhereHas('seller', function ($sq) {
+                      $sq->where('status', 'approved');
+                  });
+            });
+    }
 }

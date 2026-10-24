@@ -7,12 +7,14 @@ use App\Models\Announcement;
 use App\Models\Category;
 use App\Models\GroupBuySession;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\RefundRequest;
 use App\Models\ReportedIssue;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class AdminController extends Controller
@@ -33,9 +35,14 @@ class AdminController extends Controller
         $completedGroupsCount = GroupBuySession::where('status', 'completed')->count();
         $expiredGroupsCount = GroupBuySession::where('status', 'expired')->count();
 
-        // Customer savings estimate
-        $groupOrders = Order::where('order_type', 'group_buy')->where('order_status', '!=', 'cancelled')->get();
-        $totalCustomerSavings = $groupOrders->sum('total_amount') * 0.25;
+        // Genuine customer savings calculated from catalog pricing: (single_price - group_price) * quantity
+        $totalCustomerSavings = (float) DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->where('orders.order_type', 'group_buy')
+            ->where('orders.order_status', '!=', 'cancelled')
+            ->whereRaw('products.single_price > products.group_price')
+            ->sum(DB::raw('(products.single_price - products.group_price) * order_items.quantity'));
 
         // Pending refunds & open dispute tickets count
         $pendingRefundsCount = RefundRequest::where('status', 'pending')->count();
@@ -121,8 +128,14 @@ class AdminController extends Controller
     public function showCustomer(User $user)
     {
         $totalSpent = $user->orders()->where('order_status', '!=', 'cancelled')->sum('total_amount');
-        $groupOrders = $user->orders()->where('order_type', 'group_buy')->where('order_status', '!=', 'cancelled')->get();
-        $totalSavings = (float) ($groupOrders->sum('total_amount') * 0.25);
+        $totalSavings = (float) DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->where('orders.user_id', $user->id)
+            ->where('orders.order_type', 'group_buy')
+            ->where('orders.order_status', '!=', 'cancelled')
+            ->whereRaw('products.single_price > products.group_price')
+            ->sum(DB::raw('(products.single_price - products.group_price) * order_items.quantity'));
         
         $ordersCount = $user->orders()->count();
         $groupsCount = $user->groupMemberships()->count();
@@ -214,9 +227,11 @@ class AdminController extends Controller
         $products = $user->products()->with('category')->latest()->paginate(10);
         $totalProductsCount = $user->products()->count();
         
-        $grossSales = Order::whereHas('items.product', function ($q) use ($user) {
+        $grossSales = (float) OrderItem::whereHas('product', function ($q) use ($user) {
             $q->where('seller_id', $user->id);
-        })->whereIn('order_status', ['processing', 'shipped', 'delivered'])->sum('total_amount');
+        })->whereHas('order', function ($q) {
+            $q->whereIn('order_status', ['processing', 'shipped', 'delivered']);
+        })->sum('subtotal');
 
         $ordersFulfilledCount = Order::whereHas('items.product', function ($q) use ($user) {
             $q->where('seller_id', $user->id);
@@ -320,8 +335,17 @@ class AdminController extends Controller
             'is_active' => ['nullable', 'boolean'],
         ]);
 
+        $slug = $category->slug;
+        if ($category->name !== $validated['name']) {
+            $slug = Str::slug($validated['name']);
+            if (Category::where('slug', $slug)->where('id', '!=', $category->id)->exists()) {
+                $slug .= '-' . rand(10, 99);
+            }
+        }
+
         $category->update([
             'name' => $validated['name'],
+            'slug' => $slug,
             'description' => $validated['description'] ?? null,
             'icon' => $validated['icon'] ?? $category->icon,
             'is_active' => $request->has('is_active') ? (bool) $request->input('is_active') : $category->is_active,
@@ -443,6 +467,14 @@ class AdminController extends Controller
 
     public function relaunchGroup(GroupBuySession $session)
     {
+        if ($session->status === 'completed') {
+            return back()->with('error', "Cannot relaunch Group #{$session->group_code} because it has already reached required buyers and completed successfully.");
+        }
+
+        if ($session->product && $session->product->stock <= 0) {
+            return back()->with('error', "Cannot relaunch Group #{$session->group_code} because product '{$session->product->title}' is currently out of stock.");
+        }
+
         $session->update([
             'status' => 'active',
             'expires_at' => now()->addHours($session->product->group_duration_hours ?? 24),
@@ -520,6 +552,28 @@ class AdminController extends Controller
             'tracking_number' => $validated['tracking_number'] ?? $order->tracking_number,
         ];
 
+        // 1. Inventory stock restoration on order cancellation
+        if ($validated['order_status'] === 'cancelled' && $order->order_status !== 'cancelled') {
+            foreach ($order->items as $item) {
+                if ($item->product) {
+                    $item->product->increment('stock', (int) $item->quantity);
+                    $item->product->decrement('sales_count', min($item->product->sales_count, (int) $item->quantity));
+                }
+            }
+            $updates['escrow_status'] = 'refunded';
+        }
+
+        // 2. Re-decrement stock if re-activating a previously cancelled order
+        if ($order->order_status === 'cancelled' && $validated['order_status'] !== 'cancelled') {
+            foreach ($order->items as $item) {
+                if ($item->product) {
+                    $item->product->decrement('stock', min($item->product->stock, (int) $item->quantity));
+                    $item->product->increment('sales_count', (int) $item->quantity);
+                }
+            }
+            $updates['escrow_status'] = 'held';
+        }
+
         if ($validated['order_status'] === 'shipped' && !$order->shipped_at) {
             $updates['shipped_at'] = now();
         }
@@ -527,6 +581,9 @@ class AdminController extends Controller
         if ($validated['order_status'] === 'delivered') {
             if (!$order->delivered_at) {
                 $updates['delivered_at'] = now();
+            }
+            if ($order->payment_method === 'cod') {
+                $updates['payment_status'] = 'paid';
             }
             $updates['escrow_status'] = 'released';
         }
@@ -543,9 +600,15 @@ class AdminController extends Controller
     public function payments()
     {
         $grossVolume = Order::whereIn('order_status', ['processing', 'shipped', 'delivered'])->sum('total_amount');
-        $heldInEscrow = Order::whereIn('order_status', ['processing', 'shipped'])->sum('total_amount');
-        $releasedToSellers = Order::where('order_status', 'delivered')->sum('total_amount');
-        $platformFee = $grossVolume * 0.05; // 5% Take-rate commission
+        // Escrow pool: only funds genuinely received into platform gateway and currently held
+        $heldInEscrow = Order::where('escrow_status', 'held')
+            ->where('payment_status', 'paid')
+            ->whereIn('order_status', ['pending', 'processing', 'shipped'])
+            ->sum('total_amount');
+        // Settled merchant payout: orders where escrow has officially been released
+        $releasedToSellers = Order::where('escrow_status', 'released')->sum('total_amount');
+        // Platform take-rate revenue: 5% commission on settled transactions
+        $platformFee = $releasedToSellers * 0.05;
 
         $orders = Order::with(['user', 'items.product.seller'])
             ->whereIn('payment_status', ['paid', 'cash_on_delivery'])
@@ -603,7 +666,16 @@ class AdminController extends Controller
         ]);
 
         if ($refund->order) {
-            $refund->order->update(['escrow_status' => 'refunded', 'order_status' => 'cancelled']);
+            $order = $refund->order;
+            $order->update(['escrow_status' => 'refunded', 'order_status' => 'cancelled']);
+
+            // Restore product stock and adjust sales count
+            foreach ($order->items as $item) {
+                if ($item->product) {
+                    $item->product->increment('stock', (int) $item->quantity);
+                    $item->product->decrement('sales_count', min($item->product->sales_count, (int) $item->quantity));
+                }
+            }
         }
 
         ActivityLog::log('refund_approved', "Refund of ৳{$refund->amount} for Order #{$refund->order->order_number} approved.", 'RefundRequest', $refund->id);
@@ -686,14 +758,24 @@ class AdminController extends Controller
         $totalGroups = GroupBuySession::count();
         $groupSuccessRate = $totalGroups > 0 ? round(($completedGroups / $totalGroups) * 100, 1) : 0;
 
-        $groupOrders = Order::where('order_type', 'group_buy')->where('order_status', '!=', 'cancelled')->get();
-        $totalCustomerSavings = $groupOrders->sum('total_amount') * 0.25;
+        $totalCustomerSavings = (float) DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->where('orders.order_type', 'group_buy')
+            ->where('orders.order_status', '!=', 'cancelled')
+            ->whereRaw('products.single_price > products.group_price')
+            ->sum(DB::raw('(products.single_price - products.group_price) * order_items.quantity'));
 
         // Top 5 selling products
         $topProducts = Product::orderByDesc('sales_count')->take(5)->get();
 
-        // Top 5 stores by sales volume
-        $topSellers = User::where('role', 'seller')->withCount('products')->take(5)->get();
+        // Top 5 stores ranked by total sales units across their product catalog
+        $topSellers = User::where('role', 'seller')
+            ->withCount('products')
+            ->withSum('products as total_sales_volume', 'sales_count')
+            ->orderByDesc('total_sales_volume')
+            ->take(5)
+            ->get();
 
         return view('admin.statistics.index', compact(
             'totalGMV',

@@ -86,7 +86,7 @@
                             </td>
 
                             <td class="py-4 px-6 text-teal-800 font-bold">
-                                {{ $ord->items->first()->product->seller->shop_name ?? 'Cartiva Direct' }}
+                                {{ $ord->items->first()?->product?->seller?->shop_name ?? 'Cartiva Direct' }}
                             </td>
 
                             <td class="py-4 px-6 text-right font-mono font-black text-slate-900">

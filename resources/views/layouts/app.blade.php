@@ -22,6 +22,25 @@
 <body class="min-h-full flex flex-col font-sans bg-[#f8f9fa] text-slate-800 selection:bg-[#53a318] selection:text-white" 
       x-data="{ mobileMenuOpen: false, notifOpen: false, userDropdownOpen: false }">
 
+    <!-- Official Platform Announcement Banner -->
+    @php
+        $topAnnouncement = \App\Models\Announcement::where('is_active', true)
+            ->whereIn('target_audience', ['all', 'customers'])
+            ->latest()
+            ->first();
+    @endphp
+    @if($topAnnouncement)
+        <div class="bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 text-white text-xs py-2 px-4 text-center font-bold relative z-50 flex items-center justify-center space-x-2 shadow-xs">
+            <span>📢 {{ $topAnnouncement->title }}: {{ $topAnnouncement->message }}</span>
+            @if($topAnnouncement->action_url)
+                <a href="{{ $topAnnouncement->action_url }}" class="underline hover:text-purple-200 font-extrabold ml-1 inline-flex items-center space-x-1">
+                    <span>{{ $topAnnouncement->action_label ?: 'View details' }}</span>
+                    <span>&rarr;</span>
+                </a>
+            @endif
+        </div>
+    @endif
+
     <!-- 1. Top Live Community Activity Marquee Ticker -->
     <div class="bg-[#111827] text-white text-xs font-semibold py-1 px-4 overflow-hidden border-b border-slate-800 shadow-inner">
         <div class="max-w-[1600px] mx-auto flex items-center justify-between gap-4">

@@ -22,6 +22,25 @@
 <body class="min-h-full flex flex-col font-sans bg-[#f8f9fa] text-slate-800 selection:bg-[#53a318] selection:text-white"
       x-data="{ userMenuOpen: false, notifMenuOpen: false }">
 
+    <!-- Official Platform Announcement for Sellers -->
+    @php
+        $sellerAnnouncement = \App\Models\Announcement::where('is_active', true)
+            ->whereIn('target_audience', ['all', 'sellers'])
+            ->latest()
+            ->first();
+    @endphp
+    @if($sellerAnnouncement)
+        <div class="bg-purple-900 text-purple-100 text-xs py-2 px-4 text-center font-medium flex items-center justify-center space-x-2 border-b border-purple-800 shadow-xs relative z-50">
+            <span class="font-bold text-white">📢 {{ $sellerAnnouncement->title }}:</span>
+            <span>{{ $sellerAnnouncement->message }}</span>
+            @if($sellerAnnouncement->action_url)
+                <a href="{{ $sellerAnnouncement->action_url }}" class="underline text-white font-extrabold ml-1 hover:text-purple-200">
+                    {{ $sellerAnnouncement->action_label ?: 'Details' }} &rarr;
+                </a>
+            @endif
+        </div>
+    @endif
+
     <!-- Dedicated Executive Merchant Header (Crisp White Executive Bar with Official Brand Logo) -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40 text-slate-800 shadow-xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">

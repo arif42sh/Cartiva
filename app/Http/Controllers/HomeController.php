@@ -31,7 +31,7 @@ class HomeController extends Controller
         $categories = Category::withCount('products')->get();
 
         $query = Product::with(['category', 'seller', 'activeGroupSessions.members.user'])
-            ->where('is_active', true);
+            ->marketplaceVisible();
 
         // Search filter
         if ($request->filled('q')) {
