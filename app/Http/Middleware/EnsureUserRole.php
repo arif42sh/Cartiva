@@ -32,14 +32,25 @@ class EnsureUserRole
         if (!in_array($user->role, $roles)) {
             // For customers trying to access the seller portal, redirect to login with friendly alert
             if ($request->is('seller*')) {
-                return redirect()->route('login')->with('error', 'Access Denied');
+                return redirect()->route('login')->with('error', 'Access Denied: Merchant account required.');
             }
 
             if ($request->is('admin*')) {
-                return redirect()->route('login')->with('error', 'Access Denied');
+                return redirect()->route('login')->with('error', 'Access Denied: Administrator privileges required.');
             }
 
             abort(403, 'Unauthorized access: You do not have permission for this section.');
+        }
+
+        // 3. Seller application status enforcement
+        if ($user->isSeller() && $request->is('seller*')) {
+            if ($user->status === 'rejected') {
+                return redirect()->route('home')->with('error', 'Your merchant application was rejected by administration. Reason: ' . ($user->status_reason ?: 'Compliance requirements not met.'));
+            }
+
+            if ($user->status === 'pending' && !$request->routeIs('seller.profile*')) {
+                return redirect()->route('seller.profile')->with('error', 'Your merchant store application is currently pending admin approval. You can update your store profile details while awaiting verification.');
+            }
         }
 
         return $next($request);
