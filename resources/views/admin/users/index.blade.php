@@ -1,9 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'User Directory - Cartiva Admin')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <div class="mb-8">
         <div class="flex items-center space-x-2 text-xs font-bold text-slate-500 mb-1">
