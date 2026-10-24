@@ -23,6 +23,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'status',
+        'status_reason',
         'shop_name',
         'shop_slug',
         'business_category',
@@ -78,6 +80,26 @@ class User extends Authenticatable
         return $this->role === 'customer' || empty($this->role);
     }
 
+    public function isActive(): bool
+    {
+        return ($this->status ?? 'active') === 'active' || ($this->isSeller() && $this->status === 'approved');
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->status === 'suspended';
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === 'pending';
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->status === 'approved';
+    }
+
     public function products(): HasMany
     {
         return $this->hasMany(Product::class, 'seller_id');
@@ -124,5 +146,16 @@ class User extends Authenticatable
     public function getShopSlugAttribute(): string
     {
         return $this->attributes['shop_slug'] ?? \Illuminate\Support\Str::slug($this->shop_name ?? $this->name);
+    }
+
+    public function getTotalSpentAttribute(): float
+    {
+        return (float) $this->orders()->where('order_status', '!=', 'cancelled')->sum('total_amount');
+    }
+
+    public function getTotalSavingsAttribute(): float
+    {
+        $groupOrders = $this->orders()->where('order_type', 'group_buy')->where('order_status', '!=', 'cancelled')->get();
+        return (float) ($groupOrders->sum('total_amount') * 0.25);
     }
 }

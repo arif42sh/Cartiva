@@ -108,8 +108,67 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
 */
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::get('/users', [AdminController::class, 'users'])->name('users');
+
+    // i. Customer Management (SRS 4.4.i)
+    Route::get('/customers', [AdminController::class, 'customers'])->name('customers.index');
+    Route::get('/customers/{user}', [AdminController::class, 'showCustomer'])->name('customers.show');
+    Route::post('/customers/{user}/toggle-status', [AdminController::class, 'toggleCustomerStatus'])->name('customers.toggle-status');
+
+    // ii & iii. Seller Management & Approvals (SRS 4.4.ii, iii)
+    Route::get('/sellers', [AdminController::class, 'sellers'])->name('sellers.index');
+    Route::get('/sellers/{user}', [AdminController::class, 'showSeller'])->name('sellers.show');
+    Route::post('/sellers/{user}/approve', [AdminController::class, 'approveSeller'])->name('sellers.approve');
+    Route::post('/sellers/{user}/reject', [AdminController::class, 'rejectSeller'])->name('sellers.reject');
+    Route::post('/sellers/{user}/toggle-status', [AdminController::class, 'toggleSellerStatus'])->name('sellers.toggle-status');
+
+    // iv. Product Categories (SRS 4.4.iv)
+    Route::get('/categories', [AdminController::class, 'categories'])->name('categories.index');
+    Route::post('/categories', [AdminController::class, 'storeCategory'])->name('categories.store');
+    Route::put('/categories/{category}', [AdminController::class, 'updateCategory'])->name('categories.update');
+    Route::delete('/categories/{category}', [AdminController::class, 'deleteCategory'])->name('categories.destroy');
+
+    // v. Products Catalog Oversight (SRS 4.4.v)
     Route::get('/products', [AdminController::class, 'products'])->name('products');
+    Route::post('/products/{product}/toggle-status', [AdminController::class, 'toggleProductStatus'])->name('products.toggle-status');
+    Route::post('/products/{product}/toggle-feature', [AdminController::class, 'toggleProductFeature'])->name('products.toggle-feature');
+    Route::post('/products/{product}/approve', [AdminController::class, 'approveProduct'])->name('products.approve');
+    Route::delete('/products/{product}', [AdminController::class, 'deleteProduct'])->name('products.destroy');
+
+    // vi. Monitor Group Sessions (SRS 4.4.vi)
     Route::get('/groups', [AdminController::class, 'groups'])->name('groups');
+    Route::post('/groups/{session}/relaunch', [AdminController::class, 'relaunchGroup'])->name('groups.relaunch');
     Route::post('/check-expirations', [AdminController::class, 'triggerExpirationCheck'])->name('trigger-check');
+
+    // vii. Order Management (SRS 4.4.vii)
+    Route::get('/orders', [AdminController::class, 'orders'])->name('orders');
+    Route::get('/orders/{order}', [AdminController::class, 'showOrder'])->name('orders.show');
+    Route::patch('/orders/{order}/status', [AdminController::class, 'updateOrderStatus'])->name('orders.update-status');
+
+    // viii. Monitor Payments & Escrow (SRS 4.4.viii)
+    Route::get('/payments', [AdminController::class, 'payments'])->name('payments');
+    Route::post('/orders/{order}/release-escrow', [AdminController::class, 'releaseEscrow'])->name('orders.release-escrow');
+
+    // ix. Refund Requests (SRS 4.4.ix)
+    Route::get('/refunds', [AdminController::class, 'refunds'])->name('refunds');
+    Route::post('/refunds/{refund}/approve', [AdminController::class, 'approveRefund'])->name('refunds.approve');
+    Route::post('/refunds/{refund}/reject', [AdminController::class, 'rejectRefund'])->name('refunds.reject');
+
+    // x. Reported Issues & Disputes (SRS 4.4.x)
+    Route::get('/issues', [AdminController::class, 'issues'])->name('issues');
+    Route::get('/issues/{issue}', [AdminController::class, 'showIssue'])->name('issues.show');
+    Route::post('/issues/{issue}/resolve', [AdminController::class, 'resolveIssue'])->name('issues.resolve');
+
+    // xi. Platform Statistics (SRS 4.4.xi)
+    Route::get('/statistics', [AdminController::class, 'statistics'])->name('statistics');
+
+    // xii. Announcements & Notifications (SRS 4.4.xii)
+    Route::get('/announcements', [AdminController::class, 'announcements'])->name('announcements');
+    Route::post('/announcements', [AdminController::class, 'storeAnnouncement'])->name('announcements.store');
+    Route::post('/announcements/{announcement}/toggle', [AdminController::class, 'toggleAnnouncement'])->name('announcements.toggle');
+    Route::delete('/announcements/{announcement}', [AdminController::class, 'deleteAnnouncement'])->name('announcements.destroy');
+
+    // xiii. Overall System Activities & Logs (SRS 4.4.xiii)
+    Route::get('/activity-logs', [AdminController::class, 'activityLogs'])->name('activity-logs');
+
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
 });

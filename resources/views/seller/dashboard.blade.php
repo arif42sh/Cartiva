@@ -12,7 +12,7 @@
     @if(session('success'))
         <div class="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-bold flex items-center justify-between shadow-xs">
             <div class="flex items-center space-x-2.5">
-                <span class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center font-black text-xs flex-shrink-0">✓</span>
+                <span class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center font-black text-xs flex-shrink-0"></span>
                 <span class="text-sm font-semibold">{{ session('success') }}</span>
             </div>
             <button type="button" onclick="this.parentElement.remove()" class="text-emerald-700 hover:text-emerald-950 font-black text-base">&times;</button>
@@ -29,7 +29,7 @@
             <div class="flex items-center space-x-2.5">
                 <span class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center font-black text-xs flex-shrink-0 shadow-xs">!</span>
                 <span class="text-xs sm:text-sm font-semibold text-amber-900">
-                    Inventory Alert: You have <strong class="text-amber-950 font-black">{{ $lowStockCount }} product(s)</strong> with 5 or fewer items remaining in stock.
+                    Alert: You have <strong class="text-amber-950 font-black">{{ $lowStockCount }} product(s)</strong> with 5 or fewer items remaining in stock.
                 </span>
             </div>
             <div class="flex items-center space-x-2 self-end sm:self-auto flex-shrink-0">
@@ -67,7 +67,7 @@
             </div>
             <div class="flex items-center space-x-1.5 text-[11px] sm:text-xs font-bold text-emerald-700 mt-3 pt-2.5 border-t border-slate-100">
                 <svg class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                <span class="truncate">Solo + completed group revenue</span>
+                <span class="truncate">Solo & completed group revenue</span>
             </div>
         </div>
 
@@ -132,17 +132,14 @@
             <div class="flex items-center justify-between mb-5">
                 <div>
                     <div class="flex items-center space-x-2">
-                        <span class="relative flex h-2.5 w-2.5">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#53a318]"></span>
-                        </span>
+                        
                         <h3 class="text-base font-black text-slate-900 tracking-tight">Active Group-Buying Circles</h3>
                     </div>
-                    <p class="text-xs text-slate-500 mt-0.5">Live customer circles currently pooling buyers for your products</p>
+                    
                 </div>
                 <a href="{{ route('seller.groups') }}" class="text-xs font-bold text-[#53a318] hover:underline flex items-center space-x-1">
                     <span>View All</span>
-                    <span>&rarr;</span>
+                    
                 </a>
             </div>
 
@@ -177,7 +174,7 @@
 
                             <a href="{{ route('seller.groups.show', $group) }}" 
                                class="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-[#53a318] hover:text-[#53a318] text-slate-800 text-xs font-bold transition-all shadow-2xs whitespace-nowrap">
-                                Details &rarr;
+                                Details 
                             </a>
                         </div>
                     </div>
@@ -197,7 +194,7 @@
             <div>
                 <span class="text-[10px] font-black uppercase tracking-wider text-[#84cc16]">Quick Operations</span>
                 <h3 class="text-lg font-black text-white mt-1">Merchant Action Hub</h3>
-                <p class="text-xs text-slate-300 mt-1">Manage pricing tiers, restock items, or fulfill customer orders.</p>
+                <p class="text-xs text-slate-300 mt-1">Manage pricing tiers, restock items or fulfill customer orders.</p>
 
                 <div class="space-y-3 mt-5">
                     <a href="{{ route('seller.products.create') }}" 
@@ -255,11 +252,11 @@
         <div class="p-6 border-b border-slate-100 flex items-center justify-between">
             <div>
                 <h3 class="text-base font-black text-slate-900">Recent Customer Purchases</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Orders received across both single purchases and completed team buys</p>
+               
             </div>
             <a href="{{ route('seller.orders') }}" class="text-xs font-bold text-[#53a318] hover:underline flex items-center space-x-1">
                 <span>Manage All Orders</span>
-                <span>&rarr;</span>
+             
             </a>
         </div>
 
@@ -309,7 +306,7 @@
                                 <a href="{{ route('seller.orders.show', $sale->order) }}" 
                                    class="text-[#53a318] hover:text-[#468c13] font-black hover:underline inline-flex items-center space-x-1">
                                     <span>Fulfill</span>
-                                    <span>&rarr;</span>
+                                    
                                 </a>
                             </td>
                         </tr>

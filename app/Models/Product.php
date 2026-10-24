@@ -28,6 +28,10 @@ class Product extends Model
         'group_duration_hours',
         'stock',
         'is_active',
+        'approval_status',
+        'is_featured',
+        'is_hot_deal',
+        'is_flash_sale',
         'rating',
         'sales_count',
     ];
