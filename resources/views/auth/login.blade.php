@@ -102,32 +102,51 @@
                    
                 </div>
 
-                <!-- 1-Click Quick Demo Login Fillers -->
+                @if(auth()->check())
+                    <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
+                        <div>
+                            <span class="font-black block">Signed in: {{ auth()->user()->name }} ({{ ucfirst(auth()->user()->role) }})</span>
+                            <span class="text-[11px] text-amber-700">Want to test as another user? Click below:</span>
+                        </div>
+                        <div class="flex items-center space-x-1.5">
+                            @if(auth()->user()->isSeller())
+                                <a href="{{ route('switch-user', 'customer') }}" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[11px] shadow-2xs">
+                                    Switch to Customer (Arif)
+                                </a>
+                            @else
+                                <a href="{{ route('switch-user', 'seller') }}" class="px-3 py-1 rounded-lg bg-[#53a318] hover:bg-[#468c13] text-white font-extrabold text-[11px] shadow-2xs">
+                                    Switch to Seller (Apex)
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
+                <!-- 1-Click Quick Demo Login Switchers -->
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
                     <div class="flex items-center justify-between">
                         <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 block">
-                            ⚡ Quick Demo Logins (1-Click Auto Fill):
+                            ⚡ Instant 1-Click Persona Switch (No Passwords Required):
                         </span>
-                        <span class="text-[9px] font-bold text-[#53a318] bg-green-50 px-1.5 py-0.2 rounded">Instant 1-Click Fill</span>
                     </div>
                     <div class="grid grid-cols-3 gap-1.5 text-xs font-bold">
-                        <button type="button" @click="fillDemo('admin@cartiva.com', 'password123')" 
-                                class="py-1.5 px-2 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-200/60 transition-all flex items-center justify-center space-x-1 text-[11px]">
+                        <a href="{{ route('switch-user', 'admin') }}" 
+                           class="py-1.5 px-2 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-200/60 transition-all flex items-center justify-center space-x-1 text-[11px] font-extrabold shadow-2xs">
                             <span>👑</span>
                             <span>Admin</span>
-                        </button>
+                        </a>
 
-                        <button type="button" @click="fillDemo('seller@cartiva.com', 'password123')" 
-                                class="py-1.5 px-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-900 border border-teal-200/60 transition-all flex items-center justify-center space-x-1 text-[11px]">
+                        <a href="{{ route('switch-user', 'seller') }}" 
+                           class="py-1.5 px-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-900 border border-teal-200/60 transition-all flex items-center justify-center space-x-1 text-[11px] font-extrabold shadow-2xs">
                             <span>🏪</span>
                             <span>Seller</span>
-                        </button>
+                        </a>
 
-                        <button type="button" @click="fillDemo('customer@cartiva.com', 'password123')" 
-                                class="py-1.5 px-2 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-200/60 transition-all flex items-center justify-center space-x-1 text-[11px]">
+                        <a href="{{ route('switch-user', 'customer') }}" 
+                           class="py-1.5 px-2 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-200/60 transition-all flex items-center justify-center space-x-1 text-[11px] font-extrabold shadow-2xs">
                             <span>👤</span>
                             <span>Customer</span>
-                        </button>
+                        </a>
                     </div>
                 </div>
 
