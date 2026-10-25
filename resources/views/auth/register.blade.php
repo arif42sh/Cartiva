@@ -109,16 +109,16 @@
                         <button type="button" @click="role = 'customer'"
                                 :class="role === 'customer' ? 'bg-white text-slate-900 shadow-sm border-emerald-600 font-black' : 'text-slate-600 hover:text-slate-900 font-bold'"
                                 class="py-1.5 px-2 rounded-lg border border-transparent text-center transition-all flex items-center justify-center space-x-1.5">
-                            <span class="text-sm">🛒</span>
-                            <span class="text-xs">Buyer / Customer</span>
+                            
+                            <span class="text-xs">Customer</span>
                         </button>
 
                         <!-- Seller Role Tab -->
                         <button type="button" @click="role = 'seller'"
                                 :class="role === 'seller' ? 'bg-white text-slate-900 shadow-sm border-teal-600 font-black' : 'text-slate-600 hover:text-slate-900 font-bold'"
                                 class="py-1.5 px-2 rounded-lg border border-transparent text-center transition-all flex items-center justify-center space-x-1.5">
-                            <span class="text-sm">🏪</span>
-                            <span class="text-xs">Merchant / Seller</span>
+                           
+                            <span class="text-xs">Merchant </span>
                         </button>
                     </div>
                 </div>
@@ -295,7 +295,7 @@
                 <div class="text-center pt-1 border-t border-slate-100 text-xs text-slate-600">
                     Already have an account? 
                     <a href="{{ route('login') }}" class="font-extrabold text-[#53a318] hover:underline">
-                        Sign In &rarr;
+                        Sign In
                     </a>
                 </div>
 

@@ -104,7 +104,7 @@
                         <div class="py-1 text-xs font-semibold">
                             <a href="{{ route('switch-user', 'customer') }}" class="flex items-center space-x-2 px-4 py-2 hover:bg-emerald-50 text-emerald-700 font-bold transition-colors">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <span>Switch to Customer (Arif)</span>
+                                <span>Switch to Customer</span>
                             </a>
                            
                             <form action="{{ route('logout') }}" method="POST">

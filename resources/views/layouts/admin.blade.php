@@ -84,7 +84,7 @@
                                class="flex items-center justify-between px-3 py-2 rounded-xl transition-all {{ request()->routeIs('admin.statistics*') ? 'bg-purple-700 text-white font-bold shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
                                 <div class="flex items-center space-x-2.5">
                                     <svg class="w-4 h-4 {{ request()->routeIs('admin.statistics*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                                    <span>Analytics (Stats)</span>
+                                    <span>Analytics</span>
                                 </div>
                             </a>
                         </div>
@@ -169,7 +169,7 @@
                                class="flex items-center justify-between px-3 py-2 rounded-xl transition-all {{ request()->routeIs('admin.payments*') ? 'bg-purple-700 text-white font-bold shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
                                 <div class="flex items-center space-x-2.5">
                                     <svg class="w-4 h-4 {{ request()->routeIs('admin.payments*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                                    <span>Payments / Escrow</span>
+                                    <span>Payments</span>
                                 </div>
                             </a>
 
@@ -284,7 +284,7 @@
                         <div class="relative" @click.outside="userMenuOpen = false">
                             <button type="button" @click="userMenuOpen = !userMenuOpen"
                                     class="flex items-center space-x-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer border border-slate-200">
-                                <span class="text-xs font-bold text-slate-700">Switch Persona</span>
+                                <span class="text-xs font-bold text-slate-700">Switch Account</span>
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
 
@@ -303,7 +303,7 @@
                                     </a>
                                     <a href="{{ route('switch-user', 'customer') }}" class="flex items-center space-x-2 px-4 py-2 hover:bg-emerald-50 text-emerald-800 font-bold transition-colors">
                                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                        <span>Customer (Arif)</span>
+                                        <span>Customer</span>
                                     </a>
                                 </div>
                             </div>

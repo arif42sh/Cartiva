@@ -16,6 +16,33 @@
          isFlashSale: {{ old('is_flash_sale') ? 'true' : 'false' }},
          isHotDeal: {{ old('is_hot_deal') ? 'true' : 'false' }},
          imagePreview: null,
+         customTiers: {{ json_encode(old('discount_tiers', [
+             ['min_members' => 3, 'discount_percent' => 5],
+             ['min_members' => 5, 'discount_percent' => 10],
+             ['min_members' => 7, 'discount_percent' => 15],
+         ])) }},
+         addTier() {
+             this.customTiers.push({ min_members: '', discount_percent: '' });
+         },
+         removeTier(index) {
+             this.customTiers.splice(index, 1);
+         },
+         getTierPrice(discountPct) {
+             const s = parseFloat(this.singlePrice);
+             const d = parseFloat(discountPct);
+             if (s > 0 && d > 0 && d < 100) {
+                 return (s * (1 - (d / 100))).toFixed(2);
+             }
+             return '0.00';
+         },
+         getTierSavings(discountPct) {
+             const s = parseFloat(this.singlePrice);
+             const d = parseFloat(discountPct);
+             if (s > 0 && d > 0 && d < 100) {
+                 return (s * (d / 100)).toFixed(2);
+             }
+             return '0.00';
+         },
          get discountPercent() {
              const s = parseFloat(this.singlePrice);
              const g = parseFloat(this.groupPrice);
@@ -181,24 +208,83 @@
                             </div>
                         </div>
 
-                        <!-- Optional Tier 2 & Tier 3 -->
-                        <div class="p-3 rounded-xl bg-purple-50/50 border border-purple-200 space-y-2">
-                            <div class="flex items-center justify-between">
-                                <h4 class="text-xs font-extrabold text-purple-950">Volume Price Tiers</h4>
-                               
+                        <!-- Custom Tiered Discounts (ধাপভিত্তিক গ্রুপ ডিসকাউন্ট অফার) -->
+                        <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-purple-50/80 via-white to-indigo-50/60 border border-purple-200/90 shadow-2xs space-y-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-purple-100 pb-2.5">
+                                <div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-xs font-black text-purple-950 uppercase tracking-wide">Custom Group Discount Tiers</span>
+                        
+                                    </div>
+                                </div>
+                                <button type="button" @click="addTier()"
+                                        class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-2xs self-start sm:self-auto cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                                    <span> Add Tier</span>
+                                </button>
                             </div>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-[10px] font-bold text-purple-900 mb-0.5">Tier 2 Price (5+ Buyers) ($ USD)</label>
-                                    <input type="number" step="0.01" name="tier2_group_price" x-model="tier2Price" value="{{ old('tier2_group_price') }}" placeholder="Optional (e.g. 89.00)"
-                                           class="w-full px-3 py-1.5 rounded-lg bg-white border border-purple-200 text-xs font-bold focus:outline-hidden focus:ring-2 focus:ring-purple-500">
-                                </div>
+                            <!-- Tier Rows Container -->
+                            <div class="space-y-2.5">
+                                <template x-for="(tier, index) in customTiers" :key="index">
+                                    <div class="p-3 rounded-xl bg-white border border-purple-150 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all hover:border-purple-300">
+                                        <div class="flex items-center space-x-2 shrink-0">
+                                            <span class="w-6 h-6 rounded-lg bg-purple-100 text-purple-800 font-black text-xs flex items-center justify-center" x-text="index + 1"></span>
+                                            <span class="text-xs font-bold text-slate-800">Tier Milestone:</span>
+                                        </div>
 
-                                <div>
-                                    <label class="block text-[10px] font-bold text-purple-900 mb-0.5">Tier 3 Super-Team Price (10+ Buyers)</label>
-                                    <input type="number" step="0.01" name="tier3_group_price" x-model="tier3Price" value="{{ old('tier3_group_price') }}" placeholder="Optional (e.g. 79.00)"
-                                           class="w-full px-3 py-1.5 rounded-lg bg-white border border-purple-200 text-xs font-bold focus:outline-hidden focus:ring-2 focus:ring-purple-500">
+                                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 flex-1">
+                                            <!-- Min Members -->
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Min Members (জন)</label>
+                                                <div class="relative">
+                                                    <input type="number" :name="'discount_tiers[' + index + '][min_members]'" x-model="tier.min_members" min="2" :max="groupSize - 1" placeholder="e.g. 3" required
+                                                           class="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-purple-500">
+                                                    <span class="absolute right-2 top-1.5 text-[10px] font-bold text-slate-400">Buyers</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Discount % -->
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Discount %</label>
+                                                <div class="relative">
+                                                    <input type="number" step="0.5" :name="'discount_tiers[' + index + '][discount_percent]'" x-model="tier.discount_percent" min="1" max="99" placeholder="e.g. 5" required
+                                                           class="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-purple-500">
+                                                    <span class="absolute right-2 top-1.5 text-[10px] font-bold text-slate-400">%</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Live Calculated Price Preview -->
+                                            <div class="col-span-2 sm:col-span-1 flex flex-col justify-center bg-purple-50/60 p-1.5 rounded-lg border border-purple-100">
+                                                <span class="text-[9px] uppercase font-bold text-purple-700">Effective Unit Price</span>
+                                                <div class="flex items-baseline space-x-1.5">
+                                                    <span class="text-xs font-black text-purple-900">৳<span x-text="getTierPrice(tier.discount_percent)"></span></span>
+                                                    <span class="text-[10px] text-emerald-700 font-bold">(Save ৳<span x-text="getTierSavings(tier.discount_percent)"></span>)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Remove Tier Button -->
+                                        <button type="button" @click="removeTier(index)"
+                                                class="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors self-end sm:self-center cursor-pointer" title="Remove this tier">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    </div>
+                                </template>
+
+                                <div x-show="customTiers.length === 0" class="p-3.5 rounded-xl border border-dashed border-purple-200 text-center text-xs text-purple-700">
+                                     Add Tier
+                                </div>
+                            </div>
+
+                            <!-- Dynamic explanation badge -->
+                            <div class="p-2.5 rounded-xl bg-purple-100/60 border border-purple-200/70 text-[11px] text-purple-950 flex items-start space-x-2">
+                                <span class="text-purple-600 font-bold shrink-0">💡</span>
+                                <div class="space-y-0.5">
+                                    <span class="font-extrabold block">Guaranteed Delivery:</span>
+                                    <p class="text-purple-900">
+                                        গ্রুপের সময় শেষে যদি মূল টার্গেট (<span x-text="groupSize || 10"></span> জন) পূর্ণ না-ও হয়, কিন্তু অর্জিত ধাপের শর্ত (যেমন ৩, ৫ বা ৭ জন) পূরণ হয়, তবে <strong>গ্রুপ বাতিল হবে না</strong>! ক্রেতারা অর্জিত ধাপ অনুযায়ী ডিসকাউন্ট পাবেন এবং অর্ডার সরাসরি ডেলিভারির জন্য প্রসেসিংয়ে যাবে।
+                                    </p>
                                 </div>
                             </div>
                         </div>

@@ -111,11 +111,11 @@
                         <div class="flex items-center space-x-1.5">
                             @if(auth()->user()->isSeller())
                                 <a href="{{ route('switch-user', 'customer') }}" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[11px] shadow-2xs">
-                                    Switch to Customer (Arif)
+                                    Switch to Customer 
                                 </a>
                             @else
                                 <a href="{{ route('switch-user', 'seller') }}" class="px-3 py-1 rounded-lg bg-[#53a318] hover:bg-[#468c13] text-white font-extrabold text-[11px] shadow-2xs">
-                                    Switch to Seller (Apex)
+                                    Switch to Seller
                                 </a>
                             @endif
                         </div>
@@ -125,26 +125,24 @@
                 <!-- 1-Click Quick Demo Login Switchers -->
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
                     <div class="flex items-center justify-between">
-                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 block">
-                            ⚡ Instant 1-Click Persona Switch (No Passwords Required):
-                        </span>
+                        
                     </div>
                     <div class="grid grid-cols-3 gap-1.5 text-xs font-bold">
                         <a href="{{ route('switch-user', 'admin') }}" 
                            class="py-1.5 px-2 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-200/60 transition-all flex items-center justify-center space-x-1 text-[11px] font-extrabold shadow-2xs">
-                            <span>👑</span>
+                            
                             <span>Admin</span>
                         </a>
 
                         <a href="{{ route('switch-user', 'seller') }}" 
                            class="py-1.5 px-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-900 border border-teal-200/60 transition-all flex items-center justify-center space-x-1 text-[11px] font-extrabold shadow-2xs">
-                            <span>🏪</span>
+                            
                             <span>Seller</span>
                         </a>
 
                         <a href="{{ route('switch-user', 'customer') }}" 
                            class="py-1.5 px-2 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-200/60 transition-all flex items-center justify-center space-x-1 text-[11px] font-extrabold shadow-2xs">
-                            <span>👤</span>
+                           
                             <span>Customer</span>
                         </a>
                     </div>
@@ -181,7 +179,7 @@
                             <label for="password" class="block text-[11px] font-bold text-slate-700">
                                 Password *
                             </label>
-                            <a href="#" @click.prevent="alert('পাসওয়ার্ড ভুলে গেলে অ্যাডমিনের সাথে যোগাযোগ করুন: admin@cartiva.com অথবা ডেমো বাটন ব্যবহার করুন।')" 
+                            <a href="#" @click.prevent="alert('Wrong Passwod')" 
                                class="text-[10px] font-bold text-[#53a318] hover:underline">
                                 Forgot Password?
                             </a>
@@ -210,14 +208,14 @@
                     <div class="flex items-center justify-between text-[11px]">
                         <label class="flex items-center space-x-1.5 text-slate-600 cursor-pointer">
                             <input type="checkbox" name="remember" class="rounded text-[#53a318] focus:ring-[#53a318] w-3.5 h-3.5">
-                            <span>Remember me on this device</span>
+                            <span>Remember me</span>
                         </label>
                     </div>
 
                     <!-- Submit Button -->
                     <button type="submit" 
                             class="w-full py-2.5 px-4 rounded-xl font-black text-xs bg-[#53a318] hover:bg-[#468c13] text-white shadow-md shadow-green-900/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center space-x-2">
-                        <span>Sign In to Account</span>
+                        <span>Sign In</span>
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </form>

@@ -335,6 +335,48 @@
                     </div>
 
                 </div>
+
+                <!-- Tiered Milestone Discount Roadmap -->
+                @php
+                    $tiersList = $product->formatted_tiers;
+                @endphp
+                @if(count($tiersList) > 1)
+                    <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-purple-50/80 via-white to-indigo-50/60 border border-purple-200/90 shadow-2xs space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-6 h-6 rounded-lg bg-purple-600 text-white font-black text-xs flex items-center justify-center">👥</span>
+                                <span class="text-xs font-black text-purple-950 uppercase tracking-wide">ধাপভিত্তিক ডিসকাউন্ট অফার (Dynamic Tiers)</span>
+                            </div>
+                            <span class="text-[10px] font-bold text-purple-800 bg-purple-100 px-2 py-0.5 rounded-full">
+                                বাতিল হওয়ার ভয় নেই
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-{{ min(4, count($tiersList)) }} gap-2 pt-1">
+                            @foreach($tiersList as $t)
+                                <div class="p-2.5 rounded-xl bg-white border {{ $t['is_target'] ? 'border-[#53a318] ring-2 ring-[#53a318]/20 bg-emerald-50/30' : 'border-purple-200/80' }} shadow-2xs flex flex-col justify-between text-center space-y-1">
+                                    <div class="flex items-center justify-center space-x-1">
+                                        <span class="text-xs font-black text-slate-800">{{ $t['min_members'] }}+ জন</span>
+                                        @if($t['is_target'])
+                                            <span class="text-[9px] font-black uppercase px-1 rounded bg-[#53a318] text-white">Target</span>
+                                        @endif
+                                    </div>
+                                    <div class="text-xs font-black text-purple-900">
+                                        -{{ $t['discount_percent'] }}% ছাড়
+                                    </div>
+                                    <div class="text-[11px] font-extrabold text-[#53a318]">
+                                        ৳{{ number_format($t['price']) }}
+                                    </div>
+                                    <span class="text-[9px] text-slate-400">সাশ্রয় ৳{{ number_format($t['savings']) }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <p class="text-[11px] text-purple-950/90 leading-relaxed bg-purple-100/50 p-2 rounded-xl border border-purple-200/60">
+                            🛡️ <strong>নিরাপদ শিপিং:</strong> সময় শেষ হলেও অন্তত <strong>{{ $tiersList[0]['min_members'] }} জন</strong> হলেই গ্রুপ বাতিল হবে না; অর্জিত ধাপ অনুযায়ী ডিসকাউন্টে সরাসরি ডেলিভারি হবে!
+                        </p>
+                    </div>
+                @endif
             @endif
 
         </div>

@@ -154,12 +154,12 @@
 
                         @if($orderType === 'group_buy')
                             <div class="flex justify-between text-emerald-600 font-bold">
-                                <span>গ্রুপ বাই সাশ্রয় (Team Savings)</span>
+                                <span>Savings</span>
                                 <span>-৳{{ number_format(($product->single_price - $unitPrice) * $quantity) }}</span>
                             </div>
                         @elseif($orderType === 'single' && $quantity >= 2)
                             <div class="flex justify-between text-emerald-600 font-bold">
-                                <span>বাল্ক ভলিউম সাশ্রয় (Bulk Discount)</span>
+                                <span>Bulk Discount</span>
                                 <span>-৳{{ number_format(($product->single_price - $unitPrice) * $quantity) }}</span>
                             </div>
                         @endif
@@ -193,7 +193,7 @@
                         <a href="{{ route('products.show', $product->slug) }}" 
                            class="inline-flex items-center space-x-1.5 text-xs font-bold text-slate-500 hover:text-rose-600 transition-colors">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                            <span>বাতিল করে পণ্য পেজে ফিরে যান (Cancel & Return)</span>
+                            <span>Cancel & Return</span>
                         </a>
                     </div>
                 </div>

@@ -310,12 +310,12 @@
                                         @if($activePool->current_members > 0)
                                             <div class="mt-1.5 flex items-center space-x-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded w-max">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                                <span>গ্রুপ রানিং: {{ $activePool->current_members }}/{{ $activePool->required_members }} জন</span>
+                                                <span>Group running: {{ $activePool->current_members }}/{{ $activePool->required_members }}</span>
                                             </div>
                                         @else
                                             <div class="mt-1.5 flex items-center space-x-1 text-[10px] font-bold text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded w-max">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
-                                                <span>টিম বাই: {{ $activePool->required_members }} জনের গ্রুপ</span>
+                                                <span>Team Buy: {{ $activePool->required_members }}</span>
                                             </div>
                                         @endif
                                     @endif
@@ -363,13 +363,11 @@
             @else
                 <!-- Empty State -->
                 <div class="p-10 text-center bg-white rounded-xl border border-slate-200/90 space-y-3">
-                    <h3 class="text-sm font-bold text-slate-800">কোনো প্রোডাক্ট পাওয়া যায়নি</h3>
-                    <p class="text-xs text-slate-500 max-w-sm mx-auto">
-                        আপনার নির্বাচিত ফিল্টারে কোনো পণ্য পাওয়া যায়নি। ফিল্টার রিসেট করে আবার চেষ্টা করুন।
-                    </p>
+                    <h3 class="text-sm font-bold text-slate-800">Product Not Found</h3>
+                    
                     <div class="pt-1">
                         <a href="{{ route('categories.index') }}" class="inline-flex items-center px-3.5 py-1.5 rounded-lg bg-[#53a318] text-white text-xs font-bold">
-                            সকল প্রোডাক্ট দেখুন
+                            All Product
                         </a>
                     </div>
                 </div>

@@ -139,7 +139,94 @@
                              style="width: {{ min(100, ($session->current_members / $session->required_members) * 100) }}%"></div>
                     </div>
 
-                    @if($session->effective_min_quota < $session->required_members)
+                    @php
+                        $sessionTiers = $session->all_tiers;
+                        $achievedTier = $session->current_achieved_tier;
+                        $nextTier = $session->next_tier;
+                    @endphp
+
+                    @if(!empty($sessionTiers) && count($sessionTiers) > 1)
+                        <!-- Milestone Tier Progress Roadmap -->
+                        <div class="p-3.5 rounded-2xl bg-gradient-to-br from-purple-50/80 via-white to-indigo-50/60 border border-purple-200/90 shadow-2xs space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-black text-purple-950 uppercase tracking-wide flex items-center space-x-1.5">
+                                    <span>🎯</span>
+                                    <span>টিয়ারড ডিসকাউন্ট রোডম্যাপ (Tier Milestones)</span>
+                                </span>
+                                @if($achievedTier)
+                                    <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                        {{ $achievedTier['discount_percent'] }}% ছাড় আনলকড ✓
+                                    </span>
+                                @else
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                                        ন্যূনতম {{ $session->effective_min_quota }} জন প্রয়োজন
+                                    </span>
+                                @endif
+                            </div>
+
+                            <!-- Milestone Steps -->
+                            <div class="grid grid-cols-2 sm:grid-cols-{{ min(4, count($sessionTiers)) }} gap-2">
+                                @foreach($sessionTiers as $t)
+                                    @php
+                                        $isTierUnlocked = $session->current_members >= $t['min_members'];
+                                        $isCurrentActive = $achievedTier && $achievedTier['min_members'] === $t['min_members'];
+                                    @endphp
+                                    <div class="p-2.5 rounded-xl text-center space-y-1 transition-all {{ $isCurrentActive ? 'bg-purple-100/90 border-2 border-purple-500 shadow-xs' : ($isTierUnlocked ? 'bg-emerald-50/70 border border-emerald-300' : 'bg-slate-50 border border-slate-200 opacity-75') }}">
+                                        <div class="flex items-center justify-center space-x-1">
+                                            <span class="text-xs font-black {{ $isTierUnlocked ? 'text-slate-900' : 'text-slate-500' }}">
+                                                {{ $t['min_members'] }}+ জন
+                                            </span>
+                                            @if($isTierUnlocked)
+                                                <span class="text-emerald-600 font-black text-[11px]">✓</span>
+                                            @endif
+                                        </div>
+                                        <div class="text-xs font-black {{ $isTierUnlocked ? 'text-purple-950' : 'text-slate-600' }}">
+                                            -{{ $t['discount_percent'] }}% ছাড়
+                                        </div>
+                                        <div class="text-[11px] font-extrabold {{ $isTierUnlocked ? 'text-[#53a318]' : 'text-slate-500' }}">
+                                            ৳{{ number_format($t['price']) }}
+                                        </div>
+                                        <div class="text-[9px] font-bold uppercase tracking-wider">
+                                            @if($isCurrentActive)
+                                                <span class="text-purple-700 bg-purple-200/80 px-1.5 py-0.5 rounded">Current Tier</span>
+                                            @elseif($isTierUnlocked)
+                                                <span class="text-emerald-700">Unlocked</span>
+                                            @else
+                                                <span class="text-slate-400">Locked</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <!-- Live Dynamic Status Message -->
+                            <div class="p-2.5 rounded-xl {{ $session->hasReachedSoftThreshold() ? 'bg-emerald-50 border border-emerald-200 text-emerald-900' : 'bg-amber-50 border border-amber-200 text-amber-900' }} text-[11px] flex items-start space-x-2">
+                                <span class="text-base shrink-0">{{ $session->hasReachedSoftThreshold() ? '🛡️' : '⏳' }}</span>
+                                <div class="space-y-0.5">
+                                    @if($session->hasReachedSoftThreshold())
+                                        <span class="font-extrabold block text-emerald-950">
+                                            গ্রুপ নিশ্চিত সফল! এই অর্ডার বাতিল বা রিফান্ড হবে না।
+                                        </span>
+                                        <p class="text-emerald-800">
+                                            ইতোমধ্যে <strong>{{ $session->current_members }} জন</strong> যুক্ত হওয়ায় <strong>{{ $achievedTier['discount_percent'] ?? 0 }}% ডিসকাউন্ট</strong> নিশ্চিত হয়েছে।
+                                            @if($nextTier)
+                                                আর মাত্র <strong class="underline">{{ $nextTier['members_needed'] }} জন</strong> যোগ দিলেই পরবর্তী ধাপে <strong>{{ $nextTier['discount_percent'] }}% ডিসকাউন্ট</strong> আনলক হবে! লিংকটি বন্ধুদের সাথে শেয়ার করুন।
+                                            @else
+                                                সর্বোচ্চ ডিসকাউন্ট সম্পূর্ণ আনলক হয়েছে!
+                                            @endif
+                                        </p>
+                                    @else
+                                        <span class="font-extrabold block text-amber-950">
+                                            নিরাপদ শিপিং কোটা: ন্যূনতম {{ $session->effective_min_quota }} জন সদস্য প্রয়োজন!
+                                        </span>
+                                        <p class="text-amber-800">
+                                            আর মাত্র <strong>{{ max(1, $session->effective_min_quota - $session->current_members) }} জন</strong> যুক্ত হলেই গ্রুপটির ডেলিভারি নিশ্চিত হবে এবং বাতিল হওয়ার কোনো ঝুঁকি থাকবে না!
+                                        </p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @elseif($session->effective_min_quota < $session->required_members)
                         <div class="p-2.5 rounded-xl {{ $session->hasReachedSoftThreshold() ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-amber-50/70 border border-amber-200/80 text-amber-900' }} text-[11px] flex items-center justify-between">
                             <span class="flex items-center space-x-1.5 font-bold">
                                 <span>🛡️</span>
