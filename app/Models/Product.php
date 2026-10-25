@@ -24,6 +24,7 @@ class Product extends Model
         'tier2_group_price',
         'tier3_group_price',
         'group_size_required',
+        'min_quota_to_ship',
         'max_buyers_limit',
         'group_duration_hours',
         'stock',
@@ -47,6 +48,7 @@ class Product extends Model
             'is_active' => 'boolean',
             'rating' => 'decimal:2',
             'group_size_required' => 'integer',
+            'min_quota_to_ship' => 'integer',
             'max_buyers_limit' => 'integer',
             'stock' => 'integer',
         ];

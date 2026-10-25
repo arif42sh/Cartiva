@@ -3,16 +3,16 @@
 @section('title', 'Manage Products & Stock - Cartiva Seller')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="{ quickStockModal: false, selectedProduct: null, stockValue: 0 }">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4" x-data="{ quickStockModal: false, selectedProduct: null, stockValue: 0 }">
 
     <!-- Shared Navigation -->
     @include('seller.partials.nav')
 
     <!-- Notification Alert -->
     @if(session('success'))
-        <div class="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center justify-between shadow-2xs">
+        <div class="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center justify-between shadow-2xs">
             <div class="flex items-center space-x-2">
-                <svg class="w-5 h-5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <span>{{ session('success') }}</span>
             </div>
             <button type="button" onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-900">&times;</button>
@@ -20,9 +20,9 @@
     @endif
 
     @if(session('error'))
-        <div class="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-center justify-between shadow-2xs">
+        <div class="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-center justify-between shadow-2xs">
             <div class="flex items-center space-x-2">
-                <svg class="w-5 h-5 text-rose-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <svg class="w-4 h-4 text-rose-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <span>{{ session('error') }}</span>
             </div>
             <button type="button" onclick="this.parentElement.remove()" class="text-rose-600 hover:text-rose-900">&times;</button>
@@ -30,14 +30,14 @@
     @endif
 
     <!-- Controls Bar: Search, Category Filter, Status Pills -->
-    <div class="bg-white rounded-3xl border border-slate-200/90 p-5 shadow-xs mb-6">
-        <form action="{{ route('seller.products') }}" method="GET" class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="bg-white rounded-2xl border border-slate-200/90 p-3.5 shadow-2xs mb-4">
+        <form action="{{ route('seller.products') }}" method="GET" class="flex flex-col md:flex-row md:items-center justify-between gap-3">
             
             <!-- Search Input -->
             <div class="relative flex-1 max-w-md">
                 <input type="text" name="q" value="{{ request('q') }}" placeholder="Search products by title or keywords..." 
-                       class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 transition-all font-medium">
-                <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                       class="w-full pl-9 pr-3.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 transition-all font-medium">
+                <svg class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
 
             <!-- Filters -->
@@ -52,6 +52,8 @@
                 <select name="status" onchange="this.form.submit()" class="py-2 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-teal-500">
                     <option value="">All Statuses</option>
                     <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active Items</option>
+                    <option value="flash_sale" {{ request('status') === 'flash_sale' ? 'selected' : '' }}>⚡ Flash Sales</option>
+                    <option value="hot_deal" {{ request('status') === 'hot_deal' ? 'selected' : '' }}>🔥 Hot Deals</option>
                     <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive Items</option>
                     <option value="low_stock" {{ request('status') === 'low_stock' ? 'selected' : '' }}>Low Stock (≤5)</option>
                     <option value="out_of_stock" {{ request('status') === 'out_of_stock' ? 'selected' : '' }}>Out of Stock</option>
@@ -98,6 +100,19 @@
                                         <span>•</span>
                                         <span>★ {{ number_format($product->rating, 1) }}</span>
                                     </div>
+                                    @if($product->is_flash_sale || $product->is_hot_deal || $product->is_featured)
+                                        <div class="flex flex-wrap items-center gap-1 mt-1">
+                                            @if($product->is_flash_sale)
+                                                <span class="px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-800 font-bold text-[9px] border border-amber-200">⚡ Flash Sale</span>
+                                            @endif
+                                            @if($product->is_hot_deal)
+                                                <span class="px-1.5 py-0.5 rounded-md bg-rose-100 text-rose-800 font-bold text-[9px] border border-rose-200">🔥 Hot Deal</span>
+                                            @endif
+                                            @if($product->is_featured)
+                                                <span class="px-1.5 py-0.5 rounded-md bg-blue-100 text-blue-800 font-bold text-[9px] border border-blue-200">⭐ Featured</span>
+                                            @endif
+                                        </div>
+                                    @endif
                                 </div>
                             </td>
 

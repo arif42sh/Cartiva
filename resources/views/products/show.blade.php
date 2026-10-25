@@ -603,8 +603,12 @@
                     <span>⚡ Group Buy Terms & Rules</span>
                 </h4>
                 <ul class="list-disc list-inside space-y-1 text-amber-900 text-[11px]">
-                    <li>Group buy discounts require all {{ $product->group_size_required }} member slots to be filled before the session countdown timer expires.</li>
-                    <li>If a group does not fill within the allocated time, Cartiva automatically triggers a 100% full refund back to the buyer's original payment method with zero cancellation fees.</li>
+                    <li>Group buy discounts target {{ $product->group_size_required }} member slots to unlock full group rates.</li>
+                    @if($product->min_quota_to_ship && $product->min_quota_to_ship < $product->group_size_required)
+                        <li class="font-bold text-emerald-800">🛡️ Soft Threshold Guarantee: সময় শেষ হলেও যদি অন্তত {{ $product->min_quota_to_ship }} জন ক্রেতা থাকে, তবে অর্ডার বাতিল বা রিফান্ড হবে না; সবার অর্ডার ডিসকাউন্টে সরাসরি ডেলিভারি হবে! কেবল {{ $product->min_quota_to_ship }} জনের কম হলে ১০০% অটো-রিফান্ড হবে।</li>
+                    @else
+                        <li>If a group does not fill within the allocated time, Cartiva automatically triggers a 100% full refund back to the buyer's original payment method with zero cancellation fees.</li>
+                    @endif
                     <li>Once a team reaches {{ $product->group_size_required }} members, orders are locked and moved directly to dispatch processing.</li>
                 </ul>
             </div>

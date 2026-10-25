@@ -141,6 +141,10 @@ class SellerController extends Controller
                 $query->where('stock', '<=', 5);
             } elseif ($request->status === 'out_of_stock') {
                 $query->where('stock', '<=', 0);
+            } elseif ($request->status === 'flash_sale') {
+                $query->where('is_flash_sale', true);
+            } elseif ($request->status === 'hot_deal') {
+                $query->where('is_hot_deal', true);
             }
         }
 
@@ -174,10 +178,13 @@ class SellerController extends Controller
             'group_price' => 'required|numeric|min:0.5|lt:single_price',
             'tier2_group_price' => 'nullable|numeric|min:0.5|lt:group_price',
             'tier3_group_price' => 'nullable|numeric|min:0.5|lt:tier2_group_price',
-            'group_size_required' => 'required|integer|min:2|max:50',
-            'max_buyers_limit' => 'nullable|integer|gte:group_size_required|max:100',
+            'group_size_required' => 'required|integer|min:2|max:100',
+            'min_quota_to_ship' => 'nullable|integer|min:1|lte:group_size_required',
+            'max_buyers_limit' => 'nullable|integer|gte:group_size_required|max:500',
             'group_duration_hours' => 'required|integer|min:1|max:168',
             'stock' => 'required|integer|min:0',
+            'is_flash_sale' => 'nullable|boolean',
+            'is_hot_deal' => 'nullable|boolean',
         ], [
             'title.required' => 'Product title is required.',
             'category_id.required' => 'Please select a valid category.',
@@ -186,8 +193,28 @@ class SellerController extends Controller
             'group_price.lt' => 'Team-buy price must be cheaper than the single retail price.',
             'tier2_group_price.lt' => 'Tier 2 price must be lower than standard group price.',
             'tier3_group_price.lt' => 'Tier 3 price must be lower than Tier 2 price.',
-            'max_buyers_limit.gte' => 'Maximum buyer limit cannot be lower than minimum required buyers.',
+            'min_quota_to_ship.lte' => 'Minimum Quota to Ship cannot exceed the Target Group Size.',
+            'min_quota_to_ship.min' => 'Minimum Quota to Ship must be at least 1.',
+            'max_buyers_limit.gte' => 'Maximum buyer limit cannot be lower than the Target Group Size.',
         ]);
+
+        // Promotional Campaign Qualification Rules
+        $isFlashSale = $request->boolean('is_flash_sale');
+        $isHotDeal = $request->boolean('is_hot_deal');
+
+        if ($isFlashSale) {
+            $discountPct = round((($validated['single_price'] - $validated['group_price']) / $validated['single_price']) * 100);
+            if ($discountPct < 20) {
+                return back()->withInput()->withErrors([
+                    'is_flash_sale' => "⚡ To qualify for Flash Sales, the team discount must be at least 20%. Current discount is only {$discountPct}%. Please increase your discount."
+                ]);
+            }
+            if ($validated['stock'] < 5) {
+                return back()->withInput()->withErrors([
+                    'is_flash_sale' => "⚡ Flash Sales requires dedicated inventory of at least 5 units."
+                ]);
+            }
+        }
 
         // Inventory consistency validation:
         if ($validated['stock'] < $validated['group_size_required']) {
@@ -226,10 +253,13 @@ class SellerController extends Controller
             'tier2_group_price' => $validated['tier2_group_price'] ?? null,
             'tier3_group_price' => $validated['tier3_group_price'] ?? null,
             'group_size_required' => $validated['group_size_required'],
+            'min_quota_to_ship' => $validated['min_quota_to_ship'] ?? null,
             'max_buyers_limit' => $validated['max_buyers_limit'] ?? null,
             'group_duration_hours' => $validated['group_duration_hours'],
             'stock' => $validated['stock'],
             'is_active' => true,
+            'is_flash_sale' => $isFlashSale,
+            'is_hot_deal' => $isHotDeal,
         ]);
 
         // Automatically launch initial open Group-Buy campaign pool (waiting for customers)
@@ -241,13 +271,15 @@ class SellerController extends Controller
             'leader_user_id' => null,
             'group_code' => 'GRP-' . strtoupper(Str::random(6)),
             'required_members' => $product->group_size_required ?: 2,
+            'min_quota_to_ship' => $product->min_quota_to_ship,
+            'max_buyers_limit' => $product->max_buyers_limit,
             'current_members' => 0,
             'status' => 'active',
             'expires_at' => Carbon::now()->addHours($durationHours),
         ]);
 
         return redirect()->route('seller.products')
-            ->with('success', ' Product listed successfully with Group-Buy campaign live!');
+            ->with('success', ' Product listed successfully with Group-Buy campaign live!' . ($isFlashSale ? ' (Enrolled in Flash Sales ⚡)' : ''));
     }
 
     /**
@@ -282,19 +314,42 @@ class SellerController extends Controller
             'group_price' => 'required|numeric|min:0.5|lt:single_price',
             'tier2_group_price' => 'nullable|numeric|min:0.5|lt:group_price',
             'tier3_group_price' => 'nullable|numeric|min:0.5|lt:tier2_group_price',
-            'group_size_required' => 'required|integer|min:2|max:50',
-            'max_buyers_limit' => 'nullable|integer|gte:group_size_required|max:100',
+            'group_size_required' => 'required|integer|min:2|max:100',
+            'min_quota_to_ship' => 'nullable|integer|min:1|lte:group_size_required',
+            'max_buyers_limit' => 'nullable|integer|gte:group_size_required|max:500',
             'group_duration_hours' => 'required|integer|min:1|max:168',
             'stock' => 'required|integer|min:0',
             'is_active' => 'boolean',
+            'is_flash_sale' => 'nullable|boolean',
+            'is_hot_deal' => 'nullable|boolean',
         ], [
             'single_price.required' => 'Single retail price is required.',
             'group_price.required' => 'Team-buy price is required.',
             'group_price.lt' => 'Team-buy price must be cheaper than single retail price.',
             'tier2_group_price.lt' => 'Tier 2 price must be lower than standard group price.',
             'tier3_group_price.lt' => 'Tier 3 price must be lower than Tier 2 price.',
-            'max_buyers_limit.gte' => 'Maximum buyer limit cannot be lower than minimum required buyers.',
+            'min_quota_to_ship.lte' => 'Minimum Quota to Ship cannot exceed Target Group Size.',
+            'min_quota_to_ship.min' => 'Minimum Quota to Ship must be at least 1.',
+            'max_buyers_limit.gte' => 'Maximum buyer limit cannot be lower than the Target Group Size.',
         ]);
+
+        // Promotional Campaign Qualification Rules
+        $isFlashSale = $request->boolean('is_flash_sale');
+        $isHotDeal = $request->boolean('is_hot_deal');
+
+        if ($isFlashSale) {
+            $discountPct = round((($validated['single_price'] - $validated['group_price']) / $validated['single_price']) * 100);
+            if ($discountPct < 20) {
+                return back()->withInput()->withErrors([
+                    'is_flash_sale' => "⚡ To qualify for Flash Sales, the team discount must be at least 20%. Current discount is only {$discountPct}%. Please increase your discount."
+                ]);
+            }
+            if ($validated['stock'] < 5) {
+                return back()->withInput()->withErrors([
+                    'is_flash_sale' => "⚡ Flash Sales requires dedicated inventory of at least 5 units."
+                ]);
+            }
+        }
 
         if ($validated['stock'] < $validated['group_size_required']) {
             return back()->withInput()->withErrors([
@@ -320,14 +375,17 @@ class SellerController extends Controller
             'tier2_group_price' => $validated['tier2_group_price'] ?? null,
             'tier3_group_price' => $validated['tier3_group_price'] ?? null,
             'group_size_required' => $validated['group_size_required'],
+            'min_quota_to_ship' => $validated['min_quota_to_ship'] ?? null,
             'max_buyers_limit' => $validated['max_buyers_limit'] ?? null,
             'group_duration_hours' => $validated['group_duration_hours'],
             'stock' => $validated['stock'],
             'is_active' => $request->boolean('is_active', true),
+            'is_flash_sale' => $isFlashSale,
+            'is_hot_deal' => $isHotDeal,
         ]);
 
         return redirect()->route('seller.products')
-            ->with('success', ' Product details and group pricing updated successfully!');
+            ->with('success', ' Product details and group pricing updated successfully!' . ($isFlashSale ? ' (Enrolled in Flash Sales ⚡)' : ''));
     }
 
     /**

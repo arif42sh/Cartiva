@@ -3,14 +3,14 @@
 @section('title', 'Merchant Hub - Cartiva Seller Dashboard')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
 
     <!-- Shared Seller Navigation Header -->
     @include('seller.partials.nav')
 
     <!-- Notification Alert -->
     @if(session('success'))
-        <div class="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-bold flex items-center justify-between shadow-xs">
+        <div class="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-bold flex items-center justify-between shadow-xs">
             <div class="flex items-center space-x-2.5">
                 <span class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center font-black text-xs flex-shrink-0"></span>
                 <span class="text-sm font-semibold">{{ session('success') }}</span>
@@ -25,7 +25,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 scale-100"
              x-transition:leave-end="opacity-0 scale-95"
-             class="mb-6 p-3.5 sm:p-4 rounded-2xl bg-amber-50/90 border border-amber-200 text-amber-950 text-xs font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+             class="mb-4 p-3 sm:p-3.5 rounded-xl bg-amber-50/90 border border-amber-200 text-amber-950 text-xs font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
             <div class="flex items-center space-x-2.5">
                 <span class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center font-black text-xs flex-shrink-0 shadow-xs">!</span>
                 <span class="text-xs sm:text-sm font-semibold text-amber-900">
@@ -49,7 +49,7 @@
     @endif
 
     <!-- Key Performance Metrics (Executive High-Contrast KPI Cards) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
         
         <!-- Total Revenue -->
         <div class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-sm relative overflow-hidden group hover:shadow-md hover:border-emerald-300 transition-all flex flex-col justify-between">

@@ -23,7 +23,7 @@
                 @elseif($session->status === 'expired' || ($session->status === 'active' && $session->expires_at->isPast()))
                     <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-rose-100 text-rose-800">Expired</span>
                 @else
-                    <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-100 text-amber-800">Active (Awaiting Buyers)</span>
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-100 text-amber-800">Active</span>
                 @endif
             </h1>
         </div>
