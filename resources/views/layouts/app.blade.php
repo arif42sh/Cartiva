@@ -126,7 +126,7 @@
 
                 <!-- Smart Search Bar (Compact Width & Guaranteed Middle Position) -->
                 <div class="hidden lg:flex items-center justify-center shrink-0 w-full max-w-[480px] xl:max-w-[520px] mx-auto relative px-2">
-                    <form action="{{ route('home') }}" method="GET" class="w-full flex items-center bg-white border-2 border-[#53a318] rounded-full overflow-hidden shadow-xs hover:border-[#468c13] focus-within:ring-4 focus-within:ring-[#53a318]/20 transition-all">
+                    <form id="desktop-search-form" action="{{ route('home') }}" method="GET" class="w-full flex items-center bg-white border-2 border-[#53a318] rounded-full overflow-hidden shadow-xs hover:border-[#468c13] focus-within:ring-4 focus-within:ring-[#53a318]/20 transition-all">
                         
                         <!-- Left Field: What / Keyword / Group Code -->
                         <div class="flex-1 flex items-center pl-4 pr-2 py-2 relative min-w-0">
@@ -151,23 +151,23 @@
                         <div>
                             <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-2">Trending Search Keywords</span>
                             <div class="flex flex-wrap gap-1.5">
-                                <button type="button" @click="searchQuery = 'Fleece Hoodie'; $el.closest('form')?.submit()" 
+                                <button type="button" @click="searchQuery = 'Winter Fleece Hoodie'; $nextTick(() => document.getElementById('desktop-search-form').submit())" 
                                         class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
                                     🧥 Winter Fleece Hoodie
                                 </button>
-                                <button type="button" @click="searchQuery = 'SoundCore Ultra ANC'; $el.closest('form')?.submit()" 
+                                <button type="button" @click="searchQuery = 'SoundCore Ultra ANC'; $nextTick(() => document.getElementById('desktop-search-form').submit())" 
                                         class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
                                     🎧 SoundCore ANC Headphones
                                 </button>
-                                <button type="button" @click="searchQuery = 'Mechanical Keyboard'; $el.closest('form')?.submit()" 
+                                <button type="button" @click="searchQuery = 'Mechanical Keyboard'; $nextTick(() => document.getElementById('desktop-search-form').submit())" 
                                         class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
                                     ⌨️ Mechanical Keyboard
                                 </button>
-                                <button type="button" @click="searchQuery = 'Air Fryer'; $el.closest('form')?.submit()" 
+                                <button type="button" @click="searchQuery = 'Digital Air Fryer'; $nextTick(() => document.getElementById('desktop-search-form').submit())" 
                                         class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
                                     🍳 Digital Air Fryer
                                 </button>
-                                <button type="button" @click="searchQuery = 'Fast Charger'; $el.closest('form')?.submit()" 
+                                <button type="button" @click="searchQuery = '65W GaN Charger'; $nextTick(() => document.getElementById('desktop-search-form').submit())" 
                                         class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-green-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
                                     ⚡ 65W GaN Charger
                                 </button>
