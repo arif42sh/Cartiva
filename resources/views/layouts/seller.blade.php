@@ -22,24 +22,6 @@
 <body class="min-h-full flex flex-col font-sans bg-[#f8f9fa] text-slate-800 selection:bg-[#53a318] selection:text-white"
       x-data="{ userMenuOpen: false, notifMenuOpen: false }">
 
-    <!-- Official Platform Announcement for Sellers -->
-    @php
-        $sellerAnnouncement = \App\Models\Announcement::where('is_active', true)
-            ->whereIn('target_audience', ['all', 'sellers'])
-            ->latest()
-            ->first();
-    @endphp
-    @if($sellerAnnouncement)
-        <div class="bg-purple-900 text-purple-100 text-xs py-2 px-4 text-center font-medium flex items-center justify-center space-x-2 border-b border-purple-800 shadow-xs relative z-50">
-            <span class="font-bold text-white">📢 {{ $sellerAnnouncement->title }}:</span>
-            <span>{{ $sellerAnnouncement->message }}</span>
-            @if($sellerAnnouncement->action_url)
-                <a href="{{ $sellerAnnouncement->action_url }}" class="underline text-white font-extrabold ml-1 hover:text-purple-200">
-                    {{ $sellerAnnouncement->action_label ?: 'Details' }} &rarr;
-                </a>
-            @endif
-        </div>
-    @endif
 
     <!-- Dedicated Executive Merchant Header (Crisp White Executive Bar with Official Brand Logo) -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40 text-slate-800 shadow-xs">
@@ -112,15 +94,11 @@
                         </div>
 
                         <div class="py-1 text-xs font-semibold">
-                            <a href="{{ route('seller.dashboard') }}" class="block px-4 py-2 hover:bg-slate-50 hover:text-[#53a318]">
-                                Dashboard Overview
-                            </a>
+                           
                             <a href="{{ route('seller.profile') }}" class="block px-4 py-2 hover:bg-slate-50 hover:text-[#53a318]">
-                                Store Profile & Settings
+                                Profile and settings
                             </a>
-                            <a href="{{ route('seller.storefront') }}" class="block px-4 py-2 hover:bg-slate-50 text-[#53a318] font-bold">
-                                Storefront Preview
-                            </a>
+                           
                         </div>
 
                         <div class="py-1 text-xs font-semibold">
@@ -128,9 +106,7 @@
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                                 <span>Switch to Customer (Arif)</span>
                             </a>
-                            <a href="{{ route('home') }}" class="block px-4 py-2 hover:bg-slate-50 text-slate-600">
-                                Browse Marketplace Home
-                            </a>
+                           
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-2 hover:bg-rose-50 text-rose-600 font-bold cursor-pointer">
@@ -151,14 +127,15 @@
     </main>
 
     <!-- Clean Executive Merchant Footer -->
-    <footer class="bg-white border-t border-slate-200 mt-16 py-6 text-slate-500 text-xs">
+    <footer class="bg-white border-t border-slate-200 mt-8 py-4 text-slate-500 text-xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <div class="flex items-center space-x-2">
                 <span class="font-black text-slate-900">Cartiva Merchant Central</span>
                 <span>•</span>
-                <span>Version 2.0</span>
+                <span>TAORB TEAM</span>
                 <span>•</span>
-                <span class="text-emerald-600 font-semibold">Platform Operational</span>
+                <span>Version 2.0</span>
+                
             </div>
         </div>
     </footer>

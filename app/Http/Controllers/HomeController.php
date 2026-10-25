@@ -75,6 +75,7 @@ class HomeController extends Controller
             ->where('status', 'active')
             ->where('expires_at', '>', now())
             ->whereColumn('current_members', '<', 'required_members')
+            ->orderByRaw('(SELECT COALESCE(is_hot_deal, 0) FROM products WHERE products.id = group_buy_sessions.product_id) DESC')
             ->orderByRaw('(current_members / required_members) DESC')
             ->orderBy('expires_at', 'asc')
             ->take(12)
@@ -96,6 +97,7 @@ class HomeController extends Controller
                 ->where('status', 'active')
                 ->where('expires_at', '>', now())
                 ->whereColumn('current_members', '<', 'required_members')
+                ->orderByRaw('(SELECT COALESCE(is_hot_deal, 0) FROM products WHERE products.id = group_buy_sessions.product_id) DESC')
                 ->orderByRaw('(current_members / required_members) DESC')
                 ->orderBy('expires_at', 'asc')
                 ->take(12)
@@ -156,7 +158,12 @@ class HomeController extends Controller
 
         $almostCompletedGroups = $urgentGroups;
         $todayDeals = Product::with(['category', 'seller', 'activeGroupSessions'])->where('is_active', true)->orderBy('sales_count', 'desc')->take(4)->get();
-        $flashDeals = Product::with(['category', 'seller', 'activeGroupSessions'])->where('is_active', true)->orderByRaw('((single_price - group_price) / single_price) DESC')->take(4)->get();
+        $flashDeals = Product::with(['category', 'seller', 'activeGroupSessions'])
+            ->where('is_active', true)
+            ->orderBy('is_flash_sale', 'desc')
+            ->orderByRaw('((single_price - group_price) / single_price) DESC')
+            ->take(12)
+            ->get();
         $popularGroupBuys = Product::with(['category', 'seller'])->where('is_active', true)->orderBy('sales_count', 'desc')->take(8)->get();
         $newArrivals = Product::with(['category', 'seller'])->where('is_active', true)->latest()->take(8)->get();
         $recommendedDeals = Product::with(['category', 'seller'])->where('is_active', true)->orderBy('rating', 'desc')->take(6)->get();
@@ -712,6 +719,8 @@ class HomeController extends Controller
         // 2. Fetch active products from DB or fallback mock array
         $dbProducts = Product::with(['category', 'seller', 'activeGroupSessions'])
             ->where('is_active', true)
+            ->orderBy('is_flash_sale', 'desc')
+            ->orderByRaw('((single_price - group_price) / single_price) DESC')
             ->get();
 
         $enrichedDeals = [];
@@ -725,7 +734,8 @@ class HomeController extends Controller
 
         if ($dbProducts->isNotEmpty()) {
             foreach ($dbProducts as $index => $product) {
-                $slotId = $slotDistribution[$index % count($slotDistribution)];
+                // If product is specifically enrolled in Flash Sales by merchant/admin, guarantee it goes to 'live' slot
+                $slotId = $product->is_flash_sale ? 'live' : $slotDistribution[$index % count($slotDistribution)];
                 
                 // Deterministic high-conversion flash discount (38% to 68%)
                 $discountPct = intval(38 + (($product->id * 7) % 31));

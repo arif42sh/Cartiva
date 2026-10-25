@@ -117,6 +117,8 @@ class OrderController extends Controller
                         'leader_user_id' => $user->id,
                         'group_code' => 'GRP-' . strtoupper(Str::random(6)),
                         'required_members' => $targetUnits,
+                        'min_quota_to_ship' => $product->min_quota_to_ship,
+                        'max_buyers_limit' => $product->max_buyers_limit,
                         'current_members' => $quantity, // Unit/Quantity-based quota
                         'status' => $isInstantComplete ? 'completed' : 'active',
                         'expires_at' => now()->addHours($product->group_duration_hours),
@@ -227,14 +229,59 @@ class OrderController extends Controller
             ->with('success', 'আপনার অর্ডারটি সফলভাবে সম্পন্ন হয়েছে!');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with(['items.product', 'groupSession'])
-            ->where('user_id', Auth::id())
-            ->latest()
-            ->paginate(10);
+        $tab = $request->input('tab', 'all');
 
-        return view('orders.index', compact('orders'));
+        $query = Order::with(['items.product', 'groupSession.product'])
+            ->where('user_id', Auth::id());
+
+        if ($tab === 'groups') {
+            $query->where('order_type', 'group_buy');
+        } elseif ($tab === 'delivered') {
+            $query->where('order_status', 'delivered');
+        } elseif ($tab === 'single') {
+            $query->where('order_type', 'single');
+        }
+
+        $orders = $query->latest()->paginate(10)->withQueryString();
+
+        $totalCount = Order::where('user_id', Auth::id())->count();
+        $groupsCount = Order::where('user_id', Auth::id())->where('order_type', 'group_buy')->count();
+        $deliveredCount = Order::where('user_id', Auth::id())->where('order_status', 'delivered')->count();
+
+        return view('orders.index', compact('orders', 'tab', 'totalCount', 'groupsCount', 'deliveredCount'));
+    }
+
+    public function trackOrder(Request $request)
+    {
+        $query = trim((string) $request->input('q', $request->input('order_number', '')));
+        $trackedOrder = null;
+        $searched = false;
+
+        if (!empty($query)) {
+            $searched = true;
+            $trackedOrder = Order::with(['items.product.seller', 'groupSession.members.user', 'user'])
+                ->where(function ($q) use ($query) {
+                    $q->where('order_number', 'LIKE', '%' . $query . '%')
+                      ->orWhere('shipping_phone', 'LIKE', '%' . $query . '%')
+                      ->orWhere('tracking_number', 'LIKE', '%' . $query . '%');
+                })
+                ->latest()
+                ->first();
+        } elseif (Auth::check()) {
+            // Default to user's most recent order
+            $trackedOrder = Order::with(['items.product.seller', 'groupSession.members.user', 'user'])
+                ->where('user_id', Auth::id())
+                ->latest()
+                ->first();
+        }
+
+        $recentOrders = Auth::check()
+            ? Order::with('items.product')->where('user_id', Auth::id())->latest()->take(5)->get()
+            : collect();
+
+        return view('orders.track', compact('trackedOrder', 'query', 'searched', 'recentOrders'));
     }
 
     public function show(Order $order)

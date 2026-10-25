@@ -19,85 +19,26 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<body class="min-h-full flex flex-col font-sans bg-[#f8f9fa] text-slate-800 selection:bg-[#53a318] selection:text-white" 
+<body class="min-h-full flex flex-col font-sans bg-[#f8f9fa] text-slate-800 selection:bg-[#53a318] selection:text-white overflow-x-hidden" 
       x-data="{ mobileMenuOpen: false, notifOpen: false, userDropdownOpen: false }">
 
-    <!-- Official Platform Announcement Banner -->
-    @php
-        $topAnnouncement = \App\Models\Announcement::where('is_active', true)
-            ->whereIn('target_audience', ['all', 'customers'])
-            ->latest()
-            ->first();
-    @endphp
-    @if($topAnnouncement)
-        <div class="bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 text-white text-xs py-2 px-4 text-center font-bold relative z-50 flex items-center justify-center space-x-2 shadow-xs">
-            <span>📢 {{ $topAnnouncement->title }}: {{ $topAnnouncement->message }}</span>
-            @if($topAnnouncement->action_url)
-                <a href="{{ $topAnnouncement->action_url }}" class="underline hover:text-purple-200 font-extrabold ml-1 inline-flex items-center space-x-1">
-                    <span>{{ $topAnnouncement->action_label ?: 'View details' }}</span>
-                    <span>&rarr;</span>
-                </a>
-            @endif
-        </div>
-    @endif
-
-    <!-- 1. Top Live Community Activity Marquee Ticker -->
-    <div class="bg-[#111827] text-white text-xs font-semibold py-1 px-4 overflow-hidden border-b border-slate-800 shadow-inner">
-        <div class="max-w-[1600px] mx-auto flex items-center justify-between gap-4">
-            
-            <!-- Live Activity Marquee Ticker -->
-            <div class="flex-1 overflow-hidden relative flex items-center">
-                <span class="inline-flex items-center px-2 py-0.5 rounded font-black bg-[#53a318] text-white text-[10px] uppercase tracking-wider mr-3 flex-shrink-0 z-10 shadow-sm animate-pulse">
-                    LIVE
-                </span>
-
-                <div class="overflow-hidden w-full whitespace-nowrap">
-                    <div class="animate-marquee flex items-center space-x-10 text-[11px] sm:text-xs text-slate-300">
-                        <span class="flex items-center space-x-1.5 font-bold text-amber-300">
-                            <span>Today's Total Savings:</span>
-                            <span class="text-white font-black bg-amber-500/30 px-1.5 py-0.2 rounded">৳64,200+</span>
-                            <span class="text-slate-400">•</span>
-                            <span class="text-emerald-400">38 Group Deals Successfully Unlocked!</span>
-                        </span>
-                        <span>•</span>
-                        <span class="flex items-center space-x-1.5">
-                            <span class="text-amber-400 font-bold">Arif S. (Saidpur)</span>
-                            <span>just joined Premium Winter Hoodie team •</span>
-                            <span class="text-[#84cc16] font-extrabold">৳250 saved!</span>
-                        </span>
-                        <span>•</span>
-                        <span class="flex items-center space-x-1.5">
-                            <span class="text-emerald-400 font-bold">SoundCore ANC Headphones</span>
-                            <span>deal is 80% filled •</span>
-                            <span class="text-rose-400 font-extrabold">Only 1 slot left!</span>
-                        </span>
-                        <span>•</span>
-                        <span class="flex items-center space-x-1.5">
-                            <span class="text-cyan-400 font-bold">Fuad H. (Dhaka)</span>
-                            <span>unlocked Tier 3 bulk price on Mechanical Keyboard •</span>
-                            <span class="text-amber-300 font-extrabold">Order Confirmed</span>
-                        </span>
-                        <span>•</span>
-                        <span class="flex items-center space-x-1.5">
-                            <span class="text-purple-400 font-bold">Promo Voucher:</span>
-                            <span class="bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded font-mono font-black text-[10px]">CARTIVA20</span>
-                            <span>for extra 20% discount on team checkout</span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-
-        </div>
-    </div>
-
-    <!-- 2. Main High-Density Header (Full Width & Professional) -->
-    <header class="sticky top-0 z-40 bg-white border-b border-gray-200/90 shadow-xs backdrop-blur-md"
+    <!-- Main High-Density Header (Full Width & Professional) -->
+    <header class="sticky top-0 z-40 bg-white border-b border-gray-200/90 shadow-xs"
             x-data="{ 
                 searchOpen: false, 
                 searchQuery: '{{ request('q') }}',
                 categoriesDropdownOpen: false,
-                wishlistCount: 3,
+                wishlistItems: JSON.parse(localStorage.getItem('cartiva_wishlist') || JSON.stringify([
+                    { id: 1, title: 'Premium Fleece Winter Hoodie', group_price: 750, original_price: 1000, code: 'GRP-HOODIE05' },
+                    { id: 2, title: 'SoundCore ANC Headphones', group_price: 3150, original_price: 4500, code: 'GRP-SOUND99' }
+                ])),
+                get wishlistCount() {
+                    return this.wishlistItems.length;
+                },
+                removeFromWishlist(id) {
+                    this.wishlistItems = this.wishlistItems.filter(i => i.id != id);
+                    localStorage.setItem('cartiva_wishlist', JSON.stringify(this.wishlistItems));
+                },
                 cartItems: JSON.parse(localStorage.getItem('cartiva_cart') || '[]'),
                 get cartCount() {
                     return this.cartItems.reduce((acc, i) => acc + (i.quantity || 1), 0);
@@ -129,6 +70,22 @@
                         this.showCartToast = true;
                         setTimeout(() => this.showCartToast = false, 3500);
                     };
+                    window.addToWishlist = (item) => {
+                        const exists = this.wishlistItems.find(i => i.id == item.id || (item.code && i.code == item.code));
+                        if (!exists) {
+                            this.wishlistItems.push({
+                                id: item.id || Date.now(),
+                                title: item.title,
+                                group_price: item.group_price || item.price,
+                                original_price: item.original_price || null,
+                                code: item.code || ''
+                            });
+                            localStorage.setItem('cartiva_wishlist', JSON.stringify(this.wishlistItems));
+                        }
+                        this.toastMessage = '❤️ ' + item.title + ' উইশলিস্টে যোগ করা হয়েছে!';
+                        this.showCartToast = true;
+                        setTimeout(() => this.showCartToast = false, 3500);
+                    };
                 },
                 removeFromCart(id) {
                     this.cartItems = this.cartItems.filter(i => i.id != id);
@@ -148,57 +105,43 @@
                 }
             }">
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
-            <div class="flex items-center justify-between h-16 sm:h-[68px] gap-3 sm:gap-6 lg:gap-8">
+            <div class="flex items-center justify-between h-16 sm:h-[72px] gap-2 sm:gap-4 relative">
                 
-                <!-- Brand Logo & Tagline -->
-                <div class="flex items-center space-x-3 flex-shrink-0">
-                    <a href="{{ route('home') }}" class="flex items-center space-x-2.5 group">
+                <!-- Brand Logo & Tagline (Left balanced flex) -->
+                <div class="flex items-center justify-start flex-1 min-w-0">
+                    <a href="{{ route('home') }}" class="flex items-center space-x-2.5 sm:space-x-3.5 group shrink-0">
                         <img src="{{ asset('images/cartiva-logo.png') }}" 
                              alt="Cartiva" 
-                             class="h-7 sm:h-8 w-auto max-w-[140px] sm:max-w-[170px] object-contain transition-transform group-hover:scale-105">
-                        <div class="hidden sm:block leading-none border-l border-slate-200 pl-2.5">
+                             class="h-8 sm:h-9 md:h-10 lg:h-11 w-auto max-w-[150px] sm:max-w-[190px] md:max-w-[230px] object-contain transition-transform group-hover:scale-105 shrink-0">
+                        <div class="hidden sm:flex flex-col justify-center border-l-2 border-slate-200/90 pl-3 leading-tight shrink-0">
                             <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-blue-50 text-blue-800 uppercase tracking-wider block w-max">
                                 GROUP BUY
                             </span>
-                            <span class="block text-[9px] font-extrabold text-slate-400 tracking-wider uppercase mt-1">
+                            <span class="block text-[9px] font-black text-slate-400 tracking-wider uppercase mt-0.5">
                                 Buy Together, Pay Less
                             </span>
                         </div>
                     </a>
                 </div>
 
-                <!-- Smart Search Bar with Category Filter & Real-Time Pool Search -->
-                <div class="hidden lg:flex flex-1 max-w-3xl mx-2 relative">
-                    <form action="{{ route('home') }}" method="GET" class="w-full flex items-center bg-white border-2 border-[#53a318] rounded-xl overflow-hidden shadow-xs hover:border-[#468c13] focus-within:ring-4 focus-within:ring-[#53a318]/20 transition-all">
+                <!-- Smart Search Bar (Compact Width & Guaranteed Middle Position) -->
+                <div class="hidden lg:flex items-center justify-center shrink-0 w-full max-w-[480px] xl:max-w-[520px] mx-auto relative px-2">
+                    <form action="{{ route('home') }}" method="GET" class="w-full flex items-center bg-white border-2 border-[#53a318] rounded-full overflow-hidden shadow-xs hover:border-[#468c13] focus-within:ring-4 focus-within:ring-[#53a318]/20 transition-all">
                         
-                        <!-- Category Filter Selector -->
-                        <div class="w-48 flex items-center px-3 py-2.5 bg-slate-50 border-r border-slate-200">
-                            <svg class="w-3.5 h-3.5 text-slate-400 mr-1.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-                            <select name="category" class="w-full text-xs text-slate-700 bg-transparent focus:outline-none font-bold cursor-pointer">
-                                <option value="">All Categories</option>
-                                <option value="tech-accessories" {{ request('category') == 'tech-accessories' ? 'selected' : '' }}>🎧 Electronics</option>
-                                <option value="winter-specials" {{ request('category') == 'winter-specials' ? 'selected' : '' }}>🧥 Winter Specials</option>
-                                <option value="fashion-wearables" {{ request('category') == 'fashion-wearables' ? 'selected' : '' }}>👕 Fashion</option>
-                                <option value="dry-food-fmcg" {{ request('category') == 'dry-food-fmcg' ? 'selected' : '' }}>🥫 Grocery FMCG</option>
-                                <option value="kitchen-appliances" {{ request('category') == 'kitchen-appliances' ? 'selected' : '' }}>🍳 Kitchen</option>
-                                <option value="home-lifestyle" {{ request('category') == 'home-lifestyle' ? 'selected' : '' }}>🏠 Home & Living</option>
-                            </select>
-                        </div>
-
                         <!-- Left Field: What / Keyword / Group Code -->
-                        <div class="flex-1 flex items-center px-4 py-2.5 relative">
-                            <svg class="w-4 h-4 text-slate-400 mr-2.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <div class="flex-1 flex items-center pl-4 pr-2 py-2 relative min-w-0">
+                            <svg class="w-4 h-4 text-slate-400 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             <input type="text" name="q" x-model="searchQuery" 
                                    @focus="searchOpen = true"
                                    @click.outside="searchOpen = false"
                                    placeholder="Search products or Group Code (e.g. GRP-HOODIE05)..." 
-                                   class="w-full text-xs text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none font-semibold">
+                                   class="w-full text-xs text-slate-800 placeholder:text-slate-400 bg-transparent focus:outline-none font-semibold truncate">
                         </div>
 
                         <!-- Submit Button -->
-                        <button type="submit" class="bg-[#53a318] hover:bg-[#468c13] text-white px-6 py-3 text-xs font-black transition-colors flex items-center space-x-1.5 flex-shrink-0">
+                        <button type="submit" class="bg-[#53a318] hover:bg-[#468c13] text-white px-4 xl:px-5 py-2.5 text-xs font-black transition-colors flex items-center space-x-1.5 shrink-0 rounded-r-full">
                             <span>Search Deals</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </button>
                     </form>
 
@@ -253,24 +196,130 @@
                     </div>
                 </div>
 
-                <!-- User Controls & Dropdowns (My Groups, Wishlist, Cart, Notifications, Auth) -->
-                <div class="flex items-center space-x-1.5 sm:space-x-2.5 flex-shrink-0">
+                <!-- User Controls & Dropdowns (Right balanced flex) -->
+                <div class="flex items-center justify-end flex-1 space-x-1 sm:space-x-2 shrink-0 min-w-0">
                     
                     @auth
-                        <!-- My Groups (Active Buying Circles) - Only for authenticated users -->
+                        <!-- My Groups (Active Buying Circles) Dropdown - Only for authenticated users -->
                         @php
                             $userActiveGroupsCount = auth()->user()->orders()->where('order_type', 'group_buy')->where('order_status', 'pending_group')->count();
-                            if ($userActiveGroupsCount === 0) {
-                                $userActiveGroupsCount = auth()->user()->orders()->where('order_type', 'group_buy')->count();
-                            }
+                            $activeGroupOrders = auth()->user()->orders()
+                                ->with(['groupSession.product', 'items.product'])
+                                ->where('order_type', 'group_buy')
+                                ->whereIn('order_status', ['pending_group', 'processing'])
+                                ->latest()
+                                ->take(4)
+                                ->get();
                         @endphp
-                        <a href="{{ route('orders.index') }}" 
-                           class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-green-50 hover:bg-green-100 text-[#53a318] border border-green-200/80 text-xs font-black transition-all shadow-2xs"
-                           title="View My Active Groups & Buying Circles">
-                            <span class="w-2 h-2 rounded-full bg-[#53a318] animate-ping"></span>
-                            <span class="hidden sm:inline">My Groups</span>
-                            <span class="px-1.5 py-0.2 rounded-full bg-[#53a318] text-white text-[10px] font-black">{{ $userActiveGroupsCount > 0 ? $userActiveGroupsCount : 2 }}</span>
-                        </a>
+                        <div class="relative" x-data="{ groupsOpen: false }">
+                            @php
+                                $activeCount = $userActiveGroupsCount > 0 ? $userActiveGroupsCount : $activeGroupOrders->count();
+                            @endphp
+                            <button type="button" 
+                                    @click="groupsOpen = !groupsOpen; cartModalOpen = false; wishlistModalOpen = false" 
+                                    class="p-2.5 text-slate-600 hover:text-[#53a318] rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer"
+                                    :class="groupsOpen ? 'text-[#53a318] bg-emerald-50 ring-2 ring-emerald-200' : ''"
+                                    title="My Active Team Pools">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                @if($activeCount > 0)
+                                    <span class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-[#53a318] text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white">
+                                        {{ $activeCount }}
+                                    </span>
+                                @endif
+                            </button>
+
+                            <!-- My Groups Floating Popover Card (Compact & Anchored) -->
+                            <div x-show="groupsOpen" 
+                                 x-cloak 
+                                 @click.outside="groupsOpen = false"
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-150"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+                                 class="fixed inset-x-3 top-[68px] sm:absolute sm:top-full sm:mt-2.5 sm:left-auto sm:right-0 w-auto sm:w-80 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 z-50 overflow-hidden transform origin-top-right divide-y divide-slate-100"
+                                 style="left: auto; right: 0;">
+                                
+                                <!-- Little Caret Arrow on Top -->
+                                <div class="hidden sm:block absolute -top-1.5 right-3.5 w-3 h-3 bg-white border-t border-l border-slate-200/90 rotate-45 z-10"></div>
+
+                                <!-- Header -->
+                                <div class="px-3.5 py-2.5 bg-slate-50/90 flex items-center justify-between relative z-20">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm">👥</span>
+                                        <h3 class="text-xs font-black text-slate-800 tracking-tight">Active Team Pools</h3>
+                                        <span class="text-[10px] font-extrabold bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full">
+                                            {{ $activeCount }} Active
+                                        </span>
+                                    </div>
+                                    <button type="button" @click="groupsOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-lg leading-none cursor-pointer">&times;</button>
+                                </div>
+
+                                <!-- Body: Active Groups List -->
+                                <div class="space-y-2 p-3 text-xs max-h-72 overflow-y-auto" style="scrollbar-width: thin;">
+                                    @forelse($activeGroupOrders as $grpOrder)
+                                        @php
+                                            $session = $grpOrder->groupSession;
+                                            $firstItem = $grpOrder->items->first();
+                                            $product = $session ? $session->product : ($firstItem ? $firstItem->product : null);
+                                        @endphp
+                                        <div class="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100/70 border border-slate-200/70 space-y-2 transition-colors">
+                                            <div class="flex items-center justify-between gap-2">
+                                                <div class="flex items-center space-x-2 min-w-0 flex-1">
+                                                    @if($product)
+                                                        <img src="{{ $product->image_url }}" alt="{{ $product->title }}" class="w-8 h-8 rounded-lg object-cover bg-white border border-slate-200 shrink-0">
+                                                    @else
+                                                        <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0">👥</span>
+                                                    @endif
+                                                    <div class="min-w-0 flex-1">
+                                                        <h4 class="font-bold text-slate-800 truncate text-xs" title="{{ $product ? $product->title : 'Team Pool' }}">{{ $product ? $product->title : 'Team Pool' }}</h4>
+                                                        <span class="font-mono text-[10px] text-emerald-700 font-bold">{{ $session ? $session->group_code : $grpOrder->order_number }}</span>
+                                                    </div>
+                                                </div>
+                                                @if($session)
+                                                    <a href="{{ route('group-buy.show', $session->group_code) }}" 
+                                                       class="px-2.5 py-1 bg-[#53a318] hover:bg-[#468c13] text-white font-extrabold rounded-lg text-[10px] transition-colors shrink-0 shadow-2xs">
+                                                        Team Room
+                                                    </a>
+                                                @endif
+                                            </div>
+
+                                            @if($session)
+                                                <div>
+                                                    <div class="flex items-center justify-between text-[10px] text-slate-500 font-bold mb-1">
+                                                        <span class="text-amber-700 font-semibold">Quota: {{ $session->current_members }}/{{ $session->required_members }} joined</span>
+                                                        <span class="text-slate-400 font-mono">{{ $session->remainingSlots() }} slots left</span>
+                                                    </div>
+                                                    <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                                                        <div class="h-full bg-[#53a318] rounded-full transition-all" style="width: {{ $session->progress_percent }}%;"></div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @empty
+                                        <div class="py-6 text-center text-slate-400 space-y-1.5">
+                                            <span class="text-2xl block">👥</span>
+                                            <p class="text-xs font-bold text-slate-600">কোনো চলমান গ্রুপ পুল নেই</p>
+                                            <p class="text-[10px] text-slate-400">নতুন গ্রুপ শুরু করে বন্ধুদের সাথে পাইকারি দামে কিনুন।</p>
+                                        </div>
+                                    @endforelse
+                                </div>
+
+                                <!-- Footer -->
+                                <div class="p-2.5 bg-slate-50/70 flex items-center justify-between text-xs">
+                                    <a href="{{ route('orders.index', ['tab' => 'groups']) }}" 
+                                       class="text-[11px] font-bold text-[#53a318] hover:underline px-1">
+                                        View All Group Orders &rarr;
+                                    </a>
+                                    <button type="button" @click="groupsOpen = false" class="px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 font-bold rounded-lg text-xs cursor-pointer">
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         
                         <!-- Notification Bell Dropdown -->
                         <div class="relative" x-data="{ open: false }">
@@ -308,23 +357,181 @@
                         </div>
                     @endauth
 
-                    <!-- Wishlist Icon with Count -->
-                    <button @click="wishlistModalOpen = true" 
-                            class="p-2.5 text-slate-600 hover:text-rose-600 rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer"
-                            title="My Wishlist">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                        <span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
-                              x-text="wishlistCount">3</span>
-                    </button>
+                    <!-- Wishlist Dropdown with Count -->
+                    <div class="relative">
+                        <button type="button" 
+                                @click="wishlistModalOpen = !wishlistModalOpen; cartModalOpen = false; if(typeof groupsOpen !== 'undefined') groupsOpen = false" 
+                                class="p-2.5 text-slate-600 hover:text-rose-600 rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer"
+                                :class="wishlistModalOpen ? 'text-rose-600 bg-rose-50 ring-2 ring-rose-200' : ''"
+                                title="My Wishlist">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            <span class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
+                                  x-text="wishlistCount"></span>
+                        </button>
 
-                    <!-- Cart Icon with Dynamic Count -->
-                    <button @click="cartModalOpen = true" 
-                            class="p-2.5 text-slate-600 hover:text-[#53a318] rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer group"
-                            title="My Shopping Cart">
-                        <svg class="w-5 h-5 group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                        <span class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-[#53a318] text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
-                              x-text="cartCount"></span>
-                    </button>
+                        <!-- Wishlist Popover Dropdown Card (Anchored to Right, Compact) -->
+                        <div x-show="wishlistModalOpen" 
+                             x-cloak 
+                             @click.outside="wishlistModalOpen = false"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+                             class="fixed inset-x-3 top-[68px] sm:absolute sm:top-full sm:mt-2.5 sm:left-auto sm:right-0 w-auto sm:w-80 md:w-84 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 z-50 overflow-hidden transform origin-top-right divide-y divide-slate-100"
+                             style="left: auto; right: 0;">
+                            
+                            <!-- Little Caret Arrow on Top -->
+                            <div class="hidden sm:block absolute -top-1.5 right-3.5 w-3 h-3 bg-white border-t border-l border-slate-200/90 rotate-45 z-10"></div>
+
+                            <!-- Header -->
+                            <div class="px-3.5 py-2.5 bg-slate-50/90 flex items-center justify-between relative z-20">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm">❤️</span>
+                                    <h3 class="text-xs font-black text-slate-800 tracking-tight">Saved Wishlist</h3>
+                                    <span class="text-[10px] font-extrabold bg-rose-100 text-rose-600 px-1.5 py-0.2 rounded-full" x-text="wishlistCount"></span>
+                                </div>
+                                <button type="button" @click="wishlistModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-lg leading-none cursor-pointer">&times;</button>
+                            </div>
+
+                            <!-- Items List with Delete Option -->
+                            <div class="space-y-2 p-3 text-xs max-h-72 overflow-y-auto" style="scrollbar-width: thin;">
+                                <template x-for="item in wishlistItems" :key="item.id">
+                                    <div class="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100/70 border border-slate-200/70 flex items-center justify-between gap-2.5 transition-colors">
+                                        <div class="min-w-0 flex-1">
+                                            <p class="font-bold text-slate-800 truncate text-xs" :title="item.title" x-text="item.title"></p>
+                                            <p class="text-emerald-700 font-extrabold text-[11px] mt-0.5">
+                                                Group Price: ৳<span x-text="Number(item.group_price || item.price || 0).toLocaleString()"></span> 
+                                                <template x-if="item.original_price">
+                                                    <span class="text-slate-400 font-normal line-through ml-1">৳<span x-text="Number(item.original_price).toLocaleString()"></span></span>
+                                                </template>
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center space-x-1.5 shrink-0">
+                                            <a :href="'/group-buy/' + (item.code || 'GRP-HOODIE05')" class="px-2.5 py-1.5 bg-[#53a318] hover:bg-[#468c13] text-white font-extrabold rounded-lg text-[10px] transition-colors shadow-2xs">
+                                                Join
+                                            </a>
+                                            <!-- Delete from Wishlist button -->
+                                            <button type="button" @click="removeFromWishlist(item.id)" title="Delete from Wishlist" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <div x-show="wishlistItems.length === 0" class="py-6 text-center text-slate-400 space-y-1.5">
+                                    <span class="text-2xl block">❤️</span>
+                                    <p class="text-xs font-bold text-slate-600">Your Wishlist is Empty</p>
+                                    <p class="text-[10px] text-slate-400">Save items by clicking heart on deal cards</p>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="p-2.5 bg-slate-50/70 flex items-center justify-between text-xs">
+                                <a href="{{ route('hot-deals.index') }}" class="text-[11px] font-bold text-[#53a318] hover:underline px-1">Explore More Deals &rarr;</a>
+                                <button type="button" @click="wishlistModalOpen = false" class="px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 font-bold rounded-lg text-xs cursor-pointer">Close</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cart Dropdown with Dynamic Count -->
+                    <div class="relative">
+                        <button type="button" 
+                                @click="cartModalOpen = !cartModalOpen; wishlistModalOpen = false; if(typeof groupsOpen !== 'undefined') groupsOpen = false" 
+                                class="p-2.5 text-slate-600 hover:text-[#53a318] rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer group"
+                                :class="cartModalOpen ? 'text-[#53a318] bg-emerald-50 ring-2 ring-emerald-200' : ''"
+                                title="My Shopping Cart">
+                            <svg class="w-5 h-5 group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            <span class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-[#53a318] text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
+                                  x-text="cartCount"></span>
+                        </button>
+
+                        <!-- Cart Popover Dropdown Card (Anchored to Right, Compact, Overflow Safe) -->
+                        <div x-show="cartModalOpen" 
+                             x-cloak 
+                             @click.outside="cartModalOpen = false"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+                             class="fixed inset-x-3 top-[68px] sm:absolute sm:top-full sm:mt-2.5 sm:left-auto sm:right-0 w-auto sm:w-84 md:w-88 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 z-50 overflow-hidden transform origin-top-right divide-y divide-slate-100"
+                             style="left: auto; right: 0;">
+                            
+                            <!-- Little Caret Arrow on Top -->
+                            <div class="hidden sm:block absolute -top-1.5 right-3.5 w-3 h-3 bg-white border-t border-l border-slate-200/90 rotate-45 z-10"></div>
+
+                            <!-- Header -->
+                            <div class="px-3.5 py-2.5 bg-slate-50/90 flex items-center justify-between relative z-20">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm">🛍️</span>
+                                    <h3 class="text-xs font-black text-slate-800 tracking-tight">
+                                        Shopping Cart (<span x-text="cartCount"></span>)
+                                    </h3>
+                                </div>
+                                <button type="button" @click="cartModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-lg leading-none cursor-pointer">&times;</button>
+                            </div>
+
+                            <!-- Cart Item List with Safe Boundaries -->
+                            <div class="space-y-2 p-3 text-xs max-h-72 overflow-y-auto" style="scrollbar-width: thin;">
+                                <template x-for="item in cartItems" :key="item.id">
+                                    <div class="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100/70 border border-slate-200/70 text-xs flex items-center justify-between gap-2 transition-colors">
+                                        <div class="flex items-center space-x-2.5 min-w-0 flex-1">
+                                            <template x-if="item.image">
+                                                <img :src="item.image" :alt="item.title" class="w-9 h-9 rounded-lg object-cover bg-white border border-slate-200 shrink-0">
+                                            </template>
+                                            <template x-if="!item.image">
+                                                <div class="w-9 h-9 rounded-lg bg-emerald-50 text-[#53a318] flex items-center justify-center font-bold text-xs shrink-0">
+                                                    🛒
+                                                </div>
+                                            </template>
+                                            <div class="min-w-0 flex-1">
+                                                <h4 class="font-bold text-slate-800 truncate text-xs" :title="item.title" x-text="item.title"></h4>
+                                                <span class="font-extrabold text-[#53a318] text-xs">৳<span x-text="Number(item.price * item.quantity).toLocaleString()"></span></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-center space-x-1.5 shrink-0">
+                                            <!-- Quantity buttons -->
+                                            <div class="flex items-center border border-slate-200 rounded-lg bg-white overflow-hidden shadow-2xs">
+                                                <button type="button" @click="updateQty(item.id, -1)" class="px-1.5 py-0.5 text-slate-600 hover:bg-slate-100 font-bold text-xs cursor-pointer">-</button>
+                                                <span class="px-1.5 text-xs font-bold text-slate-800" x-text="item.quantity"></span>
+                                                <button type="button" @click="updateQty(item.id, 1)" class="px-1.5 py-0.5 text-slate-600 hover:bg-slate-100 font-bold text-xs cursor-pointer">+</button>
+                                            </div>
+                                            <!-- Remove button -->
+                                            <button type="button" @click="removeFromCart(item.id)" title="Remove item" class="p-1 text-slate-400 hover:text-rose-600 cursor-pointer">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <div x-show="cartItems.length === 0" class="py-6 text-center text-slate-400 space-y-1.5">
+                                    <span class="text-2xl block">🛒</span>
+                                    <p class="text-xs font-bold text-slate-600">Your Cart is Empty</p>
+                                    <p class="text-[10px] text-slate-400">Add products to your cart to checkout</p>
+                                </div>
+                            </div>
+
+                            <!-- Cart Footer / Total & Checkout -->
+                            <div class="p-3 bg-slate-50/70 space-y-2.5">
+                                <div class="flex items-center justify-between text-xs font-bold px-0.5">
+                                    <span class="text-slate-600">Subtotal:</span>
+                                    <span class="text-base font-black text-[#53a318]">৳<span x-text="Number(cartTotal).toLocaleString()"></span></span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button type="button" @click="cartModalOpen = false" class="py-2 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold rounded-xl text-xs cursor-pointer transition-colors shadow-2xs">Keep Shopping</button>
+                                    <a :href="cartItems.length > 0 ? '{{ route('checkout') }}?product_id=' + cartItems[0].id + '&quantity=' + cartItems[0].quantity : '{{ route('home') }}'" 
+                                       class="py-2 text-center bg-[#53a318] hover:bg-[#468c13] text-white font-bold rounded-xl text-xs cursor-pointer shadow-xs transition-colors">
+                                        Checkout &rarr;
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
 
                     <!-- User Account Dropdown / Sign In -->
                     @auth
@@ -435,7 +642,7 @@
                                         </span>
                                     </a>
 
-                                    <a href="{{ route('orders.index') }}" 
+                                    <a href="{{ route('orders.index', ['tab' => 'groups']) }}" 
                                        class="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-slate-50 group transition-colors">
                                         <div class="flex items-center space-x-2.5">
                                             <div class="w-6 h-6 rounded-md bg-slate-100 text-slate-500 group-hover:bg-teal-50 group-hover:text-teal-600 flex items-center justify-center transition-colors flex-shrink-0">
@@ -444,7 +651,20 @@
                                             <span class="text-xs font-semibold text-slate-800 group-hover:text-teal-600 transition-colors">Active Team Pools</span>
                                         </div>
                                         <span class="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-teal-50 text-teal-700 border border-teal-200">
-                                            Active
+                                            {{ auth()->user()->orders()->where('order_type', 'group_buy')->count() }}
+                                        </span>
+                                    </a>
+
+                                    <a href="{{ route('orders.track') }}" 
+                                       class="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-slate-50 group transition-colors">
+                                        <div class="flex items-center space-x-2.5">
+                                            <div class="w-6 h-6 rounded-md bg-slate-100 text-slate-500 group-hover:bg-blue-50 group-hover:text-blue-600 flex items-center justify-center transition-colors flex-shrink-0">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                            </div>
+                                            <span class="text-xs font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">Track Live Orders</span>
+                                        </div>
+                                        <span class="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                                            Live
                                         </span>
                                     </a>
                                 </div>
@@ -542,6 +762,21 @@
 
             </div>
 
+            <!-- Mobile Search Bar (Immediately available on Android & iOS) -->
+            <div class="lg:hidden pb-3 pt-0.5">
+                <form action="{{ route('home') }}" method="GET" class="relative flex items-center">
+                    <div class="relative w-full flex items-center bg-slate-100 hover:bg-slate-200/70 focus-within:bg-white border border-slate-200/90 focus-within:border-[#53a318] focus-within:ring-3 focus-within:ring-[#53a318]/20 rounded-xl transition-all overflow-hidden shadow-2xs">
+                        <svg class="w-4 h-4 text-slate-400 ml-3 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" name="q" value="{{ request('q') }}" 
+                               placeholder="Search products or Group Code (e.g. GRP-HOODIE05)..." 
+                               class="w-full py-2.5 pr-20 text-xs text-slate-800 placeholder:text-slate-400 bg-transparent focus:outline-none font-semibold">
+                        <button type="submit" class="absolute right-1 top-1 bottom-1 px-3.5 bg-[#53a318] hover:bg-[#468c13] text-white text-[11px] font-bold rounded-lg transition-colors flex items-center justify-center">
+                            Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+
             <!-- 3. Category & Core Navigation Bar -->
             @if(!request()->routeIs('login', 'register'))
             <div class="hidden md:flex items-center justify-center relative border-t border-slate-200/80 py-2.5 text-sm font-semibold text-slate-700 min-h-[46px]">
@@ -590,8 +825,8 @@
                     <span class="text-slate-300 font-light select-none">•</span>
 
                     <!-- Track Order -->
-                    <a href="{{ route('orders.index') }}" 
-                       class="px-3 py-1.5 rounded-xl transition-all {{ request()->routeIs('orders.*') ? 'text-[#53a318] bg-emerald-50/80 font-black' : 'text-slate-700 hover:text-[#53a318] hover:bg-slate-50' }}">
+                    <a href="{{ route('orders.track') }}" 
+                       class="px-3 py-1.5 rounded-xl transition-all {{ request()->routeIs('orders.track') ? 'text-[#53a318] bg-emerald-50/80 font-black' : 'text-slate-700 hover:text-[#53a318] hover:bg-slate-50' }}">
                         Track Order
                     </a>
                 </nav>
@@ -619,160 +854,146 @@
             </div>
             @endif
 
-            <!-- Mobile Drawer Menu -->
+            <!-- Mobile Drawer Menu (Native touch-friendly list) -->
             <div x-show="mobileMenuOpen" x-cloak class="lg:hidden pb-4 pt-2 border-t border-slate-100">
-                <form action="{{ route('home') }}" method="GET" class="mb-3">
-                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Search deals or group code (e.g. GRP-HOODIE05)..." class="w-full px-4 py-2.5 text-xs bg-slate-100 border border-slate-200 rounded-lg">
-                </form>
-                <div class="flex flex-col space-y-1.5 text-sm font-semibold text-slate-700">
-                    <a href="{{ route('home') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100">Home</a>
-                    <a href="{{ route('categories.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 {{ request()->routeIs('categories.*') ? 'text-[#53a318] font-bold bg-emerald-50' : '' }}">Categories</a>
-                    <a href="{{ route('hot-deals.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-rose-600 font-bold">Hot Deals</a>
-                    <a href="{{ route('flash-sales.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 {{ request()->routeIs('flash-sales.*') ? 'text-amber-600 font-bold bg-amber-50' : '' }}">⚡ Flash Sales</a>
-                    <a href="{{ route('home') }}#how-it-works" class="px-3 py-2 rounded-lg hover:bg-slate-100">How It Works</a>
-                    <a href="{{ route('orders.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 {{ request()->routeIs('orders.*') ? 'text-[#53a318] font-bold' : '' }}">
-                        Track Order
+                <div class="flex flex-col space-y-1 text-sm font-semibold text-slate-700">
+                    <a href="{{ route('home') }}" class="px-3.5 py-2.5 rounded-xl hover:bg-slate-100 flex items-center justify-between">
+                        <span>Home</span>
+                        <span class="text-xs text-slate-400">&rarr;</span>
+                    </a>
+                    <a href="{{ route('categories.index') }}" class="px-3.5 py-2.5 rounded-xl hover:bg-slate-100 {{ request()->routeIs('categories.*') ? 'text-[#53a318] font-bold bg-emerald-50' : '' }} flex items-center justify-between">
+                        <span>Categories</span>
+                        <span class="text-xs text-slate-400">&rarr;</span>
+                    </a>
+                    <a href="{{ route('hot-deals.index') }}" class="px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-rose-600 font-bold flex items-center justify-between">
+                        <span class="flex items-center gap-1.5">🔥 Hot Deals</span>
+                        <span class="text-[10px] font-black bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Save 40%</span>
+                    </a>
+                    <a href="{{ route('flash-sales.index') }}" class="px-3.5 py-2.5 rounded-xl hover:bg-slate-100 {{ request()->routeIs('flash-sales.*') ? 'text-amber-600 font-bold bg-amber-50' : '' }} flex items-center justify-between">
+                        <span class="flex items-center gap-1.5">⚡ Flash Sales</span>
+                        <span class="text-[10px] font-black bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">Limited</span>
+                    </a>
+                    <a href="{{ route('home') }}#how-it-works" class="px-3.5 py-2.5 rounded-xl hover:bg-slate-100 flex items-center justify-between">
+                        <span>How It Works</span>
+                        <span class="text-xs text-slate-400">&rarr;</span>
+                    </a>
+                    <a href="{{ route('orders.track') }}" class="px-3.5 py-2.5 rounded-xl hover:bg-slate-100 {{ request()->routeIs('orders.track') ? 'text-[#53a318] font-bold bg-emerald-50' : '' }} flex items-center justify-between">
+                        <span>Track Order</span>
+                        <span class="text-xs text-slate-400">&rarr;</span>
                     </a>
                     @if(auth()->check() && auth()->user()->isSeller())
-                        <a href="{{ route('seller.dashboard') }}" class="px-3 py-2 rounded-lg bg-teal-50 text-teal-700 font-bold">Seller Dashboard</a>
+                        <a href="{{ route('seller.dashboard') }}" class="px-3.5 py-2.5 rounded-xl bg-teal-50 text-teal-800 font-bold flex items-center justify-between">
+                            <span>Seller Dashboard</span>
+                            <span class="text-xs text-teal-600">&rarr;</span>
+                        </a>
                     @else
-                        <a href="{{ route('home') }}#seller-acquisition" class="px-3 py-2 rounded-lg hover:bg-slate-100">Become a seller</a>
+                        <a href="{{ route('home') }}#seller-acquisition" class="px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold flex items-center justify-between">
+                            <span>Become a seller</span>
+                            <span class="text-xs text-slate-400">&rarr;</span>
+                        </a>
                     @endif
                     @auth
-                        <a href="{{ route('orders.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-[#53a318]">My Orders & Groups</a>
+                        <a href="{{ route('orders.index') }}" class="px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-[#53a318] font-bold flex items-center justify-between">
+                            <span>My Orders & Groups</span>
+                            <span class="text-xs text-[#53a318]">&rarr;</span>
+                        </a>
                     @endauth
                 </div>
             </div>
 
         </div>
 
-        <!-- Wishlist Mini Modal (Available to all) -->
-        <div x-show="wishlistModalOpen" x-cloak 
-             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-            <div @click.outside="wishlistModalOpen = false" 
-                 class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
-                <div class="flex items-center justify-between border-b pb-3">
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xl">❤️</span>
-                        <h3 class="text-base font-black text-slate-900">My Saved Wishlist</h3>
+        <!-- Mobile App Sticky Bottom Bar (Android & iOS Native Experience) -->
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] px-2 py-1"
+             style="padding-bottom: max(env(safe-area-inset-bottom, 0px), 6px);">
+            <div class="grid grid-cols-5 gap-1 items-center text-center">
+                
+                <!-- 1. Home -->
+                <a href="{{ route('home') }}" 
+                   class="flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('home') && !request()->has('filter') ? 'text-[#53a318] font-extrabold' : 'text-slate-500 hover:text-slate-800' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span class="text-[10px] mt-0.5">Home</span>
+                </a>
+
+                <!-- 2. Categories -->
+                <a href="{{ route('categories.index') }}" 
+                   class="flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('categories.*') ? 'text-[#53a318] font-extrabold' : 'text-slate-500 hover:text-slate-800' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    <span class="text-[10px] mt-0.5">Categories</span>
+                </a>
+
+                <!-- 3. Hot Deals -->
+                <a href="{{ route('hot-deals.index') }}" 
+                   class="flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('hot-deals.*') ? 'text-rose-600 font-extrabold' : 'text-slate-500 hover:text-slate-800' }}">
+                    <div class="relative">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>
+                        <span class="absolute -top-1 -right-1.5 w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
                     </div>
-                    <button @click="wishlistModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
-                </div>
-                <div class="space-y-3 text-xs max-h-72 overflow-y-auto">
-                    <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                        <div>
-                            <p class="font-bold text-slate-800">Premium Fleece Winter Hoodie</p>
-                            <p class="text-emerald-700 font-bold">Group Price: ৳750 (Save ৳250)</p>
+                    <span class="text-[10px] mt-0.5">Hot Deals</span>
+                </a>
+
+                <!-- 4. Cart -->
+                <button type="button" @click="cartModalOpen = !cartModalOpen; wishlistModalOpen = false; mobileMenuOpen = false" 
+                        class="flex flex-col items-center justify-center py-1 rounded-xl transition-all relative text-slate-500 hover:text-[#53a318] cursor-pointer">
+                    <div class="relative">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        <span class="absolute -top-1.5 -right-2 min-w-[15px] h-3.5 px-1 rounded-full bg-[#53a318] text-white text-[8px] font-black flex items-center justify-center ring-1 ring-white" x-text="cartCount"></span>
+                    </div>
+                    <span class="text-[10px] mt-0.5">Cart</span>
+                </button>
+
+                <!-- 5. Account / Profile -->
+                @auth
+                    <a href="{{ route('profile.index') }}" 
+                       class="flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('profile.*') ? 'text-[#53a318] font-extrabold' : 'text-slate-500 hover:text-slate-800' }}">
+                        <div class="w-5 h-5 rounded-full overflow-hidden bg-gradient-to-tr from-[#53a318] to-emerald-400 text-white flex items-center justify-center text-[9px] font-black">
+                            @if(auth()->user()->avatar)
+                                <img src="{{ auth()->user()->avatar }}" class="w-full h-full object-cover">
+                            @else
+                                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                            @endif
                         </div>
-                        <a href="{{ route('group-buy.show', 'GRP-HOODIE05') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
-                    </div>
-                    <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                        <div>
-                            <p class="font-bold text-slate-800">SoundCore ANC Headphones</p>
-                            <p class="text-emerald-700 font-bold">Group Price: ৳3,150 (Save ৳1,350)</p>
-                        </div>
-                        <a href="{{ route('group-buy.show', 'GRP-SOUND99') }}" class="px-3 py-1.5 bg-[#53a318] text-white font-bold rounded-lg text-[11px]">Join</a>
-                    </div>
-                </div>
-                <button @click="wishlistModalOpen = false" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Close</button>
+                        <span class="text-[10px] mt-0.5 truncate max-w-[50px]">{{ auth()->user()->name }}</span>
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" 
+                       class="flex flex-col items-center justify-center py-1 rounded-xl transition-all text-slate-500 hover:text-[#53a318]">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <span class="text-[10px] mt-0.5">Login</span>
+                    </a>
+                @endauth
+
             </div>
+        </nav>
+
         </div>
 
-        <!-- Quick Cart Mini Modal (Dynamic & Fully Functional) -->
-        <div x-show="cartModalOpen" x-cloak 
-             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-            <div @click.outside="cartModalOpen = false" 
-                 class="bg-white rounded-3xl p-5 sm:p-6 max-w-md w-full shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-3 flex-shrink-0">
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xl">🛍️</span>
-                        <h3 class="text-base font-black text-slate-900">
-                            Shopping Cart (<span x-text="cartCount"></span>)
-                        </h3>
-                    </div>
-                    <button @click="cartModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-xl cursor-pointer">&times;</button>
+        <!-- Live Cart Toast Notification (Teleported to Body) -->
+        <template x-teleport="body">
+            <div x-show="showCartToast" 
+                 x-cloak
+                 x-transition:enter="transition ease-out duration-300 transform"
+                 x-transition:enter-start="opacity-0 translate-y-3 scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave="transition ease-in duration-200 transform"
+                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+                 class="fixed bottom-6 right-6 z-[9999] pointer-events-auto flex items-center justify-between space-x-3 px-4 py-3 rounded-2xl bg-slate-900/95 backdrop-blur-md text-white shadow-2xl border border-slate-800/80 max-w-sm w-full mx-4 sm:mx-0">
+                <div class="flex items-center space-x-2.5 min-w-0">
+                    <span class="w-2 h-2 rounded-full bg-[#53a318] flex-shrink-0 animate-ping"></span>
+                    <span class="text-xs sm:text-sm font-semibold tracking-tight truncate" x-text="toastMessage"></span>
                 </div>
-
-                <!-- Cart Item List -->
-                <div class="space-y-2.5 overflow-y-auto flex-1 pr-1" style="scrollbar-width: thin;">
-                    <template x-for="item in cartItems" :key="item.id">
-                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs flex items-center justify-between gap-3">
-                            <div class="flex items-center space-x-2.5 min-w-0">
-                                <template x-if="item.image">
-                                    <img :src="item.image" :alt="item.title" class="w-10 h-10 rounded-lg object-cover bg-white border border-slate-200 flex-shrink-0">
-                                </template>
-                                <template x-if="!item.image">
-                                    <div class="w-10 h-10 rounded-lg bg-emerald-50 text-[#53a318] flex items-center justify-center font-bold text-xs flex-shrink-0">
-                                        🛒
-                                    </div>
-                                </template>
-                                <div class="min-w-0">
-                                    <h4 class="font-bold text-slate-800 truncate text-xs" x-text="item.title"></h4>
-                                    <span class="font-extrabold text-[#53a318] text-xs">৳<span x-text="Number(item.price * item.quantity).toLocaleString()"></span></span>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-center space-x-2 flex-shrink-0">
-                                <!-- Quantity buttons -->
-                                <div class="flex items-center border border-slate-200 rounded-lg bg-white overflow-hidden">
-                                    <button type="button" @click="updateQty(item.id, -1)" class="px-2 py-0.5 text-slate-600 hover:bg-slate-100 font-bold text-xs cursor-pointer">-</button>
-                                    <span class="px-2 text-xs font-bold text-slate-800" x-text="item.quantity"></span>
-                                    <button type="button" @click="updateQty(item.id, 1)" class="px-2 py-0.5 text-slate-600 hover:bg-slate-100 font-bold text-xs cursor-pointer">+</button>
-                                </div>
-                                <!-- Remove button -->
-                                <button type="button" @click="removeFromCart(item.id)" title="Remove item" class="p-1 text-slate-400 hover:text-rose-600 cursor-pointer">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                </button>
-                            </div>
-                        </div>
-                    </template>
-
-                    <div x-show="cartItems.length === 0" class="py-8 text-center text-slate-400 space-y-2">
-                        <span class="text-3xl block">🛒</span>
-                        <p class="text-xs font-semibold">Your Cart is Empty</p>
-                    </div>
-                </div>
-
-                <!-- Cart Footer / Total & Checkout -->
-                <div class="pt-2 border-t border-slate-100 flex-shrink-0 space-y-3">
-                    <div class="flex items-center justify-between text-xs font-bold">
-                        <span class="text-slate-600">Total Price:</span>
-                        <span class="text-lg font-black text-[#53a318]">৳<span x-text="Number(cartTotal).toLocaleString()"></span></span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button @click="cartModalOpen = false" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs cursor-pointer">Keep Shopping</button>
-                        <a :href="cartItems.length > 0 ? '{{ route('checkout') }}?product_id=' + cartItems[0].id + '&quantity=' + cartItems[0].quantity : '{{ route('home') }}'" 
-                           class="py-2.5 text-center bg-[#53a318] hover:bg-[#468c13] text-white font-bold rounded-xl text-xs cursor-pointer shadow-xs">
-                            Checkout &rarr;
-                        </a>
-                    </div>
+                <div class="flex items-center space-x-2">
+                    <button type="button" @click="cartModalOpen = true; showCartToast = false" class="text-xs font-bold text-emerald-400 hover:underline cursor-pointer">কার্ট দেখুন</button>
+                    <button type="button" @click="showCartToast = false" class="text-slate-400 hover:text-white transition-colors ml-1 text-base leading-none font-bold flex-shrink-0 cursor-pointer">&times;</button>
                 </div>
             </div>
-        </div>
+        </template>
 
     </header>
 
     <!-- Global Toast Notifications (Minimalist Floating UI) -->
     <div id="toast-container" class="fixed bottom-6 right-6 z-[9999] pointer-events-none flex flex-col space-y-2.5 max-w-sm w-full px-4 sm:px-0">
-        <!-- Live Cart Toast Notification -->
-        <div x-show="showCartToast" 
-             x-cloak
-             x-transition:enter="transition ease-out duration-300 transform"
-             x-transition:enter-start="opacity-0 translate-y-3 scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-             x-transition:leave="transition ease-in duration-200 transform"
-             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-             x-transition:leave-end="opacity-0 translate-y-2 scale-95"
-             class="pointer-events-auto flex items-center justify-between space-x-3 px-4 py-3 rounded-2xl bg-slate-900/95 backdrop-blur-md text-white shadow-2xl border border-slate-800/80">
-            <div class="flex items-center space-x-2.5 min-w-0">
-                <span class="w-2 h-2 rounded-full bg-[#53a318] flex-shrink-0 animate-ping"></span>
-                <span class="text-xs sm:text-sm font-semibold tracking-tight truncate" x-text="toastMessage"></span>
-            </div>
-            <div class="flex items-center space-x-2">
-                <button type="button" @click="cartModalOpen = true; showCartToast = false" class="text-xs font-bold text-emerald-400 hover:underline cursor-pointer">কার্ট দেখুন</button>
-                <button @click="showCartToast = false" class="text-slate-400 hover:text-white transition-colors ml-1 text-base leading-none font-bold flex-shrink-0">&times;</button>
-            </div>
-        </div>
         @if(session('success'))
             <div x-data="{ show: true }" 
                  x-show="show" 
@@ -815,7 +1036,7 @@
     </div>
 
     <!-- Main Content Area (Fluid Edge-to-Edge) -->
-    <main class="flex-grow">
+    <main class="flex-grow pb-16 md:pb-0">
         @yield('content')
     </main>
 

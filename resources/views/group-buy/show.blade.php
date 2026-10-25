@@ -134,10 +134,28 @@
                     </div>
 
                     <!-- Progress Bar -->
-                    <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                        <div class="bg-gradient-to-r from-amber-400 to-[#53a318] h-2 rounded-full transition-all duration-500"
-                             style="width: {{ ($session->current_members / $session->required_members) * 100 }}%"></div>
+                    <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-amber-400 to-[#53a318] h-2.5 rounded-full transition-all duration-500"
+                             style="width: {{ min(100, ($session->current_members / $session->required_members) * 100) }}%"></div>
                     </div>
+
+                    @if($session->effective_min_quota < $session->required_members)
+                        <div class="p-2.5 rounded-xl {{ $session->hasReachedSoftThreshold() ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-amber-50/70 border border-amber-200/80 text-amber-900' }} text-[11px] flex items-center justify-between">
+                            <span class="flex items-center space-x-1.5 font-bold">
+                                <span>🛡️</span>
+                                <span>
+                                    @if($session->hasReachedSoftThreshold())
+                                        নরম লক্ষ্যমাত্রা ({{ $session->effective_min_quota }} জন) অর্জিত! সময় শেষ হলেও এই অর্ডার নিশ্চিত শিপ হবে।
+                                    @else
+                                        নিরাপদ শিপিং কোটা: ন্যূনতম {{ $session->effective_min_quota }} জন হলেই ডেলিভারি নিশ্চিত! (বাতিল হবে না)
+                                    @endif
+                                </span>
+                            </span>
+                            <span class="font-extrabold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md {{ $session->hasReachedSoftThreshold() ? 'bg-emerald-200/60 text-emerald-950' : 'bg-amber-200/60 text-amber-950' }}">
+                                {{ $session->hasReachedSoftThreshold() ? 'Guaranteed to Ship ✓' : 'Soft Threshold' }}
+                            </span>
+                        </div>
+                    @endif
 
                     <!-- Compact Member Avatars Row -->
                     @php

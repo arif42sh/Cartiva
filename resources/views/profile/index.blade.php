@@ -13,6 +13,7 @@
     .pin-bounce {
         animation: dropPin 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
+    
     @keyframes dropPin {
         0% { transform: translateY(-16px) scale(1.1); }
         100% { transform: translateY(0) scale(1); }
