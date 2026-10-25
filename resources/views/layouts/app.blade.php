@@ -1041,9 +1041,9 @@
     </main>
 
     <!-- ========================================================
-         23. 3D ANIMATED ENTERPRISE FOOTER (MATCHES SCREENSHOT)
+         23. 3D ANIMATED ENTERPRISE FOOTER (COMPACT & BALANCED)
          ======================================================== -->
-    <footer class="mt-20 bg-[#070b14] border-t border-slate-800/90 pt-16 pb-12 text-slate-400 text-xs relative overflow-hidden">
+    <footer class="mt-12 bg-[#070b14] border-t border-slate-800/90 pt-8 pb-5 text-slate-400 text-xs relative overflow-hidden">
         
         <!-- Top Glowing Accent Border -->
         <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#53a318]/60 to-transparent"></div>
@@ -1057,66 +1057,65 @@
 
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 relative z-10">
             
-            <!-- 5-Column Navigation Grid (Screenshot Style with Accent Bars) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-8 pb-12 border-b border-slate-800/80">
+            <!-- 4-Column Navigation Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-6 pb-6 border-b border-slate-800/80">
                 
                 <!-- Col 1: Brand, Tagline & Social Icons (lg:col-span-4) -->
-                <div class="lg:col-span-4 space-y-4">
+                <div class="lg:col-span-4 space-y-2.5">
                     <div class="flex items-center space-x-2.5">
                         <img src="{{ asset('images/cartiva-logo-white.png') }}" 
                              alt="Cartiva" 
-                             class="h-8 w-auto object-contain"
+                             class="h-7 w-auto object-contain"
                              onerror="this.src='{{ asset('images/cartiva-logo.png') }}'; this.classList.add('brightness-0', 'invert');">
-                        
                     </div>
 
                     <p class="text-slate-400 text-xs leading-relaxed max-w-sm">
                         Bangladesh's dedicated collective group-buying marketplace. By combining multiple orders into bulk demand volumes, we unlock factory wholesale pricing with 100% automated refund protection.
                     </p>
 
-                    <!-- Social Icons (Dark Glass Pills matching screenshot) -->
-                    <div class="pt-2">
-                        <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-2.5">Connect With Us:</span>
-                        <div class="flex items-center space-x-2.5">
+                    <!-- Social Icons (Dark Glass Pills) -->
+                    <div class="pt-1">
+                        <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-2">Connect With Us:</span>
+                        <div class="flex items-center space-x-2">
                             <!-- Facebook -->
                             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
-                               class="w-8 h-8 rounded-xl bg-white/5 border border-white/10 hover:bg-[#1877f2] hover:text-white hover:border-[#1877f2] hover:scale-110 transition-all flex items-center justify-center text-slate-400" 
+                               class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 hover:bg-[#1877f2] hover:text-white hover:border-[#1877f2] hover:scale-110 transition-all flex items-center justify-center text-slate-400" 
                                title="Facebook">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                             </a>
                             <!-- LinkedIn -->
                             <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
-                               class="w-8 h-8 rounded-xl bg-white/5 border border-white/10 hover:bg-[#0a66c2] hover:text-white hover:border-[#0a66c2] hover:scale-110 transition-all flex items-center justify-center text-slate-400" 
+                               class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 hover:bg-[#0a66c2] hover:text-white hover:border-[#0a66c2] hover:scale-110 transition-all flex items-center justify-center text-slate-400" 
                                title="LinkedIn">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                             </a>
                             <!-- Twitter / X -->
                             <a href="https://x.com" target="_blank" rel="noopener noreferrer"
-                               class="w-8 h-8 rounded-xl bg-white/5 border border-white/10 hover:bg-slate-800 hover:text-white hover:border-slate-700 hover:scale-110 transition-all flex items-center justify-center text-slate-400" 
+                               class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 hover:bg-slate-800 hover:text-white hover:border-slate-700 hover:scale-110 transition-all flex items-center justify-center text-slate-400" 
                                title="Twitter / X">
-                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                             </a>
                             <!-- Instagram -->
                             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
-                               class="w-8 h-8 rounded-xl bg-white/5 border border-white/10 hover:bg-[#e4405f] hover:text-white hover:border-[#e4405f] hover:scale-110 transition-all flex items-center justify-center text-slate-400" 
+                               class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 hover:bg-[#e4405f] hover:text-white hover:border-[#e4405f] hover:scale-110 transition-all flex items-center justify-center text-slate-400" 
                                title="Instagram">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                             </a>
                             <!-- YouTube -->
                             <a href="https://youtube.com" target="_blank" rel="noopener noreferrer"
-                               class="w-8 h-8 rounded-xl bg-white/5 border border-white/10 hover:bg-[#ff0000] hover:text-white hover:border-[#ff0000] hover:scale-110 transition-all flex items-center justify-center text-slate-400" 
+                               class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 hover:bg-[#ff0000] hover:text-white hover:border-[#ff0000] hover:scale-110 transition-all flex items-center justify-center text-slate-400" 
                                title="YouTube">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Col 2: Quick Links (lg:col-span-2) -->
-                <div class="lg:col-span-2 space-y-2">
+                <div class="lg:col-span-2 space-y-1.5">
                     <h4 class="font-extrabold text-white text-xs tracking-wider uppercase">Quick Links</h4>
-                    <div class="w-6 h-0.5 bg-[#53a318] rounded-full mt-1.5 mb-3"></div>
-                    <ul class="space-y-2.5 text-slate-400">
+                    <div class="w-6 h-0.5 bg-[#53a318] rounded-full mt-1 mb-2"></div>
+                    <ul class="space-y-1.5 text-slate-400">
                         <li><a href="#how-it-works" class="hover:text-white hover:translate-x-1 transition-all inline-block">About Us</a></li>
                         <li><a href="{{ route('home') }}" class="hover:text-white hover:translate-x-1 transition-all inline-block">All Products</a></li>
                         <li><a href="#today-deals" class="hover:text-white hover:translate-x-1 transition-all inline-block">Group Deals</a></li>
@@ -1125,11 +1124,11 @@
                     </ul>
                 </div>
 
-                <!-- Col 3: Customer Care (lg:col-span-2) -->
-                <div class="lg:col-span-2 space-y-2">
+                <!-- Col 3: Customer Care (lg:col-span-3) -->
+                <div class="lg:col-span-3 space-y-1.5">
                     <h4 class="font-extrabold text-white text-xs tracking-wider uppercase">Customer Care</h4>
-                    <div class="w-6 h-0.5 bg-blue-500 rounded-full mt-1.5 mb-3"></div>
-                    <ul class="space-y-2.5 text-slate-400">
+                    <div class="w-6 h-0.5 bg-blue-500 rounded-full mt-1 mb-2"></div>
+                    <ul class="space-y-1.5 text-slate-400">
                         <li><a href="#faq" class="hover:text-white hover:translate-x-1 transition-all inline-block">Help Center & FAQs</a></li>
                         <li><a href="#trust-security" class="hover:text-white hover:translate-x-1 transition-all inline-block">Shipping Policy</a></li>
                         <li><a href="#cartiva-guarantee" class="hover:text-white hover:translate-x-1 transition-all inline-block">100% Refund Policy</a></li>
@@ -1138,21 +1137,21 @@
                     </ul>
                 </div>
 
-                <!-- Col 5: Contact Us (Matches screenshot styling with icons) -->
-                <div class="lg:col-span-2 space-y-2">
+                <!-- Col 4: Contact Us (lg:col-span-3) -->
+                <div class="lg:col-span-3 space-y-1.5">
                     <h4 class="font-extrabold text-white text-xs tracking-wider uppercase">Contact Us</h4>
-                    <div class="w-6 h-0.5 bg-blue-500 rounded-full mt-1.5 mb-3"></div>
-                    <div class="space-y-3 text-slate-400 text-xs">
-                        <div class="flex items-start space-x-2.5">
-                            <svg class="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <div class="w-6 h-0.5 bg-blue-500 rounded-full mt-1 mb-2"></div>
+                    <div class="space-y-2 text-slate-400 text-xs">
+                        <div class="flex items-start space-x-2">
+                            <svg class="w-3.5 h-3.5 text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                             <span class="leading-snug">Saidpur Cantonment, Nilphamari & Banani, Dhaka</span>
                         </div>
-                        <div class="flex items-center space-x-2.5">
-                            <svg class="w-4 h-4 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-3.5 h-3.5 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                             <a href="tel:+8801911000003" class="hover:text-white transition-colors">+880 1911 000003</a>
                         </div>
-                        <div class="flex items-center space-x-2.5">
-                            <svg class="w-4 h-4 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-3.5 h-3.5 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                             <a href="mailto:support@cartiva.com" class="hover:text-white transition-colors">support@cartiva.com</a>
                         </div>
                     </div>
@@ -1161,16 +1160,15 @@
             </div>
 
             <!-- Middle Section: Verified Payment Methods on Slick White Glowing Cards -->
-            <div class="py-8 border-b border-slate-800/80 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="py-4 border-b border-slate-800/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                
-
                 <!-- Slick White Glowing Payment Cards with Official Vector Logos -->
-                <div class="flex flex-wrap items-center gap-3">
+                <div class="flex flex-wrap items-center gap-2.5">
                     
                     <!-- 1. bKash -->
-                    <div class="h-10 px-3.5 bg-white rounded-xl shadow-md border border-white/20 flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-[0_8px_22px_rgba(226,19,110,0.45)] hover:border-pink-300 cursor-pointer"
+                    <div class="h-8 px-3 bg-white rounded-lg shadow-sm border border-white/20 flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 hover:shadow-[0_4px_16px_rgba(226,19,110,0.35)] hover:border-pink-300 cursor-pointer"
                          title="bKash Verified Merchant Payment">
-                        <svg class="h-6 w-auto" viewBox="0 0 105 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="h-4.5 w-auto" style="height: 18px;" viewBox="0 0 105 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12.4 2.8L1.8 17.5L16.2 14.9L12.4 2.8Z" fill="#D12053"/>
                             <path d="M16.2 14.9L1.8 17.5L19.4 22.8L16.2 14.9Z" fill="#E2136E"/>
                             <path d="M16.2 14.9L19.4 22.8L28.6 15.6L16.2 14.9Z" fill="#A50034"/>
@@ -1181,9 +1179,9 @@
                     </div>
 
                     <!-- 2. Nagad -->
-                    <div class="h-10 px-3.5 bg-white rounded-xl shadow-md border border-white/20 flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-[0_8px_22px_rgba(247,148,29,0.45)] hover:border-orange-300 cursor-pointer"
+                    <div class="h-8 px-3 bg-white rounded-lg shadow-sm border border-white/20 flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 hover:shadow-[0_4px_16px_rgba(247,148,29,0.35)] hover:border-orange-300 cursor-pointer"
                          title="Nagad Digital Payment">
-                        <svg class="h-6 w-auto" viewBox="0 0 100 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="h-4.5 w-auto" style="height: 18px;" viewBox="0 0 100 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="15" cy="16" r="11" fill="#FFF2E8"/>
                             <path d="M18.5 7.5C14.2 6.5 9.8 9.2 8.8 13.5C7.8 17.8 10.5 22.2 14.8 23.2C18.2 24 21.8 22.5 23.2 19.5L18.8 18.2C18 19.8 16 20.5 14.2 20.1C12 19.6 10.6 17.2 11.2 14.8C11.8 12.4 14.2 11 16.6 11.6L18.5 7.5Z" fill="#F7941D"/>
                             <path d="M16.5 10C18.5 10.5 20 12.2 20.5 14.2L24.8 13.2C23.8 9.5 20.8 6.8 17.2 6.2L16.5 10Z" fill="#ED1C24"/>
@@ -1193,9 +1191,9 @@
                     </div>
 
                     <!-- 3. Rocket (DBBL) -->
-                    <div class="h-10 px-3.5 bg-white rounded-xl shadow-md border border-white/20 flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-[0_8px_22px_rgba(140,43,141,0.45)] hover:border-purple-300 cursor-pointer"
+                    <div class="h-8 px-3 bg-white rounded-lg shadow-sm border border-white/20 flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 hover:shadow-[0_4px_16px_rgba(140,43,141,0.35)] hover:border-purple-300 cursor-pointer"
                          title="Dutch-Bangla Bank Rocket">
-                        <svg class="h-6 w-auto" viewBox="0 0 105 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="h-4.5 w-auto" style="height: 18px;" viewBox="0 0 105 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M15 6L21 16L17 17.5L18.5 24L12.5 18.5L8.5 19.5L15 6Z" fill="#8C2B8D"/>
                             <path d="M15 6L18.5 12L15 14L12.5 11L15 6Z" fill="#F58220"/>
                             <text x="27" y="21" font-family="'Inter', sans-serif" font-weight="900" font-size="15" fill="#8C2B8D" letter-spacing="-0.2">Rocket</text>
@@ -1203,9 +1201,9 @@
                     </div>
 
                     <!-- 4. Upay -->
-                    <div class="h-10 px-3.5 bg-white rounded-xl shadow-md border border-white/20 flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-[0_8px_22px_rgba(255,199,44,0.45)] hover:border-amber-300 cursor-pointer"
+                    <div class="h-8 px-3 bg-white rounded-lg shadow-sm border border-white/20 flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 hover:shadow-[0_4px_16px_rgba(255,199,44,0.35)] hover:border-amber-300 cursor-pointer"
                          title="Upay (UCB Fintech)">
-                        <svg class="h-6 w-auto" viewBox="0 0 95 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="h-4.5 w-auto" style="height: 18px;" viewBox="0 0 95 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M7 11V18C7 22.4 10.6 26 15 26C19.4 26 23 22.4 23 18V11H18.5V18C18.5 19.9 16.9 21.5 15 21.5C13.1 21.5 11.5 19.9 11.5 18V11H7Z" fill="#003B73"/>
                             <circle cx="19" cy="9.5" r="3.2" fill="#FFC72C"/>
                             <text x="28" y="21" font-family="'Inter', sans-serif" font-weight="900" font-size="15" fill="#003B73" letter-spacing="-0.2">upay</text>
@@ -1213,17 +1211,17 @@
                     </div>
 
                     <!-- 5. VISA -->
-                    <div class="h-10 px-3.5 bg-white rounded-xl shadow-md border border-white/20 flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-[0_8px_22px_rgba(20,52,203,0.45)] hover:border-blue-300 cursor-pointer"
+                    <div class="h-8 px-3 bg-white rounded-lg shadow-sm border border-white/20 flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 hover:shadow-[0_4px_16px_rgba(20,52,203,0.35)] hover:border-blue-300 cursor-pointer"
                          title="Visa International">
-                        <svg class="h-5 w-auto" viewBox="0 0 78 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="h-4 w-auto" style="height: 16px;" viewBox="0 0 78 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M31.2 2.2L20.4 22H13.6L8.3 6.8C8 5.6 7.7 5.1 6.8 4.6C5.2 3.7 2.4 2.9 0 2.4L0.2 1.5H11.2C12.7 1.5 14 2.5 14.3 4.2L17.1 16.4L24.6 2.2H31.2ZM58.7 15.6C58.7 9.8 50.4 9.5 50.5 6.9C50.5 6.1 51.3 5.3 53 5C53.9 4.9 56.4 4.8 59.2 6.1L60.3 1.1C58.8 0.5 56.9 0 54.4 0C47.8 0 43.1 3.5 43 8.5C42.9 12.2 46.2 14.3 48.7 15.5C51.3 16.8 52.1 17.6 52.1 18.7C52 20.4 50 21.2 48.2 21.2C44.8 21.3 42.8 20.3 41.2 19.6L40.1 24.8C41.7 25.5 44.6 26.1 47.6 26.2C54.6 26.2 59.2 22.7 59.3 17.3L58.7 15.6ZM75.8 22H81.8L76.5 2.2H71C69.7 2.2 68.6 3 68.1 4.2L58.2 22H65.2L66.6 18.2H75.1L75.8 22ZM68.5 13.5L71.9 4.4L73.9 13.5H68.5ZM41.7 2.2L36.3 22H29.8L35.2 2.2H41.7Z" fill="#1434CB"/>
                         </svg>
                     </div>
 
                     <!-- 6. MasterCard -->
-                    <div class="h-10 px-3.5 bg-white rounded-xl shadow-md border border-white/20 flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-[0_8px_22px_rgba(235,0,27,0.45)] hover:border-red-300 cursor-pointer"
+                    <div class="h-8 px-3 bg-white rounded-lg shadow-sm border border-white/20 flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 hover:shadow-[0_4px_16px_rgba(235,0,27,0.35)] hover:border-red-300 cursor-pointer"
                          title="MasterCard SecureCode">
-                        <svg class="h-6 w-auto" viewBox="0 0 70 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="h-4.5 w-auto" style="height: 18px;" viewBox="0 0 70 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="21" cy="16" r="12" fill="#EB001B"/>
                             <circle cx="37" cy="16" r="12" fill="#F79E1B"/>
                             <path d="M29 6.8C31.8 9.3 33.6 12.9 33.6 16C33.6 19.1 31.8 22.7 29 25.2C26.2 22.7 24.4 19.1 24.4 16C24.4 12.9 26.2 9.3 29 6.8Z" fill="#FF5F00"/>
@@ -1235,12 +1233,11 @@
             </div>
 
             <!-- Bottom Section: Copyright & Links -->
-            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+            <div class="pt-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
                 <div>
                     <p class="font-medium text-slate-400">&copy; {{ date('Y') }} Cartiva Group Commerce Inc. All Rights Reserved.</p>
-                    
                 </div>
-                <div class="flex items-center space-x-4 font-medium text-slate-400">
+                <div class="flex items-center space-x-3 font-medium text-slate-400">
                     <a href="#" class="hover:text-white transition-colors">Privacy</a>
                     <span>•</span>
                     <a href="#" class="hover:text-white transition-colors">Terms</a>
@@ -1249,7 +1246,7 @@
                     <span>•</span>
                     
                     <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
-                            class="ml-3 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 hover:bg-white/15 text-slate-300 hover:text-white transition-all flex items-center space-x-1" 
+                            class="ml-2 px-2 py-0.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/15 text-slate-300 hover:text-white transition-all flex items-center space-x-1" 
                             title="Scroll to Top">
                         <span>↑</span>
                         <span class="text-[10px] uppercase font-bold tracking-wider">Top</span>

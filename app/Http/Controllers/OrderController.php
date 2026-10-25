@@ -117,6 +117,7 @@ class OrderController extends Controller
                         'leader_user_id' => $user->id,
                         'group_code' => 'GRP-' . strtoupper(Str::random(6)),
                         'required_members' => $targetUnits,
+                        'discount_tiers' => $product->discount_tiers,
                         'min_quota_to_ship' => $product->min_quota_to_ship,
                         'max_buyers_limit' => $product->max_buyers_limit,
                         'current_members' => $quantity, // Unit/Quantity-based quota

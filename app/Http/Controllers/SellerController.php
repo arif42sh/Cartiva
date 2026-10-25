@@ -239,6 +239,29 @@ class SellerController extends Controller
             $imageUrl = asset('storage/' . $path);
         }
 
+        // Parse & sanitize custom tiered discounts
+        $discountTiers = [];
+        if ($request->has('discount_tiers') && is_array($request->discount_tiers)) {
+            foreach ($request->discount_tiers as $tier) {
+                $m = isset($tier['min_members']) ? (int) $tier['min_members'] : 0;
+                $d = isset($tier['discount_percent']) ? (float) $tier['discount_percent'] : 0;
+                if ($m >= 2 && $d > 0 && $d < 100 && $m < $validated['group_size_required']) {
+                    $discountTiers[$m] = [
+                        'min_members' => $m,
+                        'discount_percent' => $d,
+                    ];
+                }
+            }
+            ksort($discountTiers);
+            $discountTiers = array_values($discountTiers);
+        }
+
+        // Auto-assign min_quota_to_ship to lowest tier if not explicitly set
+        $minQuotaToShip = $validated['min_quota_to_ship'] ?? null;
+        if (empty($minQuotaToShip) && !empty($discountTiers)) {
+            $minQuotaToShip = $discountTiers[0]['min_members'];
+        }
+
         $slug = Str::slug($validated['title']) . '-' . Str::random(5);
 
         $product = Product::create([
@@ -253,7 +276,8 @@ class SellerController extends Controller
             'tier2_group_price' => $validated['tier2_group_price'] ?? null,
             'tier3_group_price' => $validated['tier3_group_price'] ?? null,
             'group_size_required' => $validated['group_size_required'],
-            'min_quota_to_ship' => $validated['min_quota_to_ship'] ?? null,
+            'discount_tiers' => !empty($discountTiers) ? $discountTiers : null,
+            'min_quota_to_ship' => $minQuotaToShip,
             'max_buyers_limit' => $validated['max_buyers_limit'] ?? null,
             'group_duration_hours' => $validated['group_duration_hours'],
             'stock' => $validated['stock'],
@@ -271,7 +295,8 @@ class SellerController extends Controller
             'leader_user_id' => null,
             'group_code' => 'GRP-' . strtoupper(Str::random(6)),
             'required_members' => $product->group_size_required ?: 2,
-            'min_quota_to_ship' => $product->min_quota_to_ship,
+            'discount_tiers' => !empty($discountTiers) ? $discountTiers : null,
+            'min_quota_to_ship' => $minQuotaToShip,
             'max_buyers_limit' => $product->max_buyers_limit,
             'current_members' => 0,
             'status' => 'active',
@@ -365,6 +390,29 @@ class SellerController extends Controller
             $imageUrl = $validated['image_url'];
         }
 
+        // Parse & sanitize custom tiered discounts
+        $discountTiers = [];
+        if ($request->has('discount_tiers') && is_array($request->discount_tiers)) {
+            foreach ($request->discount_tiers as $tier) {
+                $m = isset($tier['min_members']) ? (int) $tier['min_members'] : 0;
+                $d = isset($tier['discount_percent']) ? (float) $tier['discount_percent'] : 0;
+                if ($m >= 2 && $d > 0 && $d < 100 && $m < $validated['group_size_required']) {
+                    $discountTiers[$m] = [
+                        'min_members' => $m,
+                        'discount_percent' => $d,
+                    ];
+                }
+            }
+            ksort($discountTiers);
+            $discountTiers = array_values($discountTiers);
+        }
+
+        // Auto-assign min_quota_to_ship to lowest tier if not explicitly set
+        $minQuotaToShip = $validated['min_quota_to_ship'] ?? null;
+        if (empty($minQuotaToShip) && !empty($discountTiers)) {
+            $minQuotaToShip = $discountTiers[0]['min_members'];
+        }
+
         $product->update([
             'category_id' => $validated['category_id'],
             'title' => $validated['title'],
@@ -375,7 +423,8 @@ class SellerController extends Controller
             'tier2_group_price' => $validated['tier2_group_price'] ?? null,
             'tier3_group_price' => $validated['tier3_group_price'] ?? null,
             'group_size_required' => $validated['group_size_required'],
-            'min_quota_to_ship' => $validated['min_quota_to_ship'] ?? null,
+            'discount_tiers' => !empty($discountTiers) ? $discountTiers : null,
+            'min_quota_to_ship' => $minQuotaToShip,
             'max_buyers_limit' => $validated['max_buyers_limit'] ?? null,
             'group_duration_hours' => $validated['group_duration_hours'],
             'stock' => $validated['stock'],

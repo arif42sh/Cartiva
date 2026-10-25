@@ -240,7 +240,7 @@
             </div>
 
             <div class="mt-6 pt-5 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
-                <span>Cartiva Merchant v2.0</span>
+                <span>TAORB TEAM v2.0</span>
                 <span class="text-[#84cc16] font-bold">24/7 Seller Support</span>
             </div>
         </div>

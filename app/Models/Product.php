@@ -24,6 +24,7 @@ class Product extends Model
         'tier2_group_price',
         'tier3_group_price',
         'group_size_required',
+        'discount_tiers',
         'min_quota_to_ship',
         'max_buyers_limit',
         'group_duration_hours',
@@ -41,6 +42,7 @@ class Product extends Model
     {
         return [
             'gallery' => 'array',
+            'discount_tiers' => 'array',
             'single_price' => 'decimal:2',
             'group_price' => 'decimal:2',
             'tier2_group_price' => 'decimal:2',
@@ -97,6 +99,89 @@ class Product extends Model
     public function getSavingsAttribute(): float
     {
         return max(0, (float) ($this->single_price - $this->group_price));
+    }
+
+    /**
+     * Get all structured tiers (custom intermediate tiers + target tier)
+     * Sorted by min_members ascending.
+     */
+    public function getFormattedTiersAttribute(): array
+    {
+        $tiers = [];
+        $rawTiers = is_array($this->discount_tiers) ? $this->discount_tiers : [];
+
+        foreach ($rawTiers as $tier) {
+            $members = (int) ($tier['min_members'] ?? 0);
+            $discountPct = (float) ($tier['discount_percent'] ?? 0);
+
+            if ($members > 0 && $discountPct > 0) {
+                $calcPrice = round((float) $this->single_price * (1 - ($discountPct / 100)), 2);
+                $tiers[$members] = [
+                    'min_members' => $members,
+                    'discount_percent' => $discountPct,
+                    'price' => $calcPrice,
+                    'savings' => max(0, round((float) $this->single_price - $calcPrice, 2)),
+                    'is_target' => false,
+                ];
+            }
+        }
+
+        // Include Target Group Tier
+        $targetMembers = (int) $this->group_size_required;
+        $targetDiscount = (float) $this->discount_percent;
+        $targetPrice = (float) $this->group_price;
+
+        $tiers[$targetMembers] = [
+            'min_members' => $targetMembers,
+            'discount_percent' => $targetDiscount,
+            'price' => $targetPrice,
+            'savings' => max(0, round((float) $this->single_price - $targetPrice, 2)),
+            'is_target' => true,
+        ];
+
+        ksort($tiers);
+        return array_values($tiers);
+    }
+
+    /**
+     * Get lowest tier minimum member requirement (Safe threshold)
+     */
+    public function getLowestTierMinMembers(): int
+    {
+        $tiers = $this->formatted_tiers;
+        if (!empty($tiers)) {
+            return (int) $tiers[0]['min_members'];
+        }
+        return (int) ($this->min_quota_to_ship ?: $this->group_size_required);
+    }
+
+    /**
+     * Find active tier achieved by current member count
+     */
+    public function getTierForMemberCount(int $members): ?array
+    {
+        $tiers = $this->formatted_tiers;
+        $achieved = null;
+
+        foreach ($tiers as $tier) {
+            if ($members >= $tier['min_members']) {
+                $achieved = $tier;
+            }
+        }
+
+        return $achieved;
+    }
+
+    /**
+     * Calculate price for given member count based on unlocked tier
+     */
+    public function calculatePriceForMemberCount(int $members): float
+    {
+        $tier = $this->getTierForMemberCount($members);
+        if ($tier) {
+            return (float) $tier['price'];
+        }
+        return (float) $this->single_price;
     }
 
     /**

@@ -16,6 +16,9 @@ class GroupBuySession extends Model
         'leader_user_id',
         'group_code',
         'required_members',
+        'discount_tiers',
+        'achieved_tier_members',
+        'achieved_discount_percent',
         'min_quota_to_ship',
         'max_buyers_limit',
         'current_members',
@@ -27,6 +30,9 @@ class GroupBuySession extends Model
     {
         return [
             'expires_at' => 'datetime',
+            'discount_tiers' => 'array',
+            'achieved_tier_members' => 'integer',
+            'achieved_discount_percent' => 'decimal:2',
             'required_members' => 'integer',
             'min_quota_to_ship' => 'integer',
             'max_buyers_limit' => 'integer',
@@ -64,8 +70,50 @@ class GroupBuySession extends Model
         return $this->status === 'completed' || $this->current_members >= $this->required_members;
     }
 
+    /**
+     * Get all structured tiers for this session
+     */
+    public function getAllTiersAttribute(): array
+    {
+        if ($this->product) {
+            return $this->product->formatted_tiers;
+        }
+        return [];
+    }
+
+    /**
+     * Get tier currently achieved by current member count
+     */
+    public function getCurrentAchievedTierAttribute(): ?array
+    {
+        if ($this->product) {
+            return $this->product->getTierForMemberCount($this->current_members);
+        }
+        return null;
+    }
+
+    /**
+     * Get next upcoming tier to motivate buyers to invite more
+     */
+    public function getNextTierAttribute(): ?array
+    {
+        $tiers = $this->all_tiers;
+        foreach ($tiers as $tier) {
+            if ($this->current_members < $tier['min_members']) {
+                $tier['members_needed'] = max(1, $tier['min_members'] - $this->current_members);
+                return $tier;
+            }
+        }
+        return null;
+    }
+
     public function getEffectiveMinQuotaAttribute(): int
     {
+        $tiers = $this->all_tiers;
+        if (!empty($tiers)) {
+            // Lowest milestone guarantees no dismissal!
+            return (int) $tiers[0]['min_members'];
+        }
         if ($this->min_quota_to_ship && $this->min_quota_to_ship > 0) {
             return (int) $this->min_quota_to_ship;
         }
@@ -126,8 +174,16 @@ class GroupBuySession extends Model
 
             // Tiered Quota / Soft Threshold Check:
             if ($session->current_members >= $minQuota && $session->current_members > 0) {
-                // SUCCESS: Soft threshold met! Mark as completed and fulfill orders.
-                $session->update(['status' => 'completed']);
+                // SUCCESS: Soft threshold / Tier milestone met! Mark as completed with achieved tier!
+                $achievedTier = $session->current_achieved_tier;
+                $achievedMembers = $achievedTier['min_members'] ?? $session->current_members;
+                $achievedDiscount = $achievedTier['discount_percent'] ?? ($session->product->discount_percent ?? 0);
+
+                $session->update([
+                    'status' => 'completed',
+                    'achieved_tier_members' => $achievedMembers,
+                    'achieved_discount_percent' => $achievedDiscount,
+                ]);
 
                 Order::where('group_buy_session_id', $session->id)
                     ->where('order_status', 'pending_group')

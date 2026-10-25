@@ -132,6 +132,11 @@
                         <div>
                             <span class="text-[10px] font-black uppercase text-teal-800 block">Team Buy Association</span>
                             <span class="text-xs font-bold text-teal-950">Circle Code: <strong class="font-mono">{{ $order->groupSession->group_code }}</strong></span>
+                            @if($order->groupSession->achieved_tier_members)
+                                <span class="text-[11px] text-purple-800 font-extrabold block mt-0.5">
+                                    🎯 Unlocked Tier: {{ $order->groupSession->achieved_tier_members }}+ Members (-{{ $order->groupSession->achieved_discount_percent }}% OFF)
+                                </span>
+                            @endif
                         </div>
                         <a href="{{ route('seller.groups.show', $order->groupSession) }}" class="px-3 py-1.5 rounded-xl bg-teal-600 text-white font-bold text-xs hover:bg-teal-700 transition-colors">
                             Inspect Circle &rarr;

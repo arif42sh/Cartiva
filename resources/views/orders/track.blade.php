@@ -132,7 +132,7 @@
                                 </span>
                             @elseif($status === 'delivered')
                                 <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-500/20 text-green-300 border border-green-500/30">
-                                    ✅ Delivered Successfully
+                                    Delivered Successfully
                                 </span>
                             @elseif($status === 'cancelled')
                                 <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">

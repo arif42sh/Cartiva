@@ -69,6 +69,40 @@
                     </div>
                 </div>
 
+                @php
+                    $groupTiers = $session->all_tiers;
+                    $achievedTier = $session->current_achieved_tier;
+                @endphp
+                @if(!empty($groupTiers) && count($groupTiers) > 1)
+                    <div class="mt-3 p-3 rounded-2xl bg-purple-50/80 border border-purple-200/90 space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-extrabold text-purple-950 flex items-center space-x-1.5">
+                                <span>🎯</span>
+                                <span>Tiered Milestones:</span>
+                            </span>
+                            @if($achievedTier)
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-600 text-white">
+                                    Unlocked: {{ $achievedTier['min_members'] }}+ Buyers (-{{ $achievedTier['discount_percent'] }}%)
+                                </span>
+                            @else
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-200 text-amber-900">
+                                    Min {{ $session->effective_min_quota }} Buyers to Ship
+                                </span>
+                            @endif
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            @foreach($groupTiers as $gt)
+                                @php
+                                    $isReached = $session->current_members >= $gt['min_members'];
+                                @endphp
+                                <span class="px-2 py-1 rounded-lg text-[10px] font-bold {{ $isReached ? 'bg-purple-600 text-white shadow-2xs' : 'bg-white border border-purple-200 text-purple-800' }}">
+                                    {{ $gt['min_members'] }}+ Buyers: -{{ $gt['discount_percent'] }}% (৳{{ number_format($gt['price']) }}) {{ $isReached ? '✓' : '' }}
+                                </span>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
                 <div class="mt-4 pt-3 border-t border-slate-100 flex items-center space-x-4 text-xs text-slate-500 font-medium">
                     <span>Stock: <strong class="text-slate-800">{{ $session->product->stock }}</strong> units</span>
                     <span>•</span>

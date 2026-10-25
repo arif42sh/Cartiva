@@ -37,7 +37,7 @@
             <div class="space-y-1">
                 <div class="flex items-center space-x-2">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-[#53a318]">
-                        🔍 সার্চ ফলাফল / Search Results
+                        🔍Search Results
                     </span>
                     <span class="text-xs text-slate-400">•</span>
                     <span class="text-xs font-bold text-slate-600">
@@ -52,12 +52,12 @@
             <div class="flex items-center space-x-2 shrink-0">
                 <a href="{{ route('home') }}" 
                    class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 text-xs font-bold transition-all border border-slate-200/80 cursor-pointer">
-                    <span>✕ ফিল্টার মুছুন (Clear)</span>
+                    <span>✕ Clear</span>
                 </a>
                 <a href="{{ route('categories.index', ['q' => request('q')]) }}" 
                    class="inline-flex items-center space-x-1 px-4 py-2 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white text-xs font-bold transition-all shadow-xs cursor-pointer">
-                    <span>ক্যাটালগ ফিল্টার</span>
-                    <span>&rarr;</span>
+                    <span>Filter</span>
+                    
                 </a>
             </div>
         </div>
@@ -74,7 +74,7 @@
         <div class="space-y-3 p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80">
             <div class="flex items-center justify-between">
                 <span class="text-xs font-black text-amber-900 flex items-center gap-1.5">
-                    <span>👥 সরাসরি চলমান গ্রুপ পুল (Active Group Pools)</span>
+                    <span>👥 Active Group Pools</span>
                     <span class="px-2 py-0.5 rounded-full bg-amber-200 text-amber-950 text-[10px] font-bold">{{ $matchingActiveGroups->count() }} টি লাইভ</span>
                 </span>
             </div>
@@ -414,7 +414,7 @@
                             </span>
                             <!-- Verified Tag -->
                             <span class="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-md bg-white/95 backdrop-blur-xs text-slate-700 font-bold text-[10px] border border-slate-200 shadow-2xs z-10">
-                                ⚡ Verified Deal
+                                 Verified Deal
                             </span>
 
                             <img src="{{ $heroFlashProduct->image_url ?? ($heroFlashProduct->image ? asset('storage/' . $heroFlashProduct->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80') }}" 
