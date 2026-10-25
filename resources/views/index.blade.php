@@ -1124,81 +1124,441 @@
 
 
     <!-- ========================================================
-         3. "HOW IT WORKS" (VISUAL 4-STEP ONBOARDING GUIDE)
-         Theme: Clean Elevated Cards with Gradient Icons
+         3. "HOW IT WORKS" (CONNECTED CIRCULAR ENERGY PIPELINE)
+         Concept 2: Interactive SVG Circuit Beam, Circular Progress HUD,
+                    Chain Reaction Flow & Real-time Energy Particles
          ======================================================== -->
-    <section id="how-it-works" class="space-y-6">
-        <div class="text-center max-w-2xl mx-auto space-y-2">
-            <span class="text-[11px] font-black uppercase tracking-widest text-[#53a318] bg-green-100 px-3 py-1 rounded-full inline-block">
-                SIMPLE 4-STEP ONBOARDING
-            </span>
-            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                গ্রুপ বায় কিভাবে কাজ করে? (How Group Buying Works)
-            </h2>
-            <p class="text-xs sm:text-sm text-slate-500">
-                একসাথে কেনাকাটা করে পাইকারি মূল্য আনলক করার সহজ ও নিরাপদ ধাপসমূহ
-            </p>
-        </div>
+    <section id="how-it-works" class="space-y-8 py-6 select-none"
+             x-data="{
+                activeStep: 1,
+                maxUnlocked: 2,
+                autoPlayTimer: null,
+                isHovered: false,
+                stepInfo: [
+                    { num: 1, pct: 25, title: 'ডিল ও পণ্য বাছাই' },
+                    { num: 2, pct: 50, title: 'গ্রুপে জয়েন বা গঠন' },
+                    { num: 3, pct: 75, title: 'ইনভাইট ও শেয়ার' },
+                    { num: 4, pct: 100, title: 'পাইকারি ডেলিভারি' }
+                ],
+                hoverStep(step) {
+                    this.activeStep = step;
+                    this.maxUnlocked = Math.max(this.maxUnlocked, Math.min(step + 1, 4));
+                    this.isHovered = true;
+                    this.clearTimer();
+                },
+                leaveStep() {
+                    this.isHovered = false;
+                    this.resetTimer();
+                },
+                startAutoPlay() {
+                    this.clearTimer();
+                    this.autoPlayTimer = setInterval(() => {
+                        if (!this.isHovered) {
+                            this.activeStep = (this.activeStep % 4) + 1;
+                            this.maxUnlocked = Math.max(this.maxUnlocked, Math.min(this.activeStep + 1, 4));
+                        }
+                    }, 4200);
+                },
+                clearTimer() {
+                    if (this.autoPlayTimer) {
+                        clearInterval(this.autoPlayTimer);
+                        this.autoPlayTimer = null;
+                    }
+                },
+                resetTimer() {
+                    this.clearTimer();
+                    setTimeout(() => {
+                        if (!this.isHovered) this.startAutoPlay();
+                    }, 2500);
+                }
+             }"
+             x-init="startAutoPlay()">
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
+        <!-- Section Header with Dynamic Circular Progress HUD -->
+        <div class="flex flex-col items-center text-center max-w-3xl mx-auto space-y-3 px-4">
             
-            <!-- Step 1 -->
-            <div class="relative bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 space-y-4 group">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-100 to-green-100 text-[#53a318] flex items-center justify-center text-2xl font-black group-hover:scale-110 transition-transform shadow-xs">
-                    🏷️
+            <!-- Rotating Circular Progress Bar HUD Pill -->
+            <div class="inline-flex items-center space-x-3 px-4 py-2 rounded-full bg-white border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-300">
+                <!-- SVG Circular Rotating Progress Gauge -->
+                <div class="relative w-10 h-10 flex items-center justify-center shrink-0">
+                    <svg class="w-10 h-10 -rotate-90 transform" viewBox="0 0 36 36">
+                        <!-- Track Background -->
+                        <path class="text-slate-100" stroke-width="3.5" stroke="currentColor" fill="none"
+                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <!-- Animated Progress Stroke -->
+                        <path class="transition-all duration-700 ease-out" 
+                              :class="{
+                                  'text-[#53a318]': activeStep === 1,
+                                  'text-amber-500': activeStep === 2,
+                                  'text-sky-500': activeStep === 3,
+                                  'text-purple-600': activeStep === 4
+                              }"
+                              stroke-width="3.8" 
+                              stroke-linecap="round"
+                              stroke="currentColor" 
+                              fill="none"
+                              :stroke-dasharray="(activeStep * 25) + ', 100'"
+                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    </svg>
+                    <!-- Percentage text in center -->
+                    <span class="absolute font-black font-mono text-[11px] text-slate-800" 
+                          x-text="(activeStep * 25) + '%'"></span>
                 </div>
-                <div class="space-y-1.5">
-                    <span class="text-[10px] font-black text-[#53a318] uppercase tracking-wider block">STEP 01</span>
-                    <h3 class="text-base font-black text-slate-900">Choose a Deal</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        ক্যাটালগ থেকে বাল্ক টিয়ার অফার ও পছন্দের পণ্যটি বাছাই করুন। একলা কেনার চেয়ে টিম প্রাইস অনেক কম।
-                    </p>
+
+                <!-- Active Step Description Label -->
+                <div class="text-left pr-1">
+                    <div class="flex items-center space-x-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full"
+                              :class="{
+                                  'bg-[#53a318]': activeStep === 1,
+                                  'bg-amber-500': activeStep === 2,
+                                  'bg-sky-500': activeStep === 3,
+                                  'bg-purple-600': activeStep === 4
+                              }"></span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400"
+                              x-text="'ধাপ ০' + activeStep + ' / ০৪'">
+                        </span>
+                    </div>
+                    <span class="text-xs sm:text-sm font-bold text-slate-900 block leading-tight" 
+                          x-text="stepInfo[activeStep - 1].title">
+                    </span>
                 </div>
             </div>
 
-            <!-- Step 2 -->
-            <div class="relative bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 space-y-4 group">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-100 to-orange-100 text-amber-700 flex items-center justify-center text-2xl font-black group-hover:scale-110 transition-transform shadow-xs">
-                    👥
-                </div>
-                <div class="space-y-1.5">
-                    <span class="text-[10px] font-black text-amber-700 uppercase tracking-wider block">STEP 02</span>
-                    <h3 class="text-base font-black text-slate-900">Form or Join a Group</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        চলমান কোনো ওপেন পুলে যোগ দিয়ে স্লট বুক করুন অথবা নিজে নতুন গ্রুপ খুলে আপনার বন্ধুদের জন্য রুম তৈরি করুন।
-                    </p>
-                </div>
-            </div>
-
-            <!-- Step 3 -->
-            <div class="relative bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 space-y-4 group">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-100 to-blue-100 text-cyan-700 flex items-center justify-center text-2xl font-black group-hover:scale-110 transition-transform shadow-xs">
-                    📲
-                </div>
-                <div class="space-y-1.5">
-                    <span class="text-[10px] font-black text-cyan-700 uppercase tracking-wider block">STEP 03</span>
-                    <h3 class="text-base font-black text-slate-900">Share & Invite</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        হোয়াটসঅ্যাপ, মেসেঞ্জার বা বন্ধুদের সাথে গ্রুপ কোড শেয়ার করুন যাতে সময় শেষ হওয়ার আগেই লক্ষ্য পূরণ হয়।
-                    </p>
-                </div>
-            </div>
-
-            <!-- Step 4 -->
-            <div class="relative bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 space-y-4 group">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-100 to-indigo-100 text-purple-700 flex items-center justify-center text-2xl font-black group-hover:scale-110 transition-transform shadow-xs">
-                    📦
-                </div>
-                <div class="space-y-1.5">
-                    <span class="text-[10px] font-black text-purple-700 uppercase tracking-wider block">STEP 04</span>
-                    <h3 class="text-base font-black text-slate-900">Unlock & Ship</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        টার্গেট মেম্বার পূর্ণ হলেই সরাসরি পাইকারি রেটে সবার ঠিকানায় ডেলিভারি শুরু হবে। ব্যর্থ হলে ১০০% অটো-রিফান্ড!
-                    </p>
-                </div>
+            <!-- Main Heading & Subtitle -->
+            <div class="space-y-1.5 pt-1">
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">
+                    Cartiva কিভাবে কাজ করে?
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
+                    ৪টি সহজ ধাপে যৌথ কেনাকাটার মাধ্যমে পাইকারি সাশ্রয় উপভোগ করুন।
+                </p>
             </div>
 
         </div>
+
+        <!-- Connected Circular Energy Pipeline Container -->
+        <div class="relative pt-6 pb-2">
+            
+            <!-- Glowing Circuit Line (SVG Beam behind the circles on Desktop & Tablet) -->
+            <div class="hidden lg:block absolute top-[54px] left-[12.5%] right-[12.5%] h-6 z-0 pointer-events-none">
+                <svg class="w-full h-8 overflow-visible" preserveAspectRatio="none" viewBox="0 0 1000 24">
+                    <defs>
+                        <!-- Glow Filters -->
+                        <filter id="circuitGlow1" x="-20%" y="-40%" width="140%" height="180%">
+                            <feGaussianBlur stdDeviation="3.5" result="blur" />
+                            <feMerge>
+                                <feMergeNode in="blur" />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+                        <!-- Gradients for the 3 connecting segments -->
+                        <linearGradient id="beamGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#53a318" />
+                            <stop offset="100%" stop-color="#f59e0b" />
+                        </linearGradient>
+                        <linearGradient id="beamGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#f59e0b" />
+                            <stop offset="100%" stop-color="#0284c7" />
+                        </linearGradient>
+                        <linearGradient id="beamGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#0284c7" />
+                            <stop offset="100%" stop-color="#7c3aed" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Segment 1 -> 2 (0 to 333) -->
+                    <line x1="0" y1="12" x2="333" y2="12" stroke="#e2e8f0" stroke-width="4" stroke-dasharray="6 6" />
+                    <line x1="0" y1="12" x2="333" y2="12" stroke="url(#beamGrad1)" stroke-width="4.5" stroke-linecap="round" filter="url(#circuitGlow1)"
+                          class="transition-all duration-700 ease-out"
+                          :stroke-dasharray="activeStep >= 1 ? '333' : '0'" stroke-dashoffset="0" />
+
+                    <!-- Segment 2 -> 3 (333 to 666) -->
+                    <line x1="333" y1="12" x2="666" y2="12" stroke="#e2e8f0" stroke-width="4" stroke-dasharray="6 6" />
+                    <line x1="333" y1="12" x2="666" y2="12" stroke="url(#beamGrad2)" stroke-width="4.5" stroke-linecap="round" filter="url(#circuitGlow1)"
+                          class="transition-all duration-700 ease-out"
+                          :stroke-dasharray="activeStep >= 2 ? '333' : '0'" stroke-dashoffset="0" />
+
+                    <!-- Segment 3 -> 4 (666 to 1000) -->
+                    <line x1="666" y1="12" x2="1000" y2="12" stroke="#e2e8f0" stroke-width="4" stroke-dasharray="6 6" />
+                    <line x1="666" y1="12" x2="1000" y2="12" stroke="url(#beamGrad3)" stroke-width="4.5" stroke-linecap="round" filter="url(#circuitGlow1)"
+                          class="transition-all duration-700 ease-out"
+                          :stroke-dasharray="activeStep >= 3 ? '333' : '0'" stroke-dashoffset="0" />
+
+                    <!-- Traveling Light Photons (Native Smooth SVG Particle Animation) -->
+                    <!-- Particle 1 -> 2 -->
+                    <g :class="activeStep === 1 ? 'opacity-100' : 'opacity-0'" class="transition-opacity duration-300">
+                        <circle r="6" fill="#53a318" filter="url(#circuitGlow1)">
+                            <animate attributeName="cx" from="0" to="333" dur="1.3s" repeatCount="indefinite" />
+                            <animate attributeName="cy" values="12;12" dur="1.3s" repeatCount="indefinite" />
+                            <animate attributeName="opacity" values="0.2;1;0.2" dur="1.3s" repeatCount="indefinite" />
+                        </circle>
+                        <circle r="3" fill="#ffffff">
+                            <animate attributeName="cx" from="0" to="333" dur="1.3s" repeatCount="indefinite" />
+                            <animate attributeName="cy" values="12;12" dur="1.3s" repeatCount="indefinite" />
+                        </circle>
+                    </g>
+
+                    <!-- Particle 2 -> 3 -->
+                    <g :class="activeStep === 2 ? 'opacity-100' : 'opacity-0'" class="transition-opacity duration-300">
+                        <circle r="6" fill="#f59e0b" filter="url(#circuitGlow1)">
+                            <animate attributeName="cx" from="333" to="666" dur="1.3s" repeatCount="indefinite" />
+                            <animate attributeName="cy" values="12;12" dur="1.3s" repeatCount="indefinite" />
+                            <animate attributeName="opacity" values="0.2;1;0.2" dur="1.3s" repeatCount="indefinite" />
+                        </circle>
+                        <circle r="3" fill="#ffffff">
+                            <animate attributeName="cx" from="333" to="666" dur="1.3s" repeatCount="indefinite" />
+                            <animate attributeName="cy" values="12;12" dur="1.3s" repeatCount="indefinite" />
+                        </circle>
+                    </g>
+
+                    <!-- Particle 3 -> 4 -->
+                    <g :class="activeStep === 3 ? 'opacity-100' : 'opacity-0'" class="transition-opacity duration-300">
+                        <circle r="6" fill="#0284c7" filter="url(#circuitGlow1)">
+                            <animate attributeName="cx" from="666" to="1000" dur="1.3s" repeatCount="indefinite" />
+                            <animate attributeName="cy" values="12;12" dur="1.3s" repeatCount="indefinite" />
+                            <animate attributeName="opacity" values="0.2;1;0.2" dur="1.3s" repeatCount="indefinite" />
+                        </circle>
+                        <circle r="3" fill="#ffffff">
+                            <animate attributeName="cx" from="666" to="1000" dur="1.3s" repeatCount="indefinite" />
+                            <animate attributeName="cy" values="12;12" dur="1.3s" repeatCount="indefinite" />
+                        </circle>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- 4 Connected Circular Step Stages -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7 relative z-10">
+                
+                <!-- ================= STEP 01: CHOOSE A DEAL ================= -->
+                <div @mouseenter="hoverStep(1)" 
+                     @mouseleave="leaveStep()"
+                     @click="hoverStep(1)"
+                     class="flex flex-col items-center cursor-pointer group transition-all duration-300">
+                    
+                    <!-- Circular Node Sphere -->
+                    <div class="relative w-22 h-22 sm:w-24 sm:h-24 rounded-full flex items-center justify-center transition-all duration-500 ease-out shadow-lg"
+                         :class="{
+                             'scale-115 -translate-y-2 ring-4 ring-[#53a318]/50 ring-offset-4 ring-offset-white bg-gradient-to-tr from-[#53a318] to-emerald-400 text-white shadow-emerald-500/35': activeStep === 1,
+                             'ring-2 ring-emerald-300 bg-emerald-50 text-[#53a318] shadow-emerald-500/10': activeStep > 1,
+                             'bg-white border-2 border-slate-200 text-slate-500 hover:border-slate-300': activeStep < 1
+                         }">
+                        
+                        <!-- Step Number Badge (Pill at Top) -->
+                        <span class="absolute -top-2 px-2.5 py-0.5 rounded-full text-[9px] font-black tracking-wider uppercase transition-colors shadow-xs"
+                              :class="{
+                                  'bg-white text-emerald-900 border border-emerald-200': activeStep === 1,
+                                  'bg-emerald-600 text-white': activeStep > 1,
+                                  'bg-slate-200 text-slate-700': activeStep < 1
+                              }">
+                            01
+                        </span>
+
+                        <!-- Main Icon -->
+                        <span class="text-3xl sm:text-4xl transition-transform duration-300 group-hover:scale-110">🏷️</span>
+
+                        <!-- Unlocked Checkmark (When finished) -->
+                        <template x-if="activeStep > 1">
+                            <span class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold ring-2 ring-white shadow-xs">
+                                ✓
+                            </span>
+                        </template>
+                    </div>
+
+                    <!-- Step Content Card (Classic, Clean & Elegant) -->
+                    <div class="w-full mt-5 rounded-2xl p-5 border transition-all duration-500 text-center space-y-2"
+                         :class="{
+                             'bg-white border-2 border-[#53a318] shadow-xl shadow-emerald-600/10 -translate-y-1': activeStep === 1,
+                             'bg-white/80 border-slate-200/80 shadow-2xs hover:border-slate-300': activeStep !== 1
+                         }">
+                        <span class="inline-block text-[11px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full"
+                              :class="activeStep === 1 ? 'bg-emerald-50 text-[#53a318]' : 'bg-slate-100 text-slate-500'">
+                            ধাপ ০১
+                        </span>
+                        <h3 class="text-base font-black text-slate-900 transition-colors"
+                            :class="activeStep === 1 ? 'text-[#53a318]' : ''">
+                            ডিল ও পণ্য বাছাই
+                        </h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            পছন্দের পণ্যটি নির্বাচন করে টিম ডিসকাউন্ট ডিল বেছে নিন।
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- ================= STEP 02: FORM OR JOIN A GROUP ================= -->
+                <div @mouseenter="hoverStep(2)" 
+                     @mouseleave="leaveStep()"
+                     @click="hoverStep(2)"
+                     class="flex flex-col items-center cursor-pointer group transition-all duration-300">
+                    
+                    <!-- Circular Node Sphere -->
+                    <div class="relative w-22 h-22 sm:w-24 sm:h-24 rounded-full flex items-center justify-center transition-all duration-500 ease-out shadow-lg"
+                         :class="{
+                             'scale-115 -translate-y-2 ring-4 ring-amber-500/50 ring-offset-4 ring-offset-white bg-gradient-to-tr from-amber-500 to-orange-400 text-white shadow-amber-500/35': activeStep === 2,
+                             'ring-2 ring-amber-300 bg-amber-50 text-amber-600 shadow-amber-500/10': activeStep > 2,
+                             'ring-2 ring-amber-200/80 bg-amber-50/40 text-amber-700 animate-pulse': maxUnlocked >= 2 && activeStep < 2,
+                             'bg-white border-2 border-slate-200 text-slate-400': maxUnlocked < 2
+                         }">
+                        
+                        <!-- Step Number Badge -->
+                        <span class="absolute -top-2 px-2.5 py-0.5 rounded-full text-[9px] font-black tracking-wider uppercase transition-colors shadow-xs"
+                              :class="{
+                                  'bg-white text-amber-900 border border-amber-200': activeStep === 2,
+                                  'bg-amber-600 text-white': activeStep > 2,
+                                  'bg-slate-200 text-slate-700': activeStep < 2
+                              }">
+                            02
+                        </span>
+
+                        <!-- Main Icon -->
+                        <span class="text-3xl sm:text-4xl transition-transform duration-300 group-hover:scale-110">👥</span>
+
+                        <!-- Unlocked Checkmark -->
+                        <template x-if="activeStep > 2">
+                            <span class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-bold ring-2 ring-white shadow-xs">
+                                ✓
+                            </span>
+                        </template>
+                    </div>
+
+                    <!-- Step Content Card (Classic, Clean & Elegant) -->
+                    <div class="w-full mt-5 rounded-2xl p-5 border transition-all duration-500 text-center space-y-2"
+                         :class="{
+                             'bg-white border-2 border-amber-500 shadow-xl shadow-amber-600/10 -translate-y-1': activeStep === 2,
+                             'bg-white/80 border-slate-200/80 shadow-2xs hover:border-slate-300': activeStep !== 2
+                         }">
+                        <span class="inline-block text-[11px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full"
+                              :class="activeStep === 2 ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-500'">
+                            ধাপ ০২
+                        </span>
+                        <h3 class="text-base font-black text-slate-900 transition-colors"
+                            :class="activeStep === 2 ? 'text-amber-600' : ''">
+                            গ্রুপে জয়েন বা গঠন
+                        </h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            চলমান কোনো পুলে যোগ দিন অথবা নিজের টিম গ্রুপ তৈরি করুন।
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- ================= STEP 03: SHARE & INVITE ================= -->
+                <div @mouseenter="hoverStep(3)" 
+                     @mouseleave="leaveStep()"
+                     @click="hoverStep(3)"
+                     class="flex flex-col items-center cursor-pointer group transition-all duration-300">
+                    
+                    <!-- Circular Node Sphere -->
+                    <div class="relative w-22 h-22 sm:w-24 sm:h-24 rounded-full flex items-center justify-center transition-all duration-500 ease-out shadow-lg"
+                         :class="{
+                             'scale-115 -translate-y-2 ring-4 ring-sky-500/50 ring-offset-4 ring-offset-white bg-gradient-to-tr from-sky-500 to-blue-500 text-white shadow-sky-500/35': activeStep === 3,
+                             'ring-2 ring-sky-300 bg-sky-50 text-sky-600 shadow-sky-500/10': activeStep > 3,
+                             'ring-2 ring-sky-200/80 bg-sky-50/40 text-sky-700 animate-pulse': maxUnlocked >= 3 && activeStep < 3,
+                             'bg-white border-2 border-slate-200 text-slate-400': maxUnlocked < 3
+                         }">
+                        
+                        <!-- Step Number Badge -->
+                        <span class="absolute -top-2 px-2.5 py-0.5 rounded-full text-[9px] font-black tracking-wider uppercase transition-colors shadow-xs"
+                              :class="{
+                                  'bg-white text-sky-900 border border-sky-200': activeStep === 3,
+                                  'bg-sky-600 text-white': activeStep > 3,
+                                  'bg-slate-200 text-slate-700': activeStep < 3
+                              }">
+                            03
+                        </span>
+
+                        <!-- Main Icon -->
+                        <span class="text-3xl sm:text-4xl transition-transform duration-300 group-hover:scale-110">📲</span>
+
+                        <!-- Unlocked Checkmark -->
+                        <template x-if="activeStep > 3">
+                            <span class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-sky-500 text-white flex items-center justify-center text-xs font-bold ring-2 ring-white shadow-xs">
+                                ✓
+                            </span>
+                        </template>
+                    </div>
+
+                    <!-- Step Content Card (Classic, Clean & Elegant) -->
+                    <div class="w-full mt-5 rounded-2xl p-5 border transition-all duration-500 text-center space-y-2"
+                         :class="{
+                             'bg-white border-2 border-sky-500 shadow-xl shadow-sky-600/10 -translate-y-1': activeStep === 3,
+                             'bg-white/80 border-slate-200/80 shadow-2xs hover:border-slate-300': activeStep !== 3
+                         }">
+                        <span class="inline-block text-[11px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full"
+                              :class="activeStep === 3 ? 'bg-sky-50 text-sky-700' : 'bg-slate-100 text-slate-500'">
+                            ধাপ ০৩
+                        </span>
+                        <h3 class="text-base font-black text-slate-900 transition-colors"
+                            :class="activeStep === 3 ? 'text-sky-600' : ''">
+                            ইনভাইট ও শেয়ার
+                        </h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            বন্ধুদের সাথে লিঙ্ক শেয়ার করে দ্রুত গ্রুপের কোটা পূরণ করুন।
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- ================= STEP 04: UNLOCK & SHIP ================= -->
+                <div @mouseenter="hoverStep(4)" 
+                     @mouseleave="leaveStep()"
+                     @click="hoverStep(4)"
+                     class="flex flex-col items-center cursor-pointer group transition-all duration-300">
+                    
+                    <!-- Circular Node Sphere -->
+                    <div class="relative w-22 h-22 sm:w-24 sm:h-24 rounded-full flex items-center justify-center transition-all duration-500 ease-out shadow-lg"
+                         :class="{
+                             'scale-115 -translate-y-2 ring-4 ring-purple-500/50 ring-offset-4 ring-offset-white bg-gradient-to-tr from-purple-600 to-indigo-500 text-white shadow-purple-500/35': activeStep === 4,
+                             'ring-2 ring-purple-200/80 bg-purple-50/40 text-purple-700 animate-pulse': maxUnlocked >= 4 && activeStep < 4,
+                             'bg-white border-2 border-slate-200 text-slate-400': maxUnlocked < 4
+                         }">
+                        
+                        <!-- Step Number Badge -->
+                        <span class="absolute -top-2 px-2.5 py-0.5 rounded-full text-[9px] font-black tracking-wider uppercase transition-colors shadow-xs"
+                              :class="{
+                                  'bg-white text-purple-900 border border-purple-200': activeStep === 4,
+                                  'bg-slate-200 text-slate-700': activeStep < 4
+                              }">
+                            04
+                        </span>
+
+                        <!-- Main Icon -->
+                        <span class="text-3xl sm:text-4xl transition-transform duration-300 group-hover:scale-110">📦</span>
+
+                        <!-- Unlocked Celebration Badge -->
+                        <template x-if="activeStep === 4">
+                            <span class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs font-bold ring-2 ring-white shadow-xs animate-spin-slow">
+                                ⚡
+                            </span>
+                        </template>
+                    </div>
+
+                    <!-- Step Content Card (Classic, Clean & Elegant) -->
+                    <div class="w-full mt-5 rounded-2xl p-5 border transition-all duration-500 text-center space-y-2"
+                         :class="{
+                             'bg-white border-2 border-purple-600 shadow-xl shadow-purple-600/10 -translate-y-1': activeStep === 4,
+                             'bg-white/80 border-slate-200/80 shadow-2xs hover:border-slate-300': activeStep !== 4
+                         }">
+                        <span class="inline-block text-[11px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full"
+                              :class="activeStep === 4 ? 'bg-purple-50 text-purple-700' : 'bg-slate-100 text-slate-500'">
+                            ধাপ ০৪
+                        </span>
+                        <h3 class="text-base font-black text-slate-900 transition-colors"
+                            :class="activeStep === 4 ? 'text-purple-600' : ''">
+                            পাইকারি ডেলিভারি
+                        </h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            টার্গেট পূরণ হতেই সবার ঠিকানায় সরাসরি ডেলিভারি শুরু হবে।
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </section>
 
     <!-- ========================================================
