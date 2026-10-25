@@ -236,7 +236,7 @@
                                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 flex-1">
                                             <!-- Min Members -->
                                             <div>
-                                                <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Min Members (জন)</label>
+                                                <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Min Members</label>
                                                 <div class="relative">
                                                     <input type="number" :name="'discount_tiers[' + index + '][min_members]'" x-model="tier.min_members" min="2" :max="groupSize - 1" placeholder="e.g. 3" required
                                                            class="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-purple-500">
