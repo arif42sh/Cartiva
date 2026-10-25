@@ -24,7 +24,203 @@
             this.shareGroupTitle = title;
             this.shareModalOpen = true;
         }
-     }">    <!-- ========================================================
+     }">
+
+    @if(request()->filled('q'))
+    <!-- ========================================================
+         SEARCH RESULTS SECTION (PROMINENT RESULTS FOR QUERY)
+         ======================================================== -->
+    <section id="search-results" class="bg-white rounded-3xl border-2 border-[#53a318] shadow-xl p-5 sm:p-7 space-y-6 scroll-mt-24">
+        
+        <!-- Header Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+            <div class="space-y-1">
+                <div class="flex items-center space-x-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-[#53a318]">
+                        🔍 সার্চ ফলাফল / Search Results
+                    </span>
+                    <span class="text-xs text-slate-400">•</span>
+                    <span class="text-xs font-bold text-slate-600">
+                        {{ $products->total() }} টি পণ্য পাওয়া গেছে
+                    </span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                    “<span class="text-[#53a318]">{{ request('q') }}</span>” এর জন্য ফলাফল
+                </h2>
+            </div>
+
+            <div class="flex items-center space-x-2 shrink-0">
+                <a href="{{ route('home') }}" 
+                   class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 text-xs font-bold transition-all border border-slate-200/80 cursor-pointer">
+                    <span>✕ ফিল্টার মুছুন (Clear)</span>
+                </a>
+                <a href="{{ route('categories.index', ['q' => request('q')]) }}" 
+                   class="inline-flex items-center space-x-1 px-4 py-2 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white text-xs font-bold transition-all shadow-xs cursor-pointer">
+                    <span>ক্যাটালগ ফিল্টার</span>
+                    <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        @php
+            $matchingActiveGroups = isset($activeGroups) ? $activeGroups->filter(function($grp) {
+                $q = strtolower(request('q'));
+                return str_contains(strtolower($grp->group_code), $q) || ($grp->product && str_contains(strtolower($grp->product->title), $q));
+            }) : collect();
+        @endphp
+
+        @if($matchingActiveGroups->count() > 0)
+        <!-- Matching Active Group Rooms Strip -->
+        <div class="space-y-3 p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-black text-amber-900 flex items-center gap-1.5">
+                    <span>👥 সরাসরি চলমান গ্রুপ পুল (Active Group Pools)</span>
+                    <span class="px-2 py-0.5 rounded-full bg-amber-200 text-amber-950 text-[10px] font-bold">{{ $matchingActiveGroups->count() }} টি লাইভ</span>
+                </span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                @foreach($matchingActiveGroups->take(3) as $grp)
+                <div class="p-3 bg-white rounded-xl border border-amber-200 shadow-2xs flex items-center justify-between space-x-3">
+                    <div class="min-w-0 flex-1">
+                        <span class="font-mono font-black text-xs text-amber-900 block">{{ $grp->group_code }}</span>
+                        <h4 class="text-xs font-bold text-slate-800 truncate mt-0.5">{{ $grp->product ? $grp->product->title : '' }}</h4>
+                        <span class="text-[10px] font-semibold text-[#53a318] block mt-0.5">গ্রুপ মূল্য: ৳{{ number_format($grp->product ? $grp->product->group_price : 0) }}</span>
+                    </div>
+                    <a href="{{ route('group-buy.show', $grp->group_code) }}" 
+                       class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-black shrink-0 transition-colors">
+                        পুলে যোগ দিন
+                    </a>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        @if($products->count() > 0)
+        <!-- Products Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+            @foreach($products as $product)
+                @php
+                    $discountPct = $product->discount_percent;
+                    $saveAmount = $product->single_price - $product->group_price;
+                    $activeSession = $product->activeGroupSessions->first();
+                @endphp
+                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg hover:border-[#53a318] hover:-translate-y-1 transition-all duration-300 p-3.5 flex flex-col justify-between group">
+                    
+                    <div class="space-y-2">
+                        <!-- Thumbnail -->
+                        <a href="{{ route('products.show', $product->slug) }}" class="block relative w-full h-40 sm:h-44 rounded-xl overflow-hidden bg-slate-100 group/img shadow-inner">
+                            <img src="{{ $product->image_url }}" alt="{{ $product->title }}" class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300">
+                            @if($discountPct > 0)
+                            <span class="absolute top-2 left-2 px-2 py-0.5 rounded-lg text-[9px] font-black bg-rose-600 text-white shadow-2xs">
+                                -{{ $discountPct }}%
+                            </span>
+                            @endif
+                            @if($activeSession)
+                            <span class="absolute bottom-2 right-2 px-1.5 py-0.5 rounded text-[8px] font-mono font-bold bg-slate-950/80 text-emerald-300 backdrop-blur-xs">
+                                {{ $activeSession->group_code }}
+                            </span>
+                            @endif
+                        </a>
+
+                        <!-- Category & Title -->
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-[#53a318] block truncate">
+                                {{ $product->category ? $product->category->name : 'General' }}
+                            </span>
+                            <h3 class="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 leading-snug group-hover:text-[#53a318] transition-colors mt-0.5 min-h-[2.25rem]">
+                                <a href="{{ route('products.show', $product->slug) }}">
+                                    {{ $product->title }}
+                                </a>
+                            </h3>
+                        </div>
+
+                        <!-- Pricing -->
+                        <div class="pt-1 flex items-baseline justify-between flex-wrap gap-1">
+                            <div class="flex items-baseline space-x-1.5">
+                                <span class="text-base sm:text-lg font-black text-[#53a318]">৳{{ number_format($product->group_price) }}</span>
+                                <span class="text-xs text-slate-400 line-through">৳{{ number_format($product->single_price) }}</span>
+                            </div>
+                            @if($saveAmount > 0)
+                            <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-emerald-50 text-[#53a318] border border-emerald-200/80">
+                                সাশ্রয় ৳{{ number_format($saveAmount) }}
+                            </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-2">
+                        <a href="{{ route('products.show', $product->slug) }}" 
+                           class="flex-1 py-2 px-3 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-bold text-xs text-center transition-all shadow-xs flex items-center justify-center space-x-1 active:scale-95">
+                            <span>Join Deal</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                        <button type="button" 
+                                @click="window.addToCart({ id: {{ $product->id }}, title: '{{ addslashes($product->title) }}', price: {{ $product->group_price }}, image: '{{ $product->image_url }}', slug: '{{ $product->slug }}' })" 
+                                title="কার্টে যোগ করুন (Add to Cart)"
+                                class="w-9 h-9 shrink-0 rounded-xl bg-slate-100 hover:bg-[#53a318] text-slate-700 hover:text-white transition-colors flex items-center justify-center cursor-pointer border border-slate-200/80">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        </button>
+                    </div>
+
+                </div>
+            @endforeach
+        </div>
+
+        <!-- Pagination -->
+        @if($products->hasPages())
+        <div class="pt-4 border-t border-slate-100">
+            {{ $products->links() }}
+        </div>
+        @endif
+
+        @else
+        <!-- No Products Found Empty State -->
+        <div class="py-10 px-4 text-center max-w-md mx-auto space-y-4">
+            <div class="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-3xl mx-auto shadow-inner">
+                🔍
+            </div>
+            <div class="space-y-1">
+                <h3 class="text-base sm:text-lg font-black text-slate-900">
+                    “{{ request('q') }}” এর জন্য কোনো পণ্য পাওয়া যায়নি
+                </h3>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    বানান চেক করে আবার চেষ্টা করুন অথবা নিচের জনপ্রিয় ডিলগুলো দেখতে পারেন:
+                </p>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-1.5 pt-1">
+                <a href="{{ route('home', ['q' => 'Hoodie']) }}" class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
+                    🧥 Hoodie
+                </a>
+                <a href="{{ route('home', ['q' => 'SoundCore']) }}" class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
+                    🎧 Headphones
+                </a>
+                <a href="{{ route('home', ['q' => 'Keyboard']) }}" class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
+                    ⌨️ Keyboard
+                </a>
+                <a href="{{ route('home', ['q' => 'Charger']) }}" class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
+                    ⚡ Charger
+                </a>
+                <a href="{{ route('home', ['q' => 'Air Fryer']) }}" class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-[#53a318] text-xs font-semibold text-slate-700 transition-colors">
+                    🍳 Air Fryer
+                </a>
+            </div>
+
+            <div class="pt-3">
+                <a href="{{ route('categories.index') }}" class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white text-xs font-black shadow-md transition-all">
+                    <span>সব পণ্য ক্যাটালগ দেখুন</span>
+                    <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+        @endif
+
+    </section>
+    @endif
+
+    <!-- ========================================================
          2. HIGH-CONVERSION HERO POSTER CAROUSEL (FLASH SALES & HOT DEALS)
          Inspired by: Clean, high-impact eCommerce Hero Slider with Live Countdown
          Features: Left-to-Right Animated Transition, Dynamic Countdown Timer,

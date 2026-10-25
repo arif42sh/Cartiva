@@ -35,10 +35,17 @@ class HomeController extends Controller
 
         // Search filter
         if ($request->filled('q')) {
-            $q = $request->input('q');
+            $q = trim($request->input('q'));
             $query->where(function ($sub) use ($q) {
                 $sub->where('title', 'like', "%{$q}%")
-                    ->orWhere('description', 'like', "%{$q}%");
+                    ->orWhere('description', 'like', "%{$q}%")
+                    ->orWhereHas('category', function ($catSub) use ($q) {
+                        $catSub->where('name', 'like', "%{$q}%")
+                               ->orWhere('slug', 'like', "%{$q}%");
+                    })
+                    ->orWhereHas('seller', function ($selSub) use ($q) {
+                        $selSub->where('name', 'like', "%{$q}%");
+                    });
             });
         }
 
