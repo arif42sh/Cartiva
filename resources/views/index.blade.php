@@ -1661,70 +1661,104 @@
 
     <!-- ========================================================
          8. TRUST & POLICY BADGES (SAFETY REASSURANCE)
-         Theme: 3 Elevated Protection Pillars
+         Theme: 3 Elevated Professional Protection Pillars
          ======================================================== -->
-    <section id="trust-policy" class="space-y-6">
+    <section id="trust-policy" class="space-y-6 pt-2">
         
-        <div class="text-center max-w-xl mx-auto space-y-1">
-            <span class="text-[11px] font-black uppercase tracking-wider text-[#53a318]">CUSTOMER PROTECTION</span>
+        <div class="text-center max-w-lg mx-auto space-y-2">
+            
             <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                সুরক্ষা ও বিশ্বাসযোগ্যতা (Trust & Safety Badges)
+                সুরক্ষা ও বিশ্বাসযোগ্যতা
             </h2>
-            <p class="text-xs text-slate-500">
-                গ্রুপ বাই প্ল্যাটফর্মে আপনার প্রতিটি লেনদেন ও অংশগ্রহণ সম্পূর্ণ ঝুঁকিমুক্ত
+            <p class="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto">
+                কার্টিভায় প্রতিটি অর্ডার ও লেনদেন শতভাগ নিরাপদ ও ঝুঁকিমুক্ত
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
             
             <!-- Pillar 1: 100% Auto-Refund Guarantee -->
-            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-green-200/80 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 space-y-3 relative overflow-hidden">
-                <div class="w-12 h-12 rounded-2xl bg-green-100 text-[#53a318] flex items-center justify-center text-2xl font-black">
-                    🛡️
+            <div class="group relative bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/80 hover:border-emerald-300 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 to-[#53a318] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <div class="space-y-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-50 text-[#53a318] flex items-center justify-center border border-emerald-100 group-hover:scale-105 transition-transform">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="m9 12 2 2 4-4"/>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 group-hover:text-[#53a318] transition-colors">
+                            ১০০% অটো-রিফান্ড গ্যারান্টি
+                        </h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mt-1.5">
+                            নির্ধারিত সময়ে গ্রুপের লক্ষ্য পূরণ না হলে কোনো ফি ছাড়াই সম্পূর্ণ টাকা তাৎক্ষণিক স্বয়ংক্রিয় ফেরত।
+                        </p>
+                    </div>
                 </div>
-                <h3 class="text-base font-black text-slate-900">
-                    100% Auto-Refund Guarantee
-                </h3>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    টার্গেট পূরণ না হলে কি হবে? নির্ধারিত সময়ের মধ্যে গ্রুপ মেম্বার পূরণ না হলে আপনার প্রিপেইড পেমেন্ট সম্পূর্ণ স্বয়ংক্রিয়ভাবে ১০০% রিফান্ড হয়ে যাবে। কোনো পেনাল্টি বা ফি ছাড়াই।
-                </p>
-                <div class="pt-2">
-                    <button type="button" @click="rulesModalOpen = true" class="text-xs font-bold text-[#53a318] hover:underline">
-                        Read Refund Rules &rarr;
+
+                <div class="pt-4 border-t border-slate-100 mt-4 flex items-center justify-between">
+                    <button type="button" @click="rulesModalOpen = true" class="inline-flex items-center text-xs font-bold text-[#53a318] hover:text-emerald-700 transition-colors">
+                        রিফান্ড পলিসি দেখুন
+                        <svg class="w-3.5 h-3.5 ml-1 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
+                   
                 </div>
             </div>
 
             <!-- Pillar 2: Secure Checkout -->
-            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 space-y-3 relative overflow-hidden">
-                <div class="w-12 h-12 rounded-2xl bg-cyan-100 text-cyan-700 flex items-center justify-center text-2xl font-black">
-                    🔒
+            <div class="group relative bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/80 hover:border-sky-300 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <div class="space-y-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center border border-sky-100 group-hover:scale-105 transition-transform">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 group-hover:text-sky-600 transition-colors">
+                            এসক্রো সুরক্ষিত পেমেন্ট
+                        </h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mt-1.5">
+                            বিকাশ, নগদ, কার্ড বা ক্যাশ অন ডেলিভারি — পণ্য হাতে পাওয়া পর্যন্ত অর্থ সম্পূর্ণ নিরাপদ থাকে।
+                        </p>
+                    </div>
                 </div>
-                <h3 class="text-base font-black text-slate-900">
-                    Secure Simulated & Gateway Checkout
-                </h3>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    এসক্রো-সুরক্ষিত পেমেন্ট প্রসেসিং। bKash, Nagad, কার্ড ও ক্যাশ অন ডেলিভারি সাপোর্ট। আপনার অর্থ অর্ডার চূড়ান্ত ডেলিভারি পর্যন্ত প্ল্যাটফর্ম এসক্রোতে সংরক্ষিত থাকে।
-                </p>
-                <div class="pt-2">
-                    <span class="text-[11px] font-mono font-bold text-slate-500">256-Bit SSL Secured</span>
+
+                <div class="pt-4 border-t border-slate-100 mt-4 flex items-center justify-between">
+                    
+                  
                 </div>
             </div>
 
             <!-- Pillar 3: Verified Sellers -->
-            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 space-y-3 relative overflow-hidden">
-                <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center text-2xl font-black">
-                    ✅
+            <div class="group relative bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/80 hover:border-purple-300 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-400 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <div class="space-y-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100 group-hover:scale-105 transition-transform">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="m9 12 2 2 4-4"/>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 group-hover:text-purple-600 transition-colors">
+                            ভেরিফাইড সেলার ও আসল পণ্য
+                        </h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mt-1.5">
+                            অ্যাডমিন পরীক্ষিত জেনুইন মার্চেন্ট, শতভাগ আসল পণ্য এবং ৪৮ ঘণ্টার সহজ রিপ্লেসমেন্ট সুবিধা।
+                        </p>
+                    </div>
                 </div>
-                <h3 class="text-base font-black text-slate-900">
-                    Verified Sellers & Genuine Products
-                </h3>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    কার্টিভার প্রতিটি বিক্রেতা ও তাদের পণ্য প্ল্যাটফর্ম অ্যাডমিন দ্বারা গুণগত মান পরীক্ষায় ভেরিফাইড। কোনো ত্রুটিপূর্ণ পণ্য পেলে ৪৮ ঘণ্টার রিপ্লেসমেন্ট সুবিধা।
-                </p>
-                <div class="pt-2">
-                    <span class="text-[11px] font-mono font-bold text-slate-500">Admin Quality Checked</span>
-                </div>
+
+               
             </div>
 
         </div>
