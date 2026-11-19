@@ -132,7 +132,7 @@
                 </div>
 
                 <h1 class="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-snug">
-                    ফ্ল্যাশ সেল - সীমিত সময়ের স্পেশাল অফার
+                    ফ্ল্যাশ সেল-সীমিত সময়ের স্পেশাল অফার
                 </h1>
 
                 <p class="text-xs sm:text-sm text-emerald-100/90 leading-relaxed font-normal max-w-xl">
