@@ -31,12 +31,22 @@ class ProductController extends Controller
             ->latest()
             ->get();
 
-        // Related products in the same category
+        // Related products in the same category, with fallback to popular products
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->where('is_active', true)
-            ->take(4)
+            ->take(8)
             ->get();
+
+        if ($relatedProducts->count() < 4) {
+            $fallback = Product::where('id', '!=', $product->id)
+                ->where('is_active', true)
+                ->whereNotIn('id', $relatedProducts->pluck('id'))
+                ->latest()
+                ->take(8 - $relatedProducts->count())
+                ->get();
+            $relatedProducts = $relatedProducts->merge($fallback);
+        }
 
         return view('products.show', compact('product', 'activeGroups', 'relatedProducts', 'userReview'));
     }

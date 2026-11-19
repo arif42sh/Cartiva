@@ -10,6 +10,8 @@
     $galleryList = is_array($product->gallery) && count($product->gallery) > 0 
         ? array_merge([$product->image_url], $product->gallery)
         : [$product->image_url];
+    $clubPointsEarned = max(50, round($product->single_price * 0.05));
+    $monthlyEmiStarting = max(500, round($product->single_price / 12));
 @endphp
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8"
@@ -22,6 +24,8 @@
         baseSinglePrice: {{ (float) $product->single_price }},
         groupSizeRequired: {{ (int) $product->group_size_required }},
         savePerUnit: {{ (float) $savePerUnit }},
+        emiModalOpen: false,
+        deliveryZone: 'dhaka',
         get currentSingleUnitPrice() {
             if (this.qty >= 3) {
                 return this.groupUnitPrice;
@@ -68,8 +72,8 @@
          ======================================================== -->
     <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-5 sm:p-7 grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
         
-        <!-- Left: Compact Photo Showcase + Thumbnails (5 Cols) -->
-        <div class="lg:col-span-5 space-y-3.5">
+        <!-- Left: Photo Showcase, Thumbnails & Pickaboo-Style Warranty (5 Cols) -->
+        <div class="lg:col-span-5 space-y-4">
             
             <!-- Compact Main Image Box -->
             <div class="relative w-full h-[320px] sm:h-[350px] rounded-2xl overflow-hidden bg-slate-50 border border-slate-200/90 flex items-center justify-center p-4">
@@ -98,22 +102,58 @@
                 @endforeach
             </div>
 
-            <!-- Micro Trust Bar -->
-            <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-600 font-medium">
-                <div class="flex items-center space-x-2 p-2 rounded-xl bg-slate-50 border border-slate-100">
-                    <span class="text-emerald-600 font-bold text-sm">✓</span>
-                    <span>100% Genuine Brand</span>
+            <!-- Pickaboo-Style "Shop with Confidence" & Warranty Box -->
+            <div class="rounded-2xl border border-blue-200/80 bg-gradient-to-br from-blue-50/70 via-sky-50/40 to-white p-3.5 space-y-2.5 shadow-2xs">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-bold text-slate-900 flex items-center space-x-1.5">
+                        <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span>Shop with Confidence</span>
+                    </h3>
+                    <span class="text-[10px] font-bold text-blue-700 bg-white px-2 py-0.5 rounded-full border border-blue-200 shadow-2xs">
+                        Official Warranty
+                    </span>
                 </div>
-                <div class="flex items-center space-x-2 p-2 rounded-xl bg-slate-50 border border-slate-100">
-                    <span class="text-emerald-600 font-bold text-sm">✓</span>
-                    <span>Direct Dispatch Warranty</span>
+
+                <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-white border border-blue-100 shadow-2xs">
+                    <div class="w-8 h-8 rounded-lg bg-blue-100/80 text-blue-700 flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="text-xs font-bold text-slate-900 leading-tight">
+                            (Official) 1–3 Years Brand / Importer Warranty
+                        </div>
+                        <p class="text-[10px] text-slate-500">Panel, Spare Parts & Dedicated After-Sales Service Covered</p>
+                    </div>
+                </div>
+
+                <!-- 3 Pillars Trust Grid -->
+                <div class="grid grid-cols-3 gap-2 text-center text-[10px] pt-0.5">
+                    <div class="p-2 rounded-xl bg-white border border-slate-100 flex flex-col items-center justify-center space-y-0.5">
+                        <span class="text-blue-600 font-black text-xs">🛡️</span>
+                        <span class="font-bold text-slate-800">100% Authentic</span>
+                        <span class="text-[9px] text-slate-400">Direct Importer</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-white border border-slate-100 flex flex-col items-center justify-center space-y-0.5">
+                        <span class="text-emerald-600 font-black text-xs">🚚</span>
+                        <span class="font-bold text-slate-800">Express Delivery</span>
+                        <span class="text-[9px] text-slate-400">Door-to-Door</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-white border border-slate-100 flex flex-col items-center justify-center space-y-0.5">
+                        <span class="text-amber-600 font-black text-xs">🔄</span>
+                        <span class="font-bold text-slate-800">7 Days Replace</span>
+                        <span class="text-[9px] text-slate-400">Defect Protection</span>
+                    </div>
                 </div>
             </div>
 
         </div>
 
 
-        <!-- Right: Details, Quantity & Dual Purchase Box (7 Cols) -->
+        <!-- Right: Details, Quantity, EMI & Dual Purchase Box (7 Cols) -->
         <div class="lg:col-span-7 space-y-3.5">
             
             <!-- Category, Title & Metrics -->
@@ -143,12 +183,76 @@
                 </div>
             </div>
 
-            <!-- Short Highlight Description (Clean & compact) -->
+            <!-- Short Highlight Description -->
             <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
                 {{ $product->description }}
             </p>
 
-            <!-- Quantity Selector (Sleek & Space-Efficient) -->
+            <!-- Pickaboo-Style Club Points & EMI Promo Strip -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                <!-- Club Points Earn -->
+                <div class="flex items-center space-x-2.5 p-2.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-xs">
+                    <div class="w-7 h-7 rounded-lg bg-amber-400 text-slate-950 font-black text-xs flex items-center justify-center shrink-0">
+                        🪙
+                    </div>
+                    <div class="min-w-0">
+                        <span class="font-bold text-amber-950 block">Earn ৳{{ number_format($clubPointsEarned) }} Club Points</span>
+                        <span class="text-[10px] text-amber-800">Redeemable as instant cash discount</span>
+                    </div>
+                </div>
+
+                <!-- 0% EMI Facility Card -->
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/80 text-xs">
+                    <div class="flex items-center space-x-2 min-w-0">
+                        <div class="w-7 h-7 rounded-lg bg-blue-600 text-white font-black text-xs flex items-center justify-center shrink-0">
+                            %
+                        </div>
+                        <div class="min-w-0">
+                            <span class="font-bold text-blue-950 block">0% EMI Available</span>
+                            <span class="text-[10px] text-blue-800 truncate block">From ৳{{ number_format($monthlyEmiStarting) }}/mo (30+ Banks)</span>
+                        </div>
+                    </div>
+                    <button type="button" @click="emiModalOpen = true" 
+                            class="px-2 py-1 rounded-md bg-white border border-blue-300 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-[10px] transition-colors shrink-0 shadow-2xs cursor-pointer">
+                        Plans &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- Delivery Location & Estimated Timing Selector -->
+            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200/90 text-xs space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-slate-800 flex items-center space-x-1.5">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <span>Delivery Destination</span>
+                    </span>
+                    <div class="flex items-center space-x-1.5">
+                        <button type="button" @click="deliveryZone = 'dhaka'" 
+                                :class="deliveryZone === 'dhaka' ? 'bg-slate-900 text-white font-bold' : 'bg-white text-slate-700 border border-slate-200 font-semibold'"
+                                class="px-2.5 py-1 rounded-lg text-[10px] transition-all cursor-pointer">
+                            Dhaka Inside
+                        </button>
+                        <button type="button" @click="deliveryZone = 'outside'" 
+                                :class="deliveryZone === 'outside' ? 'bg-slate-900 text-white font-bold' : 'bg-white text-slate-700 border border-slate-200 font-semibold'"
+                                class="px-2.5 py-1 rounded-lg text-[10px] transition-all cursor-pointer">
+                            Outside Dhaka
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-1.5 border-t border-slate-200/70 text-[11px]">
+                    <div class="flex items-center space-x-2 text-slate-600">
+                        <span x-show="deliveryZone === 'dhaka'">⚡ Express Doorstep Delivery (24–48 Hours)</span>
+                        <span x-show="deliveryZone === 'outside'">🚚 Nationwide Courier Dispatch (2–4 Days)</span>
+                    </div>
+                    <span class="font-bold text-slate-900" x-text="deliveryZone === 'dhaka' ? '৳60 Shipping' : '৳120 Shipping'"></span>
+                </div>
+            </div>
+
+            <!-- Quantity Selector -->
             <div class="flex items-center justify-between py-2 px-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
                 <div class="flex items-center space-x-2">
                     <span class="text-xs font-bold text-slate-900">Quantity</span>
@@ -392,7 +496,6 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
             <div>
                 <div class="flex items-center space-x-2">
-                    
                     <h2 class="text-base font-black text-slate-900 tracking-tight">
                         Active Running Teams for this Product
                     </h2>
@@ -548,7 +651,7 @@
                 </div>
                 <h4 class="text-xs font-bold text-slate-900">Nationwide Shipping</h4>
                 <p class="text-[11px] text-slate-500 leading-relaxed">
-                    Dhaka 2–3 days (৳60). Outside Dhaka 3–5 days (৳120).
+                    Dhaka 24–48h (৳60). Outside Dhaka 2–4 days (৳120).
                 </p>
             </div>
 
@@ -568,7 +671,7 @@
                 </div>
                 <h4 class="text-xs font-bold text-slate-900">Official Warranty</h4>
                 <p class="text-[11px] text-slate-500 leading-relaxed">
-                    7-day replacement warranty for manufacturing defects.
+                    7-day instant replacement warranty for manufacturing defects.
                 </p>
             </div>
 
@@ -622,16 +725,16 @@
                 </div>
                 <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex justify-between">
                     <span class="text-slate-500 font-medium">Warranty</span>
-                    <span class="text-slate-900 font-bold">Official Brand / Importer Warranty</span>
+                    <span class="text-slate-900 font-bold">1–3 Years Brand / Importer Warranty</span>
                 </div>
                 <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex justify-between">
                     <span class="text-slate-500 font-medium">Payment Mode</span>
-                    <span class="text-slate-900 font-bold">100% Pre-paid Digital (bKash / Nagad / Card)</span>
+                    <span class="text-slate-900 font-bold">Digital (bKash / Nagad / Cards / 0% EMI)</span>
                 </div>
             </div>
 
             <div class="space-y-2 pt-2 border-t border-slate-100">
-                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Product Description</h4>
+                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Product Description & Highlights</h4>
                 <p class="text-xs text-slate-600 leading-relaxed">
                     {{ $product->description }}
                 </p>
@@ -647,7 +750,7 @@
                 <ul class="list-disc list-inside space-y-1 text-amber-900 text-[11px]">
                     <li>Group buy discounts target {{ $product->group_size_required }} member slots to unlock full group rates.</li>
                     @if($product->min_quota_to_ship && $product->min_quota_to_ship < $product->group_size_required)
-                        <li class="font-bold text-emerald-800">🛡️ Soft Threshold Guarantee: সময় শেষ হলেও যদি অন্তত {{ $product->min_quota_to_ship }} জন ক্রেতা থাকে, তবে অর্ডার বাতিল বা রিফান্ড হবে না; সবার অর্ডার ডিসকাউন্টে সরাসরি ডেলিভারি হবে! কেবল {{ $product->min_quota_to_ship }} জনের কম হলে ১০০% অটো-রিফান্ড হবে।</li>
+                        <li class="font-bold text-emerald-800">🛡️ Soft Threshold Guarantee: সময় শেষ হলেও যদি অন্তত {{ $product->min_quota_to_ship }} জন ক্রেতা থাকে, তবে অর্ডার বাতিল বা রিফান্ড হবে না; অর্জিত ধাপ অনুযায়ী ডিসকাউন্টে সরাসরি ডেলিভারি হবে! কেবল {{ $product->min_quota_to_ship }} জনের কম হলে ১০০% অটো-রিফান্ড হবে।</li>
                     @else
                         <li>If a group does not fill within the allocated time, Cartiva automatically triggers a 100% full refund back to the buyer's original payment method with zero cancellation fees.</li>
                     @endif
@@ -829,53 +932,205 @@
 
 
     <!-- ========================================================
-         6. RELATED DEALS IN THIS CATEGORY
+         6. PICKABOO-STYLE RELATED PRODUCT ADS & RECOMMENDATIONS
          ======================================================== -->
     @if(isset($relatedProducts) && $relatedProducts->isNotEmpty())
-        <div class="space-y-4 pt-4">
-            <div class="flex items-center justify-between">
+        <div class="space-y-5 pt-4">
+            
+            <!-- Section Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
                 <div>
-                    <h3 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">
-                        More Hot Deals in {{ $cleanCat }}
-                    </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Explore related team discounts with instant savings</p>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 text-[10px] font-black uppercase tracking-wider">
+                            Sponsored &amp; Related
+                        </span>
+                        <h3 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                            Related Product Deals &amp; Recommendations
+                        </h3>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                        Customers who viewed this item also checked these deals in {{ $cleanCat }}
+                    </p>
                 </div>
-                <a href="{{ route('category.show', $product->category->slug) }}" 
-                   class="text-xs font-bold text-[#53a318] hover:underline flex items-center space-x-1">
-                    <span>View Category</span>
-                    <span>&rarr;</span>
-                </a>
+
+                <div class="flex items-center space-x-2">
+                    <a href="{{ route('category.show', $product->category->slug) }}" 
+                       class="text-xs font-bold text-blue-700 hover:text-blue-900 hover:underline flex items-center space-x-1">
+                        <span>View All in {{ $cleanCat }}</span>
+                        <span>&rarr;</span>
+                    </a>
+                </div>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <!-- Product Ads Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 @foreach($relatedProducts as $rel)
-                    <div class="bg-white rounded-2xl p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between space-y-3 group">
-                        <a href="{{ route('products.show', $rel->slug) }}" class="block relative aspect-square rounded-xl overflow-hidden bg-slate-50">
-                            <img src="{{ $rel->image_url }}" alt="{{ $rel->title }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-                            <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-black bg-rose-600 text-white shadow-xs">
-                                -{{ $rel->discount_percent }}%
+                    @php
+                        $relSavings = max(0, $rel->single_price - $rel->group_price);
+                    @endphp
+                    <div class="bg-white rounded-2xl p-3.5 border border-slate-200 hover:border-blue-400 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between space-y-3 group relative overflow-hidden">
+                        
+                        <!-- Sponsored Tag -->
+                        <div class="absolute top-2 left-2 z-10 flex items-center space-x-1">
+                            <span class="px-2 py-0.5 rounded-md text-[9px] font-black bg-rose-600 text-white shadow-xs">
+                                -{{ $rel->discount_percent }}% OFF
                             </span>
+                            @if($loop->index % 2 == 0)
+                                <span class="px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-amber-400 text-slate-950 shadow-xs">
+                                    Ad
+                                </span>
+                            @endif
+                        </div>
+
+                        <!-- Image -->
+                        <a href="{{ route('products.show', $rel->slug) }}" class="block relative aspect-square rounded-xl overflow-hidden bg-slate-50 pt-2">
+                            <img src="{{ $rel->image_url }}" alt="{{ $rel->title }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
                         </a>
 
-                        <div class="space-y-1 min-w-0">
-                            <h4 class="text-xs font-bold text-slate-900 truncate group-hover:text-[#53a318] transition-colors">
+                        <!-- Details -->
+                        <div class="space-y-1.5 min-w-0">
+                            <!-- Category & Rating -->
+                            <div class="flex items-center justify-between text-[10px]">
+                                <span class="text-slate-400 font-medium truncate">{{ $rel->category->name ?? 'Deal' }}</span>
+                                <div class="flex items-center text-amber-500 font-bold">
+                                    <span>★</span>
+                                    <span class="ml-0.5 text-slate-700">{{ number_format($rel->rating, 1) }}</span>
+                                </div>
+                            </div>
+
+                            <h4 class="text-xs font-bold text-slate-900 line-clamp-2 group-hover:text-blue-700 transition-colors leading-snug" title="{{ $rel->title }}">
                                 <a href="{{ route('products.show', $rel->slug) }}">{{ $rel->title }}</a>
                             </h4>
-                            <div class="flex items-baseline space-x-1.5">
-                                <span class="text-sm font-black text-[#53a318]">৳{{ number_format($rel->group_price) }}</span>
-                                <span class="text-[10px] text-slate-400 line-through">৳{{ number_format($rel->single_price) }}</span>
+
+                            <!-- Pricing -->
+                            <div class="pt-1">
+                                <div class="flex items-baseline space-x-1.5">
+                                    <span class="text-sm font-black text-[#53a318]">৳{{ number_format($rel->group_price) }}</span>
+                                    <span class="text-[11px] text-slate-400 line-through">৳{{ number_format($rel->single_price) }}</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-emerald-700 block">
+                                    Save ৳{{ number_format($relSavings) }} with Team
+                                </span>
                             </div>
                         </div>
 
-                        <a href="{{ route('products.show', $rel->slug) }}" 
-                           class="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-[#53a318] text-white font-bold text-xs text-center transition-colors flex items-center justify-center space-x-1">
-                            <span>View Deal & Join</span>
-                        </a>
+                        <!-- Action Button -->
+                        <div class="pt-1">
+                            <a href="{{ route('products.show', $rel->slug) }}" 
+                               class="w-full py-2 px-3 rounded-xl bg-slate-900 group-hover:bg-blue-600 text-white font-bold text-xs text-center transition-colors flex items-center justify-center space-x-1 shadow-2xs">
+                                <span>View Deal</span>
+                                <span>&rarr;</span>
+                            </a>
+                        </div>
                     </div>
                 @endforeach
             </div>
+
+            <!-- Pickaboo-Style Promotional Banner Ad Strip -->
+            <div class="rounded-2xl p-4 sm:p-5 border border-blue-200 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center space-x-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-white/10 text-amber-300 border border-white/20 flex items-center justify-center font-bold text-2xl shrink-0">
+                        ⚡
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-[10px] uppercase font-black tracking-wider text-amber-300 bg-amber-400/20 px-2 py-0.5 rounded border border-amber-300/30">
+                                Cartiva Protection Guarantee
+                            </span>
+                            <span class="text-xs text-blue-200">• 100% Verified Deals</span>
+                        </div>
+                        <h4 class="text-sm sm:text-base font-bold text-white mt-1">
+                            Invite friends to unlock maximum wholesale discount on any order!
+                        </h4>
+                        <p class="text-xs text-slate-300 mt-0.5">
+                            If team pool doesn't complete in time, enjoy guaranteed 100% instant automated refund. Zero risk.
+                        </p>
+                    </div>
+                </div>
+
+                <a href="{{ route('home') }}#active-deals" 
+                   class="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs shadow-md transition-all text-center shrink-0 self-start sm:self-auto cursor-pointer">
+                    Browse Trending Pools &rarr;
+                </a>
+            </div>
+
         </div>
     @endif
+
+
+    <!-- ========================================================
+         7. INTERACTIVE EMI PLANS MODAL (PICKABOO STYLE)
+         ======================================================== -->
+    <div x-show="emiModalOpen" 
+         x-cloak 
+         class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4"
+         @keydown.escape.window="emiModalOpen = false">
+        
+        <div class="bg-white rounded-3xl max-w-lg w-full border border-slate-200 shadow-2xl overflow-hidden p-6 space-y-4"
+             @click.away="emiModalOpen = false">
+            
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-black text-sm">
+                        %
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-black text-slate-900">0% Interest EMI Facility</h3>
+                        <p class="text-[11px] text-slate-500">Available across 30+ leading Bangladeshi Banks</p>
+                    </div>
+                </div>
+                <button type="button" @click="emiModalOpen = false" class="text-slate-400 hover:text-slate-700 font-bold text-lg">&times;</button>
+            </div>
+
+            <!-- Installment Matrix Table -->
+            <div class="space-y-2 text-xs">
+                <p class="text-slate-600 text-[11px]">
+                    Installment breakdown for <strong>{{ $product->title }}</strong> (Base Price: ৳{{ number_format($product->single_price) }}):
+                </p>
+
+                <div class="rounded-xl border border-slate-200 overflow-hidden divide-y divide-slate-100">
+                    <div class="bg-slate-50 p-2.5 grid grid-cols-3 font-bold text-[11px] text-slate-700">
+                        <span>Tenure</span>
+                        <span>Monthly Installment</span>
+                        <span class="text-right">Interest Rate</span>
+                    </div>
+                    <div class="p-2.5 grid grid-cols-3 text-slate-700">
+                        <span class="font-bold">3 Months</span>
+                        <span class="font-bold text-blue-700">৳{{ number_format(round($product->single_price / 3)) }}/mo</span>
+                        <span class="text-right font-bold text-emerald-600">0% Interest</span>
+                    </div>
+                    <div class="p-2.5 grid grid-cols-3 text-slate-700 bg-slate-50/50">
+                        <span class="font-bold">6 Months</span>
+                        <span class="font-bold text-blue-700">৳{{ number_format(round($product->single_price / 6)) }}/mo</span>
+                        <span class="text-right font-bold text-emerald-600">0% Interest</span>
+                    </div>
+                    <div class="p-2.5 grid grid-cols-3 text-slate-700">
+                        <span class="font-bold">9 Months</span>
+                        <span class="font-bold text-blue-700">৳{{ number_format(round($product->single_price / 9)) }}/mo</span>
+                        <span class="text-right font-bold text-emerald-600">0% Interest</span>
+                    </div>
+                    <div class="p-2.5 grid grid-cols-3 text-slate-700 bg-slate-50/50">
+                        <span class="font-bold">12 Months</span>
+                        <span class="font-bold text-blue-700">৳{{ number_format(round($product->single_price / 12)) }}/mo</span>
+                        <span class="text-right font-bold text-emerald-600">0% Interest</span>
+                    </div>
+                </div>
+
+                <div class="pt-2 text-[10px] text-slate-500 space-y-1">
+                    <p>🏦 <strong>Participating Banks:</strong> Standard Chartered, City Bank Amex, BRAC Bank, Eastern Bank (EBL), Dutch-Bangla Bank (DBBL), Mutual Trust Bank (MTB), Dhaka Bank, Premier Bank, and others.</p>
+                    <p>💡 <strong>How to Avail:</strong> Select "Credit Card EMI" during checkout and choose your preferred tenure.</p>
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <button type="button" @click="emiModalOpen = false" 
+                        class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors">
+                    Got it, Close Window
+                </button>
+            </div>
+
+        </div>
+    </div>
 
 </div>
 
