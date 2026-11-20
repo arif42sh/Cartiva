@@ -236,15 +236,7 @@
                             <span>My Orders ({{ $totalOrdersCount }})</span>
                         </button>
 
-                        <!-- Tab 5: Active Team Pools -->
-                        <button @click="switchTab('pools')" 
-                                :class="activeTab === 'pools' ? 'classic-tab-active' : 'classic-tab-inactive'"
-                                class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-left cursor-pointer">
-                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                            <span>Active Team Pools ({{ $activeGroupsCount }})</span>
-                        </button>
+                       
 
                     
                     </nav>
@@ -652,62 +644,6 @@
                     </div>
                 </div>
 
-                <!-- ========================================== -->
-                <!-- TAB 5: ACTIVE TEAM POOLS                   -->
-                <!-- ========================================== -->
-                <div x-show="activeTab === 'pools'" class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
-                    <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-                        <div>
-                            <h2 class="text-base sm:text-lg font-bold text-slate-900">Active Team Pools</h2>
-                            <p class="text-xs text-slate-500 mt-0.5">Ongoing group deals you have joined or initiated.</p>
-                        </div>
-                        <a href="{{ route('home') }}#active-deals" class="text-xs font-bold text-blue-700 hover:underline">
-                            Browse All Pools &rarr;
-                        </a>
-                    </div>
-
-                    <div class="p-6">
-                        @if($activeGroups->isEmpty())
-                            <div class="p-10 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-                                <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
-                                <p class="text-sm font-bold text-slate-800">No active group sessions found.</p>
-                                <p class="text-xs text-slate-400 mt-1">Join a circle with friends or neighbors to get wholesale price.</p>
-                            </div>
-                        @else
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                @foreach($activeGroups as $membership)
-                                    @if($membership->session)
-                                        <div class="p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-400 transition-colors shadow-2xs">
-                                            <div class="flex items-center space-x-3 mb-3">
-                                                <div class="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200">
-                                                    @if($membership->session->product && $membership->session->product->image)
-                                                        <img src="{{ $membership->session->product->image }}" alt="" class="w-full h-full object-cover">
-                                                    @else
-                                                        <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Img</div>
-                                                    @endif
-                                                </div>
-                                                <div class="flex-1 min-w-0">
-                                                    <p class="text-xs font-bold text-slate-900 truncate">{{ $membership->session->product->title ?? 'Group Deal' }}</p>
-                                                    <span class="text-[10px] font-mono font-bold text-blue-700">{{ $membership->session->group_code }}</span>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center justify-between text-[11px] pt-2 border-t border-slate-100">
-                                                <span class="font-medium text-slate-500">
-                                                    {{ $membership->session->members->count() }}/{{ $membership->session->required_members }} joined
-                                                </span>
-                                                <a href="{{ route('group-buy.show', $membership->session->group_code) }}" class="text-xs font-bold text-blue-700 hover:underline">
-                                                    View Circle &rarr;
-                                                </a>
-                                            </div>
-                                        </div>
-                                    @endif
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
-                </div>
 
                 <!-- ========================================== -->
                 <!-- TAB 6: MERCHANT HUB (For Sellers & Admins) -->
