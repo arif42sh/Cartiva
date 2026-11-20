@@ -1,0 +1,9 @@
+.git
+.env
+.env.*
+tests
+node_modules
+database/*.sql
+scratch*
+replace_rounded.py
+

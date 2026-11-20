@@ -96,7 +96,7 @@
         
         <!-- Left: Edit Form (2 cols) -->
         <div class="lg:col-span-2">
-            <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
                 
                 <form action="{{ route('seller.products.update', $product) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                     @csrf
@@ -432,7 +432,7 @@
 
         <!-- Right: Live Customer Deal Card Preview (1 col) -->
         <div class="lg:col-span-1 space-y-6">
-            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 overflow-hidden sticky top-24">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 overflow-hidden sticky top-24">
                 <div class="flex items-center justify-between mb-4">
                     <span class="text-xs font-black uppercase tracking-wider text-[#53a318]">Live Shopper Preview</span>
                     <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Interactive</span>

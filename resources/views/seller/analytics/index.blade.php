@@ -17,25 +17,25 @@
     <!-- Top Summary Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         
-        <div class="bg-white rounded-3xl border border-slate-200 p-5.5 shadow-sm">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5.5 shadow-sm">
             <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Gross Sales Revenue</span>
             <div class="text-3xl font-black text-slate-900 tracking-tight mt-1.5">৳{{ number_format($totalRevenue) }}</div>
             <span class="text-[11px] font-bold text-[#53a318] mt-1 block">From confirmed & shipped orders</span>
         </div>
 
-        <div class="bg-white rounded-3xl border border-slate-200 p-5.5 shadow-sm">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5.5 shadow-sm">
             <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Total Units Dispatched</span>
             <div class="text-3xl font-black text-indigo-600 tracking-tight mt-1.5">{{ number_format($totalUnitsSold) }} Units</div>
             <span class="text-[11px] text-slate-500 font-medium mt-1 block">Across all product lines</span>
         </div>
 
-        <div class="bg-white rounded-3xl border border-slate-200 p-5.5 shadow-sm">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5.5 shadow-sm">
             <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Group Success Rate</span>
             <div class="text-3xl font-black text-emerald-600 tracking-tight mt-1.5">{{ $completionRate }}%</div>
             <span class="text-[11px] text-slate-500 font-medium mt-1 block">{{ $successfulSessions }} of {{ $successfulSessions + ($expiredSessions ?? 0) }} resolved circles</span>
         </div>
 
-        <div class="bg-white rounded-3xl border border-slate-200 p-5.5 shadow-sm">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5.5 shadow-sm">
             <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider">Active Pooling Circles</span>
             <div class="text-3xl font-black text-amber-500 tracking-tight mt-1.5">{{ $activeSessions ?? 0 }}</div>
             <span class="text-[11px] text-slate-500 font-medium mt-1 block">Live circles recruiting buyers</span>
@@ -47,7 +47,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         
         <!-- Revenue Breakdown Card (1 col) -->
-        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
             <div>
                 <h3 class="text-sm font-black uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 mb-4">
                     Sales Channel Split
@@ -98,7 +98,7 @@
         </div>
 
         <!-- Top Selling Products Leaderboard (2 cols) -->
-        <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs">
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/90 p-6 shadow-xs">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
                 <h3 class="text-sm font-extrabold uppercase tracking-wider text-slate-900">
                     Top 5 Revenue Drivers
@@ -131,8 +131,8 @@
                     </div>
                 @empty
                     <div class="py-12 text-center text-slate-400">
-                        <span class="text-2xl block mb-1">📊</span>
-                        No product sales records yet to rank.
+                        <svg class="w-8 h-8 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        <p class="text-xs font-semibold text-slate-600">No product sales records yet to rank.</p>
                     </div>
                 @endforelse
             </div>

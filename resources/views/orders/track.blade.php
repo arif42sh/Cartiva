@@ -12,9 +12,7 @@
             <h1 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
                 Track Your Order Status
             </h1>
-            <p class="text-xs sm:text-sm text-slate-600 font-medium">
-                অর্ডার নম্বর (যেমন: <span class="font-mono font-bold text-slate-800">ORD-6GU5BEU1</span>) অথবা ফোন নম্বর দিয়ে আপনার অর্ডারের বর্তমান অবস্থা জানুন।
-            </p>
+            
 
             <!-- Search Bar Form -->
             <form action="{{ route('orders.track') }}" method="GET" class="pt-3">
@@ -110,7 +108,7 @@
                             </span>
                             @if($isGroup)
                                 <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-teal-500/20 text-teal-300 border border-teal-500/30">
-                                    👥 Team Buy Pool
+                                     Team Buy Pool
                                 </span>
                             @else
                                 <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-white/10 text-slate-300">
@@ -120,15 +118,15 @@
 
                             @if($status === 'pending_group')
                                 <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 animate-pulse">
-                                    ⏳ Waiting for Team Quota
+                                     Waiting for Team Quota
                                 </span>
                             @elseif($status === 'processing')
                                 <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                    ⚙️ Packaging & Dispatching
+                                     Packaging & Dispatching
                                 </span>
                             @elseif($status === 'shipped')
                                 <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                                    🚚 In Transit
+                                     In Transit
                                 </span>
                             @elseif($status === 'delivered')
                                 <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-500/20 text-green-300 border border-green-500/30">
@@ -136,7 +134,7 @@
                                 </span>
                             @elseif($status === 'cancelled')
                                 <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                                    ❌ Order Cancelled & Refunded
+                                     Order Cancelled & Refunded
                                 </span>
                             @endif
                         </div>
@@ -309,11 +307,7 @@
                             </div>
                         </div>
 
-                        <!-- Assurance Strip -->
-                        <div class="p-3 rounded-2xl bg-blue-50/70 border border-blue-100 flex items-center space-x-2.5 text-xs text-blue-900 font-medium">
-                            <span class="text-base shrink-0">🛡️</span>
-                            <span>১০০% ফ্রি এক্সপ্রেস কুরিয়ার ডেলিভারি এবং কোয়ালিটি নিশ্চয়তা সম্পন্ন।</span>
-                        </div>
+                       
                     </div>
 
                 </div>

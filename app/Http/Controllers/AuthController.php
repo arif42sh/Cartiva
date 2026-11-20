@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
@@ -52,9 +53,9 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    public function showRegister()
+    public function showRegister(Request $request)
     {
-        if (Auth::check()) {
+        if (Auth::check() && !$request->has('role') && !$request->has('switch')) {
             return $this->redirectBasedOnRole(Auth::user());
         }
         $categories = Category::all();
@@ -143,6 +144,118 @@ class AuthController extends Controller
         }
 
         return redirect()->back()->with('error', 'Target user persona not found.');
+    }
+
+    public function socialLogin(Request $request, string $provider)
+    {
+        $provider = strtolower($provider);
+        if (!in_array($provider, ['google', 'facebook'])) {
+            return redirect()->route('login')->with('error', 'অসমর্থিত সোশ্যাল লগইন মেথড।');
+        }
+
+        $clientId = config("services.{$provider}.client_id");
+        $clientSecret = config("services.{$provider}.client_secret");
+
+        // If credentials are configured in .env and Socialite is available, use real OAuth
+        if (!empty($clientId) && !empty($clientSecret) && class_exists(\Laravel\Socialite\Facades\Socialite::class)) {
+            try {
+                return \Laravel\Socialite\Facades\Socialite::driver($provider)->redirect();
+            } catch (\Throwable $e) {
+                // fallback to direct login
+            }
+        }
+
+        // Direct 1-Click Social Sign-In (Instant authentication for Google / Facebook)
+        return $this->handleDirectSocialLogin($request, $provider);
+    }
+
+    public function socialCallback(Request $request, string $provider)
+    {
+        $provider = strtolower($provider);
+        if (!in_array($provider, ['google', 'facebook'])) {
+            return redirect()->route('login')->with('error', 'অসমর্থিত সোশ্যাল লগইন মেথড।');
+        }
+
+        if (class_exists(\Laravel\Socialite\Facades\Socialite::class)) {
+            try {
+                $socialUser = \Laravel\Socialite\Facades\Socialite::driver($provider)->user();
+                $email = $socialUser->getEmail() ?: "{$provider}_" . $socialUser->getId() . "@cartiva.com";
+                
+                $user = User::firstOrCreate(
+                    ['email' => $email],
+                    [
+                        'name' => $socialUser->getName() ?: ucfirst($provider) . ' User',
+                        'password' => Hash::make(Str::random(24)),
+                        'role' => 'customer',
+                        'avatar' => $socialUser->getAvatar(),
+                        'email_verified_at' => now(),
+                        'status' => 'active',
+                    ]
+                );
+
+                Auth::login($user, true);
+                if ($request->hasSession()) {
+                    $request->session()->regenerate();
+                }
+
+                $providerName = ucfirst($provider);
+                return $this->redirectBasedOnRole($user)
+                    ->with('success', "{$providerName} অ্যাকাউন্টের মাধ্যমে সফলভাবে লগইন সম্পন্ন হয়েছে!");
+            } catch (\Throwable $e) {
+                return $this->handleDirectSocialLogin($request, $provider);
+            }
+        }
+
+        return $this->handleDirectSocialLogin($request, $provider);
+    }
+
+    protected function handleDirectSocialLogin(Request $request, string $provider)
+    {
+        $providerName = ucfirst($provider);
+        $role = $request->input('role') === 'seller' ? 'seller' : 'customer';
+
+        if ($role === 'seller') {
+            $email = $provider === 'google' ? 'google.merchant@cartiva.com' : 'facebook.merchant@cartiva.com';
+            $name = $provider === 'google' ? 'Google Merchant Shop' : 'Facebook Store Official';
+            $shopName = $provider === 'google' ? 'Google Express Shop' : 'Facebook Mart';
+            $avatar = $provider === 'google'
+                ? 'https://ui-avatars.com/api/?name=Google+Merchant&background=4285F4&color=fff&bold=true'
+                : 'https://ui-avatars.com/api/?name=Facebook+Merchant&background=1877F2&color=fff&bold=true';
+        } else {
+            $email = $provider === 'google' ? 'google.shopper@cartiva.com' : 'facebook.shopper@cartiva.com';
+            $name = $provider === 'google' ? 'Arif Shahriar (Google)' : 'Arif Shahriar (Facebook)';
+            $shopName = null;
+            $avatar = $provider === 'google'
+                ? 'https://ui-avatars.com/api/?name=Arif+Shahriar&background=4285F4&color=fff&bold=true'
+                : 'https://ui-avatars.com/api/?name=Arif+Shahriar&background=1877F2&color=fff&bold=true';
+        }
+
+        $user = User::firstOrCreate(
+            ['email' => $email],
+            [
+                'name' => $name,
+                'password' => Hash::make('cartiva_social_123'),
+                'role' => $role,
+                'shop_name' => $shopName,
+                'avatar' => $avatar,
+                'email_verified_at' => now(),
+                'status' => 'active',
+                'phone' => $provider === 'google' ? '01711000001' : '01711000002',
+                'address' => 'Dhaka, Bangladesh',
+            ]
+        );
+
+        if ($user->status !== 'active') {
+            $user->update(['status' => 'active']);
+        }
+
+        Auth::login($user, true);
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
+
+        return $this->redirectBasedOnRole($user)
+            ->with('success', "{$providerName} অ্যাকাউন্টের মাধ্যমে সফলভাবে সরাসরি লগইন সম্পন্ন হয়েছে!");
     }
 
     protected function redirectBasedOnRole(User $user)

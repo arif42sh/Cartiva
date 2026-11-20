@@ -9,17 +9,9 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
             <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Purchase & Order History</h1>
-            <p class="text-xs sm:text-sm text-slate-500 mt-1">আপনার সকল টিম বাই পুল এবং সিঙ্গেল কেনাকাটার পূর্ণাঙ্গ তালিকা ও স্ট্যাটাস।</p>
+           
         </div>
-        <div class="flex items-center space-x-2.5 shrink-0">
-            <a href="{{ route('orders.track') }}" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-300 font-bold text-xs shadow-xs transition-colors flex items-center space-x-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                <span>Live Tracker</span>
-            </a>
-            <a href="{{ route('home') }}" class="px-4 py-2.5 rounded-xl bg-[#53a318] hover:bg-[#468c13] text-white font-bold text-xs shadow-xs transition-colors">
-                Continue Shopping
-            </a>
-        </div>
+        
     </div>
 
     <!-- Tabs Navigation Bar -->
@@ -37,7 +29,7 @@
             <!-- Active Team Pools Tab -->
             <a href="{{ route('orders.index', ['tab' => 'groups']) }}" 
                class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-2 {{ $tab === 'groups' ? 'bg-[#53a318] text-white shadow-xs' : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100' }}">
-                <span>👥 Team Pools</span>
+                <span> Team Pools</span>
                 <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ $tab === 'groups' ? 'bg-white/20 text-white' : 'bg-emerald-200 text-emerald-900' }}">
                     {{ $groupsCount }}
                 </span>
@@ -46,17 +38,14 @@
             <!-- Delivered Orders Tab -->
             <a href="{{ route('orders.index', ['tab' => 'delivered']) }}" 
                class="px-3.5 py-2 rounded-xl transition-all flex items-center space-x-2 {{ $tab === 'delivered' ? 'bg-blue-600 text-white shadow-xs' : 'bg-blue-50 text-blue-800 hover:bg-blue-100' }}">
-                <span>📦 Delivered</span>
+                <span> Delivered</span>
                 <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ $tab === 'delivered' ? 'bg-white/20 text-white' : 'bg-blue-200 text-blue-900' }}">
                     {{ $deliveredCount }}
                 </span>
             </a>
         </div>
 
-        <a href="{{ route('orders.track') }}" class="text-xs font-bold text-[#53a318] hover:underline flex items-center space-x-1">
-            <span>কুরিয়ার ট্র্যাকিং পেজ</span>
-            <span>&rarr;</span>
-        </a>
+      
     </div>
 
     @if($orders->isEmpty())

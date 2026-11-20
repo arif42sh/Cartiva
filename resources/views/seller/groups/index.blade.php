@@ -99,7 +99,7 @@
                 $isCompleted = $group->status === 'completed';
                 $pct = $group->progress_percent;
             @endphp
-            <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-5 flex flex-col justify-between hover:border-teal-300 transition-all group">
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 flex flex-col justify-between hover:border-teal-300 transition-all group">
                 
                 <div>
                     <!-- Top Status Strip -->
@@ -181,8 +181,9 @@
                         @elseif($isExpired)
                             <span class="font-bold text-rose-500">Ended {{ $group->expires_at->diffForHumans() }}</span>
                         @else
-                            <span class="font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md">
-                                ⏳ {{ $group->expires_at->diffForHumans(['parts' => 2]) }}
+                            <span class="font-mono font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md inline-flex items-center gap-1 border border-amber-200">
+                                <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>{{ $group->expires_at->diffForHumans(['parts' => 2]) }}</span>
                             </span>
                         @endif
                     </div>
@@ -248,8 +249,10 @@
 
             </div>
         @empty
-            <div class="col-span-full py-16 text-center bg-white rounded-3xl border border-slate-200/90 p-8">
-                <span class="text-4xl block mb-2">👥</span>
+            <div class="col-span-full py-16 text-center bg-white rounded-2xl border border-slate-200/90 p-8">
+                <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 mx-auto mb-3 flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                </div>
                 <h3 class="text-base font-extrabold text-slate-800">No Group Buying Sessions Found</h3>
                 <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1">When buyers initiate team purchasing circles for your products, you will see their progress and participants here.</p>
             </div>
@@ -272,7 +275,7 @@
              @click="launchModal = false"></div>
 
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100"
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100"
                  @click.away="launchModal = false">
                 
                 <!-- Modal Header -->

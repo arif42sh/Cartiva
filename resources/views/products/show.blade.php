@@ -1219,14 +1219,20 @@
                     this.timeString = '00:00:00';
                     return;
                 }
-                const h = Math.floor(total / 3600);
-                const m = Math.floor((total % 3600) / 60);
-                const s = Math.floor(total % 60);
-                this.timeString = [
-                    h.toString().padStart(2, '0'),
-                    m.toString().padStart(2, '0'),
-                    s.toString().padStart(2, '0')
-                ].join(':');
+                const d = Math.floor(total / 86400);
+                const rem = total % 86400;
+                const h = Math.floor(rem / 3600);
+                const m = Math.floor((rem % 3600) / 60);
+                const s = Math.floor(rem % 60);
+                if (d > 0) {
+                    this.timeString = `${d}d ${h.toString().padStart(2, '0')}h ${m.toString().padStart(2, '0')}m`;
+                } else {
+                    this.timeString = [
+                        h.toString().padStart(2, '0'),
+                        m.toString().padStart(2, '0'),
+                        s.toString().padStart(2, '0')
+                    ].join(':');
+                }
             }
         };
     }

@@ -846,7 +846,7 @@
                             <span>Seller Dashboard</span>
                         </a>
                     @else
-                        <a href="{{ route('home') }}#seller-acquisition" 
+                        <a href="{{ route('register', ['role' => 'seller']) }}" 
                            class="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-bold text-slate-700 hover:text-[#53a318] hover:border-[#53a318] bg-slate-50 hover:bg-white border border-slate-200 px-3.5 py-1.5 rounded-xl transition-all shadow-2xs group">
                             <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-[#53a318] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                             <span>Become a seller</span>
@@ -890,7 +890,7 @@
                             <span class="text-xs text-teal-600">&rarr;</span>
                         </a>
                     @else
-                        <a href="{{ route('home') }}#seller-acquisition" class="px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold flex items-center justify-between">
+                        <a href="{{ route('register', ['role' => 'seller']) }}" class="px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold flex items-center justify-between">
                             <span>Become a seller</span>
                             <span class="text-xs text-slate-400">&rarr;</span>
                         </a>

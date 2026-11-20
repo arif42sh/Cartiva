@@ -77,7 +77,7 @@
         
         <!-- Left: Live Storefront Card Preview (1 col, sticky) -->
         <div class="lg:col-span-1 space-y-6 lg:sticky lg:top-6">
-            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-5 sm:p-6 overflow-hidden">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 overflow-hidden">
 
                 <!-- Mini Storefront Banner Preview -->
                 <div class="w-full h-32 rounded-2xl overflow-hidden bg-slate-900 relative border border-slate-200 group">
@@ -100,8 +100,7 @@
                             <img :src="avatarPreview" alt="Avatar" class="w-full h-full object-cover rounded-xl">
                         </template>
                         <template x-if="!avatarPreview || removeAvatar">
-                            <div class="w-full h-full rounded-xl text-white flex items-center justify-center font-black text-xl shadow-xs"
-                                 style="background: linear-gradient(135deg, #53a318 0%, #10b981 100%);">
+                            <div class="w-full h-full rounded-xl bg-slate-900 text-[#53a318] flex items-center justify-center font-black text-xl shadow-xs">
                                 <span x-text="(shopName || 'C').charAt(0).toUpperCase()"></span>
                             </div>
                         </template>
@@ -125,7 +124,7 @@
 
         <!-- Right: Settings & Branding Form (2 cols) -->
         <div class="lg:col-span-2">
-            <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
                 
                 <form action="{{ route('seller.profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-10">
                     @csrf
@@ -215,8 +214,7 @@
                                             <img :src="avatarPreview" alt="Logo" class="w-full h-full object-cover">
                                         </template>
                                         <template x-if="!avatarPreview || removeAvatar">
-                                            <div class="w-full h-full text-white flex items-center justify-center font-black text-xl"
-                                                 style="background: linear-gradient(135deg, #53a318 0%, #10b981 100%);">
+                                            <div class="w-full h-full rounded-2xl bg-slate-900 text-[#53a318] flex items-center justify-center font-black text-xl">
                                                 <span x-text="(shopName || 'C').charAt(0).toUpperCase()"></span>
                                             </div>
                                         </template>

@@ -10,7 +10,7 @@
     @include('seller.partials.nav')
 
     <!-- Interactive Simulation & Control Toolbar -->
-    <div class="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col xl:flex-row xl:items-center justify-between gap-3 sm:gap-4">
+    <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col xl:flex-row xl:items-center justify-between gap-3 sm:gap-4">
         
         <!-- Left: Title & Live Simulation Badge -->
         <div class="space-y-1">
@@ -95,7 +95,7 @@
         <!-- Adaptive Device Shell -->
         <div :class="viewMode === 'mobile' 
                 ? 'w-full max-w-[430px] bg-slate-950 p-4 rounded-[52px] shadow-2xl border-[5px] border-slate-700 ring-1 ring-white/10 transition-all duration-300' 
-                : 'w-full bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden transition-all duration-300'">
+                : 'w-full bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden transition-all duration-300'">
             
             <!-- Mobile Top Bezel: Dynamic Island & Status Bar -->
             <div x-show="viewMode === 'mobile'" class="pt-0.5 pb-2.5 px-3 text-white select-none">

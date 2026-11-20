@@ -66,17 +66,33 @@
 
             <!-- Classic Countdown Timer -->
             @if(!$isCompleted && !$isExpired)
-                <div class="inline-flex items-center space-x-2.5 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl shrink-0 self-start sm:self-center shadow-2xs">
-                    <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="inline-flex items-center space-x-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl shrink-0 self-start sm:self-center shadow-2xs">
+                    <svg class="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     <span class="text-xs font-semibold text-slate-600">Ends in:</span>
                     <div class="flex items-center space-x-1 font-mono font-bold text-xs sm:text-sm text-slate-900">
-                        <span class="bg-white px-2 py-0.5 rounded border border-slate-200" x-text="hours">00</span>
-                        <span class="text-slate-400">:</span>
-                        <span class="bg-white px-2 py-0.5 rounded border border-slate-200" x-text="minutes">00</span>
-                        <span class="text-slate-400">:</span>
-                        <span class="bg-white px-2 py-0.5 rounded border border-slate-200" x-text="seconds">00</span>
+                        <template x-if="days > 0">
+                            <span class="flex items-center">
+                                <span class="bg-white px-1.5 py-0.5 rounded border border-slate-200" x-text="days">0</span>
+                                <span class="text-[10px] text-slate-400 font-bold ml-0.5 mr-1">d</span>
+                                <span class="text-slate-300 mr-1">:</span>
+                            </span>
+                        </template>
+                        <span class="flex items-center">
+                            <span class="bg-white px-1.5 py-0.5 rounded border border-slate-200" x-text="hours">00</span>
+                            <span class="text-[10px] text-slate-400 font-bold ml-0.5 mr-1">h</span>
+                        </span>
+                        <span class="text-slate-300">:</span>
+                        <span class="flex items-center">
+                            <span class="bg-white px-1.5 py-0.5 rounded border border-slate-200" x-text="minutes">00</span>
+                            <span class="text-[10px] text-slate-400 font-bold ml-0.5 mr-1">m</span>
+                        </span>
+                        <span class="text-slate-300">:</span>
+                        <span class="flex items-center">
+                            <span class="bg-white px-1.5 py-0.5 rounded border border-slate-200 text-rose-600" x-text="seconds">00</span>
+                            <span class="text-[10px] text-slate-400 font-bold ml-0.5">s</span>
+                        </span>
                     </div>
                 </div>
             @endif
@@ -603,6 +619,7 @@
     function groupRoom(initialSec, url) {
         return {
             secondsLeft: Math.max(0, Math.floor(Number(initialSec) || 0)),
+            days: 0,
             hours: '00',
             minutes: '00',
             seconds: '00',
@@ -629,14 +646,17 @@
             updateClock() {
                 const totalSec = Math.max(0, Math.floor(Number(this.secondsLeft) || 0));
                 if (totalSec <= 0) {
+                    this.days = 0;
                     this.hours = '00';
                     this.minutes = '00';
                     this.seconds = '00';
                     return;
                 }
-                const h = Math.floor(totalSec / 3600);
-                const m = Math.floor((totalSec % 3600) / 60);
-                const s = Math.floor(totalSec % 60);
+                this.days = Math.floor(totalSec / 86400);
+                const remSec = totalSec % 86400;
+                const h = Math.floor(remSec / 3600);
+                const m = Math.floor((remSec % 3600) / 60);
+                const s = Math.floor(remSec % 60);
                 this.hours = h.toString().padStart(2, '0');
                 this.minutes = m.toString().padStart(2, '0');
                 this.seconds = s.toString().padStart(2, '0');
