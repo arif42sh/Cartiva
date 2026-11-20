@@ -251,4 +251,28 @@ class GroupBuySession extends Model
             }
         }
     }
+
+    /**
+     * Scope query to only active sessions within deadline
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active')->where('expires_at', '>', now());
+    }
+
+    /**
+     * Scope query to sessions that still have vacant buyer slots
+     */
+    public function scopeOpenForJoining($query)
+    {
+        return $query->active()->whereColumn('current_members', '<', 'required_members');
+    }
+
+    /**
+     * Scope query to sessions that need just 1 more member to unlock
+     */
+    public function scopeNearCompletion($query)
+    {
+        return $query->active()->whereRaw('(required_members - current_members) = 1');
+    }
 }
