@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -43,6 +44,8 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             $user = Auth::user();
+
+            ActivityLog::log('user_login', "User {$user->name} ({$user->email}) logged in successfully as " . ucfirst($user->role), 'User', $user->id, $user->id);
 
             return $this->redirectBasedOnRole($user)
                 ->with('success', "স্বাগতম, {$user->name}! Cartiva-তে সফলভাবে লগইন হয়েছে।");
@@ -103,12 +106,19 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
+        ActivityLog::log('user_registered', "New " . ucfirst($user->role) . " registered: {$user->name} ({$user->email})", 'User', $user->id, $user->id);
+
         return $this->redirectBasedOnRole($user)
             ->with('success', "অভিনন্দন, {$user->name}! আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে।");
     }
 
     public function logout(Request $request)
     {
+        if (Auth::check()) {
+            $u = Auth::user();
+            ActivityLog::log('user_logout', "User {$u->name} ({$u->email}) logged out.", 'User', $u->id, $u->id);
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -198,6 +208,8 @@ class AuthController extends Controller
                     $request->session()->regenerate();
                 }
 
+                ActivityLog::log('social_login', "User {$user->name} logged in via {$provider}", 'User', $user->id, $user->id);
+
                 $providerName = ucfirst($provider);
                 return $this->redirectBasedOnRole($user)
                     ->with('success', "{$providerName} অ্যাকাউন্টের মাধ্যমে সফলভাবে লগইন সম্পন্ন হয়েছে!");
@@ -253,6 +265,8 @@ class AuthController extends Controller
         if ($request->hasSession()) {
             $request->session()->regenerate();
         }
+
+        ActivityLog::log('social_login', "User {$user->name} logged in via {$providerName}", 'User', $user->id, $user->id);
 
         return $this->redirectBasedOnRole($user)
             ->with('success', "{$providerName} অ্যাকাউন্টের মাধ্যমে সফলভাবে সরাসরি লগইন সম্পন্ন হয়েছে!");
