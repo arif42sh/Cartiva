@@ -3,8 +3,6 @@
 @section('title', 'My Account & Profile - Cartiva')
 
 @push('styles')
-<!-- Leaflet CSS for Location Map -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
     /* Classic Design System Variables */
     :root {
@@ -18,20 +16,6 @@
         --classic-border: #e2e8f0;
         --classic-bg: #f1f5f9;
         --classic-card: #ffffff;
-    }
-
-    .leaflet-control-attribution {
-        font-size: 9px !important;
-        opacity: 0.65;
-    }
-
-    .pin-bounce {
-        animation: dropPin 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    @keyframes dropPin {
-        0% { transform: translateY(-16px) scale(1.1); }
-        100% { transform: translateY(0) scale(1); }
     }
 
     /* Classic Tab Active Styles */
@@ -140,7 +124,10 @@
         @endif
 
         <!-- Main 2-Column Account Grid -->
-        <div x-data="{ activeTab: 'profile' }" class="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 items-start">
+        <div x-data="{ 
+            activeTab: '{{ request('tab', 'profile') }}',
+            switchTab(tab) { this.activeTab = tab; }
+        }" class="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 items-start">
 
             <!-- LEFT COLUMN: Classic Navigation Sidebar -->
             <div class="lg:col-span-1 space-y-4">
@@ -164,8 +151,11 @@
 
                         <!-- User Info -->
                         <div class="min-w-0 flex-1">
-                            <div class="flex items-center space-x-1">
-                                <span class="text-[10px] tracking-wider uppercase font-semibold text-amber-400/90">Verified Member</span>
+                            <div class="flex items-center space-x-1.5">
+                                <svg class="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-[10px] tracking-wider uppercase font-bold text-emerald-400">Verified Member</span>
                             </div>
                             <h2 class="text-sm sm:text-base font-bold text-white truncate" title="{{ $user->name }}">{{ $user->name }}</h2>
                             <p class="text-[11px] text-slate-300 truncate">{{ $user->phone ?: $user->email }}</p>
@@ -199,7 +189,7 @@
 
                     <nav class="space-y-1">
                         <!-- Tab 1: Personal Profile -->
-                        <button @click="activeTab = 'profile'" 
+                        <button @click="switchTab('profile')" 
                                 :class="activeTab === 'profile' ? 'classic-tab-active' : 'classic-tab-inactive'"
                                 class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-left cursor-pointer">
                             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -208,19 +198,19 @@
                             <span>Personal Profile</span>
                         </button>
 
-                        <!-- Tab 2: Address Book & Map -->
-                        <button @click="activeTab = 'address'; setTimeout(() => { if (window.deliveryMap) window.deliveryMap.invalidateSize(); }, 200)" 
+                        <!-- Tab 2: Address Book -->
+                        <button @click="switchTab('address')" 
                                 :class="activeTab === 'address' ? 'classic-tab-active' : 'classic-tab-inactive'"
                                 class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-left cursor-pointer">
                             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             </svg>
-                            <span>Address Book & Map</span>
+                            <span>Address Book</span>
                         </button>
 
                         <!-- Tab 3: Password & Security -->
-                        <button @click="activeTab = 'security'" 
+                        <button @click="switchTab('security')" 
                                 :class="activeTab === 'security' ? 'classic-tab-active' : 'classic-tab-inactive'"
                                 class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-left cursor-pointer">
                             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -237,7 +227,7 @@
 
                     <nav class="space-y-1">
                         <!-- Tab 4: My Orders -->
-                        <button @click="activeTab = 'orders'" 
+                        <button @click="switchTab('orders')" 
                                 :class="activeTab === 'orders' ? 'classic-tab-active' : 'classic-tab-inactive'"
                                 class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-left cursor-pointer">
                             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -247,7 +237,7 @@
                         </button>
 
                         <!-- Tab 5: Active Team Pools -->
-                        <button @click="activeTab = 'pools'" 
+                        <button @click="switchTab('pools')" 
                                 :class="activeTab === 'pools' ? 'classic-tab-active' : 'classic-tab-inactive'"
                                 class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-left cursor-pointer">
                             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -255,6 +245,8 @@
                             </svg>
                             <span>Active Team Pools ({{ $activeGroupsCount }})</span>
                         </button>
+
+                    
                     </nav>
 
                     <!-- Section: Merchant Center (for Sellers / Admin) -->
@@ -325,13 +317,13 @@
                             <h2 class="text-base sm:text-lg font-bold text-slate-900">Personal Profile</h2>
                             <p class="text-xs text-slate-500 mt-0.5">Manage your personal identification, contact info, and profile photo.</p>
                         </div>
-                        <span class="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-[#009966]">
-                            <svg class="w-4 h-4 text-[#009966] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-green-600" style="color: #16a34a;">
+                            <svg class="w-4 h-4 flex-shrink-0" style="color: #16a34a;" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
                             <span>Verified</span>
                         </span>
-                        
+
                     </div>
 
                     <!-- Classic Executive Overview Row -->
@@ -404,8 +396,8 @@
                                 <div class="relative">
                                     <input type="email" value="{{ $user->email }}" disabled
                                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-100/80 text-xs sm:text-sm font-semibold text-slate-500 cursor-not-allowed">
-                                    <span class="absolute right-3.5 top-2.5 text-[11px] font-bold text-emerald-600 flex items-center gap-1">
-                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                    <span class="absolute right-3.5 top-2.5 text-[11px] font-bold text-green-600 flex items-center gap-1" style="color: #16a34a;">
+                                        <svg class="w-3.5 h-3.5" style="color: #16a34a;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                                         Verified
                                     </span>
                                 </div>
@@ -424,106 +416,43 @@
                 </div>
 
                 <!-- ========================================== -->
-                <!-- TAB 2: ADDRESS BOOK & INTERACTIVE MAP      -->
+                <!-- TAB 2: ADDRESS BOOK                        -->
                 <!-- ========================================== -->
                 <div x-show="activeTab === 'address'" class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
                     
                     <!-- Header -->
-                    <div class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
                         <div>
-                            <h2 class="text-base sm:text-lg font-bold text-slate-900">Address Book & Doorstep Pin</h2>
-                            <p class="text-xs text-slate-500 mt-0.5">Pinpoint your exact doorstep address for lightning-fast courier dispatch.</p>
+                            <h2 class="text-base sm:text-lg font-bold text-slate-900">Address Book</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">Manage your shipping address and doorstep delivery details.</p>
                         </div>
-
-                        <button type="button" id="locate-me-btn" onclick="locateUserPosition()" 
-                                class="btn-classic-primary inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl font-bold text-xs shadow-xs cursor-pointer self-start sm:self-auto">
-                            <svg class="w-3.5 h-3.5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <span>Use My Current GPS</span>
-                        </button>
+                        @if($user->address)
+                           
+                        @endif
                     </div>
 
-                    <!-- Interactive Map Viewport -->
                     <div class="p-6 space-y-6">
-                        
-                        <!-- Map Wrapper -->
-                        <div class="relative w-full h-[360px] sm:h-[420px] rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner">
-                            
-                            <!-- Search Bar -->
-                            <div class="absolute top-3 left-3 right-3 z-[1000] max-w-lg mx-auto">
-                                <div class="relative">
-                                    <input type="text" id="map-search-input" 
-                                           placeholder="Search road, sector, or landmark (e.g. Gulshan 1, Mirpur 10, Dhanmondi)..." 
-                                           autocomplete="off"
-                                           class="w-full pl-9 pr-9 py-2.5 rounded-xl bg-white/95 backdrop-blur-md border border-slate-300 text-xs font-semibold text-slate-900 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                                           oninput="handleSearchInput(event)">
-                                    
-                                    <svg class="w-4 h-4 text-blue-600 absolute left-3 top-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                    </svg>
-                                    
-                                    <div id="search-spinner" class="hidden absolute right-3 top-3">
-                                        <svg class="animate-spin h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
+                        @if($user->address)
+                            <!-- Current Active Address Preview Card -->
+                            <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                     </div>
-                                </div>
-
-                                <div id="search-suggestions-dropdown" 
-                                     class="hidden mt-1.5 bg-white rounded-xl shadow-2xl border border-slate-200 divide-y divide-slate-100 max-h-60 overflow-y-auto z-[1001]">
-                                </div>
-                            </div>
-
-                            <!-- Leaflet Canvas -->
-                            <div id="delivery-map" class="w-full h-full z-0"></div>
-
-                            <!-- Pin Overlay -->
-                            <div id="center-pin-container" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full pointer-events-none z-[800] transition-transform duration-150 ease-out">
-                                <div class="relative flex flex-col items-center">
-                                    <div id="center-pin-icon" class="transition-transform duration-150 ease-out origin-bottom">
-                                        <svg width="34" height="44" viewBox="0 0 24 32" fill="none" class="filter drop-shadow-md">
-                                            <path d="M12 0C5.37 0 0 5.37 0 12C0 21 12 32 12 32C12 32 24 21 24 12C24 5.37 18.63 0 12 0Z" fill="#1d4ed8"/>
-                                            <circle cx="12" cy="12" r="5" fill="#ffffff"/>
-                                        </svg>
-                                    </div>
-                                    <div id="center-pin-shadow" class="w-4 h-1.5 bg-black/30 rounded-full blur-[1px] -mt-1 transition-all duration-150"></div>
-                                </div>
-                            </div>
-
-                            <!-- Recenter GPS -->
-                            <button type="button" onclick="locateUserPosition()" 
-                                    title="Recenter to GPS position"
-                                    class="absolute bottom-16 sm:bottom-14 right-3 z-[900] w-9 h-9 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 shadow-md flex items-center justify-center transition-transform hover:scale-105 cursor-pointer">
-                                <svg class="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>
-                            </button>
-
-                            <!-- Bottom Floating Location Banner -->
-                            <div class="absolute bottom-2 left-2 right-2 sm:left-3 sm:right-3 z-[900] pointer-events-auto">
-                                <div class="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-xl p-3 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                                    <div class="flex items-start space-x-2.5 min-w-0">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-blue-600 ring-4 ring-blue-100 flex-shrink-0 mt-1 animate-pulse"></span>
-                                        <div class="min-w-0">
-                                            <h4 id="detected-title" class="text-xs font-bold text-slate-900 truncate">Detecting location...</h4>
-                                            <p id="detected-subtitle" class="text-[11px] text-slate-500 truncate mt-0.5">Move the map pin to pinpoint building</p>
+                                    <div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-xs font-bold text-slate-900">{{ $user->name }}</span>
+                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-slate-900 text-white uppercase tracking-wider">{{ $user->address_tag ?: 'Home' }}</span>
                                         </div>
-                                    </div>
-
-                                    <div class="flex items-center space-x-2 flex-shrink-0 self-end sm:self-auto">
-                                        <span id="coords-display" class="font-mono text-[10px] text-slate-400 hidden sm:inline">23.8103, 90.4125</span>
-                                        <button type="button" onclick="focusOnDetails()" 
-                                                class="btn-classic-primary px-3 py-1.5 rounded-lg font-bold text-[11px] cursor-pointer">
-                                            Confirm Pin Location
-                                        </button>
+                                        <p class="text-xs text-slate-700 mt-1 font-medium leading-relaxed">{{ $user->address }}</p>
+                                        <p class="text-[11px] text-slate-500 mt-0.5">Phone: {{ $user->phone ?: 'Not provided' }}</p>
                                     </div>
                                 </div>
+                                <span class="text-[11px] font-bold text-blue-700 bg-white px-3 py-1 rounded-lg border border-blue-200 shadow-2xs self-start sm:self-auto">
+                                    Primary Delivery
+                                </span>
                             </div>
-
-                        </div>
+                        @endif
 
                         <!-- Address Form -->
                         <form method="POST" action="{{ route('profile.update') }}" class="space-y-5">
@@ -532,28 +461,29 @@
                             <input type="hidden" name="section" value="address">
                             <input type="hidden" name="name" value="{{ $user->name }}">
                             <input type="hidden" name="phone" id="hidden-phone" value="{{ $user->phone }}">
+                            <input type="hidden" name="address_tag" id="hidden-address-tag" value="{{ old('address_tag', $user->address_tag ?? 'Home') }}">
 
                             <!-- Address Tag Chips -->
                             <div>
-                                <label class="block text-xs font-bold text-slate-800 mb-2">Save Address As</label>
+                                <label class="block text-xs font-bold text-slate-800 mb-2">Address Type</label>
                                 <div class="flex items-center space-x-2">
                                     <button type="button" onclick="setAddressTag('Home')" 
-                                            class="address-tag-btn px-4 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer" data-tag="Home">
-                                        🏠 Home
+                                            class="address-tag-btn px-4 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer {{ ($user->address_tag ?? 'Home') === 'Home' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-700 border-slate-200' }}" data-tag="Home">
+                                        Home
                                     </button>
                                     <button type="button" onclick="setAddressTag('Work')" 
-                                            class="address-tag-btn px-4 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer" data-tag="Work">
-                                        🏢 Office / Work
+                                            class="address-tag-btn px-4 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer {{ ($user->address_tag ?? 'Home') === 'Work' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-700 border-slate-200' }}" data-tag="Work">
+                                        Office
                                     </button>
                                     <button type="button" onclick="setAddressTag('Other')" 
-                                            class="address-tag-btn px-4 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer" data-tag="Other">
-                                        📍 Other
+                                            class="address-tag-btn px-4 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer {{ ($user->address_tag ?? 'Home') === 'Other' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-700 border-slate-200' }}" data-tag="Other">
+                                        Other
                                     </button>
                                 </div>
                             </div>
 
                             <!-- Structured Road / House Inputs -->
-                            <div id="address-details-section" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-bold text-slate-800 mb-1">House / Flat / Holding No.</label>
                                     <input type="text" id="input-house" placeholder="e.g. Flat 3A, House 12" 
@@ -561,20 +491,20 @@
                                            oninput="updateCombinedAddress()">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-800 mb-1">Road / Street Name</label>
+                                    <label class="block text-xs font-bold text-slate-800 mb-1">Road / Street / Block</label>
                                     <input type="text" id="input-road" placeholder="e.g. Road 11, Block C" 
                                            class="classic-input w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold"
                                            oninput="updateCombinedAddress()">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-800 mb-1">Area / Thana / Sector</label>
-                                    <input type="text" id="input-area" placeholder="e.g. Dhanmondi, Gulshan 2, Mirpur 12" 
+                                    <label class="block text-xs font-bold text-slate-800 mb-1">Area / Thana / Sector <span class="text-rose-500">*</span></label>
+                                    <input type="text" id="input-area" placeholder="e.g. Banani, Gulshan 2, Mirpur 10, Uttara" required
                                            class="classic-input w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold"
                                            oninput="updateCombinedAddress()">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-800 mb-1">District / City</label>
-                                    <input type="text" id="input-city" placeholder="e.g. Dhaka" 
+                                    <label class="block text-xs font-bold text-slate-800 mb-1">District / City <span class="text-rose-500">*</span></label>
+                                    <input type="text" id="input-city" placeholder="e.g. Dhaka, Chattogram, Sylhet" required
                                            class="classic-input w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold"
                                            oninput="updateCombinedAddress()">
                                 </div>
@@ -582,7 +512,7 @@
 
                             <!-- Landmark -->
                             <div>
-                                <label class="block text-xs font-bold text-slate-800 mb-1">Nearby Landmark / Instruction (Optional)</label>
+                                <label class="block text-xs font-bold text-slate-800 mb-1">Nearby Landmark / Delivery Instruction (Optional)</label>
                                 <input type="text" id="input-landmark" placeholder="e.g. Beside City Bank ATM, Opposite to Central Mosque" 
                                        class="classic-input w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold"
                                        oninput="updateCombinedAddress()">
@@ -591,27 +521,27 @@
                             <!-- Full Combined Address Textarea -->
                             <div>
                                 <div class="flex items-center justify-between mb-1">
-                                    <label class="block text-xs font-bold text-slate-800">Complete Delivery Address</label>
-                                    <span class="text-[11px] text-slate-400">Auto-assembled from map and inputs</span>
+                                    <label class="block text-xs font-bold text-slate-800">Complete Delivery Address <span class="text-rose-500">*</span></label>
+                                    <span class="text-[10px] text-slate-400">Auto-assembled or edit directly</span>
                                 </div>
                                 <textarea id="full-address-textarea" name="address" rows="3" required
-                                          placeholder="Full delivery address will auto-sync with the map pin and inputs..."
+                                          placeholder="Enter or verify full delivery address for courier..."
                                           class="classic-input w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold resize-none leading-relaxed">{{ old('address', $user->address) }}</textarea>
                             </div>
 
                             <!-- Contact Phone Number -->
                             <div>
-                                <label class="block text-xs font-bold text-slate-800 mb-1">Delivery Contact Number</label>
-                                <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" placeholder="e.g. +880 17XXXXXXXX"
+                                <label class="block text-xs font-bold text-slate-800 mb-1">Contact Phone Number <span class="text-rose-500">*</span></label>
+                                <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" placeholder="e.g. +880 17XXXXXXXX" required
                                        class="classic-input w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold"
                                        oninput="document.getElementById('hidden-phone').value = this.value">
                             </div>
 
                             <!-- Save Address Action -->
-                            <div class="flex justify-end pt-3 border-t border-slate-100">
+                            <div class="flex items-center justify-end pt-3 border-t border-slate-100">
                                 <button type="submit" 
                                         class="btn-classic-primary px-6 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-sm inline-flex items-center space-x-2 cursor-pointer">
-                                    <span>Save Delivery Address</span>
+                                    <span>Save Address</span>
                                 </button>
                             </div>
 
@@ -839,372 +769,15 @@
 </div>
 
 @push('scripts')
-<!-- Leaflet JS for Map -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-let deliveryMap = null;
-let currentAddressTag = 'Home';
-let searchDebounceTimer = null;
-let isProgrammaticMove = false;
+let currentAddressTag = '{{ $user->address_tag ?? "Home" }}';
 
-// Default Center: Dhaka coordinates
-let defaultLat = 23.8103;
-let defaultLng = 90.4125;
-
-function initMap() {
-    const mapElement = document.getElementById('delivery-map');
-    if (!mapElement) return;
-
-    if (deliveryMap) {
-        setTimeout(() => { deliveryMap.invalidateSize(); }, 200);
-        return;
-    }
-
-    deliveryMap = L.map('delivery-map', {
-        center: [defaultLat, defaultLng],
-        zoom: 15,
-        zoomControl: false
-    });
-
-    // Zoom control at top-right
-    L.control.zoom({ position: 'topright' }).addTo(deliveryMap);
-
-    // OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
-        maxZoom: 19
-    }).addTo(deliveryMap);
-
-    const pinIcon = document.getElementById('center-pin-icon');
-    const pinShadow = document.getElementById('center-pin-shadow');
-
-    // Pin Animation
-    deliveryMap.on('movestart', function () {
-        if (pinIcon) {
-            pinIcon.style.transform = 'translateY(-12px) scale(1.08)';
-        }
-        if (pinShadow) {
-            pinShadow.style.transform = 'scale(0.6)';
-            pinShadow.style.opacity = '0.25';
-        }
-    });
-
-    deliveryMap.on('moveend', function () {
-        if (pinIcon) {
-            pinIcon.style.transform = 'translateY(0) scale(1)';
-            pinIcon.classList.add('pin-bounce');
-            setTimeout(() => pinIcon.classList.remove('pin-bounce'), 350);
-        }
-        if (pinShadow) {
-            pinShadow.style.transform = 'scale(1)';
-            pinShadow.style.opacity = '0.35';
-        }
-
-        const center = deliveryMap.getCenter();
-        updateCoordsUI(center.lat, center.lng);
-
-        if (!isProgrammaticMove) {
-            reverseGeocode(center.lat, center.lng);
-        }
-        isProgrammaticMove = false;
-    });
-
-    deliveryMap.on('click', function (e) {
-        deliveryMap.panTo(e.latlng, { animate: true, duration: 0.6 });
-    });
-
-    const existingAddress = document.getElementById('full-address-textarea').value.trim();
-    if (!existingAddress) {
-        reverseGeocode(defaultLat, defaultLng);
-    } else {
-        geocodeAndCenter(existingAddress);
-    }
-}
-
-function updateCoordsUI(lat, lng) {
-    const coordsEl = document.getElementById('coords-display');
-    if (coordsEl) {
-        coordsEl.textContent = lat.toFixed(4) + ', ' + lng.toFixed(4);
-    }
-}
-
-// 1. AUTOCOMPLETE SEARCH
-function handleSearchInput(e) {
-    const query = e.target.value.trim();
-    const dropdown = document.getElementById('search-suggestions-dropdown');
-    const spinner = document.getElementById('search-spinner');
-
-    clearTimeout(searchDebounceTimer);
-
-    if (query.length < 2) {
-        if (dropdown) {
-            dropdown.classList.add('hidden');
-            dropdown.innerHTML = '';
-        }
-        if (spinner) spinner.classList.add('hidden');
-        return;
-    }
-
-    if (spinner) spinner.classList.remove('hidden');
-
-    searchDebounceTimer = setTimeout(() => {
-        const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=23.8103&lon=90.4125&limit=6`;
-        
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                if (spinner) spinner.classList.add('hidden');
-                if (data && data.features && data.features.length > 0) {
-                    renderSearchSuggestions(data.features);
-                } else {
-                    fallbackNominatimSearch(query);
-                }
-            })
-            .catch(() => {
-                fallbackNominatimSearch(query);
-            });
-    }, 280);
-}
-
-function fallbackNominatimSearch(query) {
-    const spinner = document.getElementById('search-spinner');
-    fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&countrycodes=bd&limit=5&accept-language=en`)
-        .then(res => res.json())
-        .then(data => {
-            if (spinner) spinner.classList.add('hidden');
-            if (data && data.length > 0) {
-                renderNominatimSuggestions(data);
-            } else {
-                showNoResults();
-            }
-        })
-        .catch(() => {
-            if (spinner) spinner.classList.add('hidden');
-            showNoResults();
-        });
-}
-
-function renderSearchSuggestions(features) {
-    const dropdown = document.getElementById('search-suggestions-dropdown');
-    if (!dropdown) return;
-
-    dropdown.innerHTML = '';
-    features.forEach(f => {
-        const props = f.properties;
-        const coords = f.geometry.coordinates;
-        const lat = coords[1];
-        const lng = coords[0];
-
-        const title = props.name || props.street || props.locality || props.district || 'Location';
-        const subtitle = [props.street, props.locality, props.district, props.city || props.state, props.country]
-            .filter(Boolean)
-            .filter((v, i, arr) => arr.indexOf(v) === i)
-            .join(', ');
-
-        const item = document.createElement('div');
-        item.className = 'p-3 hover:bg-slate-50 cursor-pointer transition-colors flex items-start space-x-2.5';
-        item.innerHTML = `
-            <svg class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
-            <div class="min-w-0 flex-1">
-                <p class="text-xs font-bold text-slate-900 truncate">${title}</p>
-                <p class="text-[10px] text-slate-500 truncate">${subtitle}</p>
-            </div>
-        `;
-
-        item.onclick = function () {
-            selectLocationFromSearch(lat, lng, title, subtitle, props);
-        };
-
-        dropdown.appendChild(item);
-    });
-
-    dropdown.classList.remove('hidden');
-}
-
-function renderNominatimSuggestions(items) {
-    const dropdown = document.getElementById('search-suggestions-dropdown');
-    if (!dropdown) return;
-
-    dropdown.innerHTML = '';
-    items.forEach(item => {
-        const lat = parseFloat(item.lat);
-        const lng = parseFloat(item.lon);
-        const title = item.name || item.display_name.split(',')[0];
-        const subtitle = item.display_name;
-
-        const row = document.createElement('div');
-        row.className = 'p-3 hover:bg-slate-50 cursor-pointer transition-colors flex items-start space-x-2.5';
-        row.innerHTML = `
-            <svg class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
-            <div class="min-w-0 flex-1">
-                <p class="text-xs font-bold text-slate-900 truncate">${title}</p>
-                <p class="text-[10px] text-slate-500 truncate">${subtitle}</p>
-            </div>
-        `;
-
-        row.onclick = function () {
-            selectLocationFromSearch(lat, lng, title, subtitle, {});
-        };
-
-        dropdown.appendChild(row);
-    });
-
-    dropdown.classList.remove('hidden');
-}
-
-function showNoResults() {
-    const dropdown = document.getElementById('search-suggestions-dropdown');
-    if (!dropdown) return;
-    dropdown.innerHTML = '<div class="p-3 text-xs text-slate-500 text-center font-medium">No locations found. Try road or sector name.</div>';
-    dropdown.classList.remove('hidden');
-}
-
-function selectLocationFromSearch(lat, lng, title, subtitle, props) {
-    const dropdown = document.getElementById('search-suggestions-dropdown');
-    if (dropdown) dropdown.classList.add('hidden');
-
-    const searchInput = document.getElementById('map-search-input');
-    if (searchInput) searchInput.value = title;
-
-    if (deliveryMap) {
-        isProgrammaticMove = true;
-        deliveryMap.flyTo([lat, lng], 17, { duration: 1.2 });
-    }
-
-    if (props && Object.keys(props).length > 0) {
-        if (document.getElementById('input-house') && props.housenumber) document.getElementById('input-house').value = props.housenumber;
-        if (document.getElementById('input-road') && props.street) document.getElementById('input-road').value = props.street;
-        if (document.getElementById('input-area') && (props.locality || props.district)) document.getElementById('input-area').value = props.locality || props.district;
-        if (document.getElementById('input-city') && (props.city || props.state)) document.getElementById('input-city').value = props.city || props.state;
-    }
-
-    updateDetectedBanner(title, subtitle);
-    reverseGeocode(lat, lng);
-}
-
-// 2. REVERSE GEOCODING
-function reverseGeocode(lat, lng) {
-    updateDetectedBanner('Fetching exact address...', lat.toFixed(4) + ', ' + lng.toFixed(4));
-
-    fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=en`)
-        .then(res => res.json())
-        .then(data => {
-            if (data && data.address) {
-                const addr = data.address;
-
-                const house = addr.house_number || addr.building || '';
-                const road = addr.road || addr.residential || addr.street || addr.footway || addr.path || '';
-                const area = addr.neighbourhood || addr.suburb || addr.quarter || addr.city_district || addr.hamlet || addr.village || '';
-                const city = addr.city || addr.town || addr.municipality || addr.state_district || addr.state || 'Dhaka';
-
-                if (document.getElementById('input-road') && road) document.getElementById('input-road').value = road;
-                if (document.getElementById('input-area') && area) document.getElementById('input-area').value = area;
-                if (document.getElementById('input-city') && city) document.getElementById('input-city').value = city;
-                if (document.getElementById('input-house') && house) document.getElementById('input-house').value = house;
-
-                const primaryTitle = [house, road].filter(Boolean).join(', ') || area || city || 'Selected Pin Location';
-                const secondarySubtitle = data.display_name || [area, city, addr.country].filter(Boolean).join(', ');
-
-                updateDetectedBanner(primaryTitle, secondarySubtitle);
-                updateCombinedAddress();
-            }
-        })
-        .catch(() => {
-            fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}`)
-                .then(r => r.json())
-                .then(fallbackData => {
-                    if (fallbackData && fallbackData.features && fallbackData.features.length > 0) {
-                        const p = fallbackData.features[0].properties;
-                        if (document.getElementById('input-road') && p.street) document.getElementById('input-road').value = p.street;
-                        if (document.getElementById('input-area') && (p.locality || p.district)) document.getElementById('input-area').value = p.locality || p.district;
-                        if (document.getElementById('input-city') && (p.city || p.state)) document.getElementById('input-city').value = p.city || p.state;
-                        
-                        const title = p.name || p.street || 'Selected Pin Location';
-                        const subtitle = [p.locality, p.district, p.city, p.country].filter(Boolean).join(', ');
-                        updateDetectedBanner(title, subtitle);
-                        updateCombinedAddress();
-                    }
-                })
-                .catch(() => {
-                    updateDetectedBanner('Location Pin Pointed', lat.toFixed(4) + ', ' + lng.toFixed(4));
-                });
-        });
-}
-
-function updateDetectedBanner(title, subtitle) {
-    const t = document.getElementById('detected-title');
-    const s = document.getElementById('detected-subtitle');
-    if (t) t.textContent = title;
-    if (s) s.textContent = subtitle;
-}
-
-// 3. LOCATE USER VIA GPS
-function locateUserPosition() {
-    const locateBtn = document.getElementById('locate-me-btn');
-    if (!navigator.geolocation) {
-        alert('Geolocation is not supported by your browser.');
-        return;
-    }
-
-    if (locateBtn) {
-        locateBtn.innerHTML = `
-            <svg class="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            <span>Finding exact GPS...</span>
-        `;
-        locateBtn.disabled = true;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-        function (position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-
-            if (deliveryMap) {
-                isProgrammaticMove = true;
-                deliveryMap.flyTo([lat, lng], 17, { duration: 1.5 });
-            }
-
-            reverseGeocode(lat, lng);
-
-            if (locateBtn) {
-                locateBtn.innerHTML = `
-                    <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                    <span>Location Locked</span>
-                `;
-                setTimeout(() => {
-                    locateBtn.innerHTML = `
-                        <svg class="w-3.5 h-3.5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span>Use My Current GPS</span>
-                    `;
-                    locateBtn.disabled = false;
-                }, 3000);
-            }
-        },
-        function (error) {
-            let msg = 'Unable to retrieve location.';
-            if (error.code === 1) msg = 'Location permission denied. Please allow GPS access in your browser settings.';
-            alert(msg);
-            if (locateBtn) {
-                locateBtn.innerHTML = '<span>Use My Current GPS</span>';
-                locateBtn.disabled = false;
-            }
-        },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-    );
-}
-
-// 4. FOCUS ON DETAILS
-function focusOnDetails() {
-    const el = document.getElementById('input-house');
-    if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        el.focus();
-    }
-}
-
-// 5. ADDRESS TAG SELECTOR
+// Address Tag Selector
 function setAddressTag(tag) {
     currentAddressTag = tag;
+    const tagInput = document.getElementById('hidden-address-tag');
+    if (tagInput) tagInput.value = tag;
+
     document.querySelectorAll('.address-tag-btn').forEach(btn => {
         if (btn.getAttribute('data-tag') === tag) {
             btn.classList.add('bg-slate-900', 'text-white', 'border-slate-900');
@@ -1217,7 +790,7 @@ function setAddressTag(tag) {
     updateCombinedAddress();
 }
 
-// 6. SYNCHRONIZE COMBINED ADDRESS
+// Synchronize Structured Inputs into Combined Address Textarea
 function updateCombinedAddress() {
     const house = document.getElementById('input-house') ? document.getElementById('input-house').value.trim() : '';
     const road = document.getElementById('input-road') ? document.getElementById('input-road').value.trim() : '';
@@ -1238,36 +811,42 @@ function updateCombinedAddress() {
     }
 
     if (full) {
-        document.getElementById('full-address-textarea').value = full;
+        const fullAddrEl = document.getElementById('full-address-textarea');
+        if (fullAddrEl) fullAddrEl.value = full;
     }
 }
 
-function geocodeAndCenter(addressStr) {
-    if (!addressStr) return;
-    const cleanQuery = addressStr.replace(/\[.*?\]|\(.*?\)/g, '').split(',').slice(0, 3).join(' ').trim();
-    if (cleanQuery.length > 3) {
-        fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(cleanQuery)}&countrycodes=bd&limit=1`)
-            .then(r => r.json())
-            .then(res => {
-                if (res && res.length > 0 && deliveryMap) {
-                    const lat = parseFloat(res[0].lat);
-                    const lon = parseFloat(res[0].lon);
-                    isProgrammaticMove = true;
-                    deliveryMap.setView([lat, lon], 16);
-                    updateCoordsUI(lat, lon);
-                }
-            })
-            .catch(() => {});
+// Parse existing address into structured inputs on page load
+function parseExistingAddress() {
+    const full = document.getElementById('full-address-textarea') ? document.getElementById('full-address-textarea').value.trim() : '';
+    if (!full) return;
+
+    const tagMatch = full.match(/\[(.*?)\]/);
+    if (tagMatch && tagMatch[1]) {
+        setAddressTag(tagMatch[1]);
+    }
+
+    const landmarkMatch = full.match(/\((.*?)\)/);
+    if (landmarkMatch && landmarkMatch[1] && document.getElementById('input-landmark')) {
+        document.getElementById('input-landmark').value = landmarkMatch[1];
+    }
+
+    const clean = full.replace(/\[.*?\]|\(.*?\)/g, '').trim();
+    const parts = clean.split(',').map(s => s.trim()).filter(Boolean);
+
+    if (parts.length >= 1 && document.getElementById('input-house') && !document.getElementById('input-house').value) {
+        document.getElementById('input-house').value = parts[0];
+    }
+    if (parts.length >= 2 && document.getElementById('input-road') && !document.getElementById('input-road').value) {
+        document.getElementById('input-road').value = parts[1];
+    }
+    if (parts.length >= 3 && document.getElementById('input-area') && !document.getElementById('input-area').value) {
+        document.getElementById('input-area').value = parts[2];
+    }
+    if (parts.length >= 4 && document.getElementById('input-city') && !document.getElementById('input-city').value) {
+        document.getElementById('input-city').value = parts.slice(3).join(', ');
     }
 }
-
-document.addEventListener('click', function(e) {
-    const dropdown = document.getElementById('search-suggestions-dropdown');
-    const searchInput = document.getElementById('map-search-input');
-    if (dropdown && !dropdown.contains(e.target) && e.target !== searchInput) {
-        dropdown.classList.add('hidden');
-    }
-});
 
 // Live Avatar Image Preview
 function previewUserAvatar(event) {
@@ -1293,8 +872,8 @@ function previewUserAvatar(event) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    setAddressTag('Home');
-    initMap();
+    setAddressTag('{{ $user->address_tag ?? "Home" }}');
+    parseExistingAddress();
 });
 </script>
 @endpush
