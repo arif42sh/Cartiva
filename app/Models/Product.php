@@ -88,6 +88,27 @@ class Product extends Model
         return $this->hasMany(Review::class)->latest();
     }
 
+    public function getImageUrlAttribute(?string $value): string
+    {
+        if (empty($value)) {
+            return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80';
+        }
+
+        if (str_contains($value, '127.0.0.1') || str_contains($value, 'localhost')) {
+            $lower = strtolower($this->title ?? '');
+            if (str_contains($lower, 'iphone') || str_contains($lower, 'apple')) {
+                return 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=800&q=80';
+            } elseif (str_contains($lower, 'ps5') || str_contains($lower, 'playstation')) {
+                return 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=800&q=80';
+            } elseif (str_contains($lower, 'erdg') || str_contains($lower, 'fitness') || str_contains($lower, 'sport')) {
+                return 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80';
+            }
+            return 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80';
+        }
+
+        return $value;
+    }
+
     public function getDiscountPercentAttribute(): int
     {
         if ($this->single_price > 0 && $this->single_price > $this->group_price) {
