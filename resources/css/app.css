@@ -8,6 +8,7 @@
 
 @theme {
     --font-sans: 'Inter', 'Hind Siliguri', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-bangla: 'Hind Siliguri', sans-serif;
     --default-font-family: var(--font-sans);
     --color-groupon-green: #53a318;
     --color-groupon-hover: #468c13;
@@ -33,6 +34,12 @@
 
     button, input, optgroup, select, textarea {
         font-family: inherit;
+    }
+
+    /* Optimal Bengali typography rule */
+    .font-bangla, [lang="bn"], :lang(bn) {
+        font-family: 'Hind Siliguri', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        letter-spacing: normal !important;
     }
 }
 
