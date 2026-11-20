@@ -60,8 +60,8 @@
                                 </div>
                             </div>
                             <div class="text-right">
-                                <span class="text-sm font-bold text-slate-900 block">${{ number_format($item->subtotal, 2) }}</span>
-                                <span class="text-xs text-slate-400">Qty: {{ $item->quantity }} × ${{ number_format($item->unit_price, 2) }}</span>
+                                <span class="text-sm font-bold text-slate-900 block">৳{{ number_format($item->subtotal) }}</span>
+                                <span class="text-xs text-slate-400">Qty: {{ $item->quantity }} × ৳{{ number_format($item->unit_price) }}</span>
                             </div>
                         </div>
                     @endforeach
@@ -94,7 +94,7 @@
                     </div>
                     <div class="border-t border-slate-200 pt-3 flex justify-between items-baseline">
                         <span class="text-sm font-bold text-slate-900">Total Amount</span>
-                        <span class="text-xl font-black text-emerald-600">${{ number_format($order->total_amount, 2) }}</span>
+                        <span class="text-xl font-black text-emerald-600">৳{{ number_format($order->total_amount) }}</span>
                     </div>
                 </div>
             </div>

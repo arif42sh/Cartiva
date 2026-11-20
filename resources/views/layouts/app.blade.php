@@ -8,12 +8,12 @@
     <title>@yield('title', 'Cartiva – Deeper Discounts, Together | Group Buying Platform')</title>
     <meta name="description" content="Discover incredible group buying discounts on tech, food, fashion and lifestyle products with Cartiva.">
 
-    <!-- Fonts: Inter (Global Modern UI) & Hind Siliguri (Bengali fallback) -->
+    <!-- Fonts: Inter (Global Modern UI) & Hind Siliguri (Bengali Typography) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:100,200,300,400,500,600,700,800,900|hind-siliguri:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=inter:100,200,300,400,500,600,700,800,900|hind-siliguri:300,400,500,600,700&display=swap" rel="stylesheet" />
 
     <!-- Scripts and Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])

@@ -282,7 +282,7 @@
                             </td>
                             <td class="py-4 px-6 text-slate-700 font-semibold">{{ $sale->order->user->name ?? $sale->order->shipping_name }}</td>
                             <td class="py-4 px-6 font-mono font-bold text-slate-600 whitespace-nowrap">{{ $sale->order->order_number }}</td>
-                            <td class="py-4 px-6 font-black text-slate-900 text-sm whitespace-nowrap">${{ number_format($sale->subtotal, 2) }}</td>
+                            <td class="py-4 px-6 font-black text-slate-900 text-sm whitespace-nowrap">৳{{ number_format($sale->subtotal) }}</td>
                             <td class="py-4 px-6 whitespace-nowrap">
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-extrabold whitespace-nowrap {{ $sale->order->order_type === 'group_buy' ? 'bg-purple-50 text-purple-800 border border-purple-200 shadow-2xs' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
                                     @if($sale->order->order_type === 'group_buy')

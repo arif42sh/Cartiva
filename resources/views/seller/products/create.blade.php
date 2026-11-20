@@ -187,22 +187,22 @@
                         <!-- Primary Dual Pricing -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Solo Direct Buy Price ($ USD) <span class="text-rose-500">*</span></label>
-                                <input type="number" step="0.01" name="single_price" x-model="singlePrice" required placeholder="149.00"
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Solo Direct Buy Price (৳ BDT) <span class="text-rose-500">*</span></label>
+                                <input type="number" step="1" name="single_price" x-model="singlePrice" required placeholder="1200"
                                        class="w-full px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-black text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-[#53a318]">
                                 <span class="text-[9px] text-slate-400 mt-0.5 block">Full price for single customer checkout</span>
                             </div>
 
                             <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-200">
-                                <label class="block text-xs font-bold text-emerald-950 mb-1">Standard Group-Buy Price ($ USD) <span class="text-rose-500">*</span></label>
-                                <input type="number" step="0.01" name="group_price" x-model="groupPrice" required placeholder="99.00"
+                                <label class="block text-xs font-bold text-emerald-950 mb-1">Standard Group-Buy Price (৳ BDT) <span class="text-rose-500">*</span></label>
+                                <input type="number" step="1" name="group_price" x-model="groupPrice" required placeholder="990"
                                        class="w-full px-3 py-1.5 rounded-lg bg-white border border-emerald-300 text-xs font-black text-emerald-700 focus:outline-hidden focus:ring-2 focus:ring-[#53a318]">
                                 <div class="mt-0.5 flex items-center space-x-2 text-[10px]">
                                     <span class="text-emerald-800 font-bold" x-show="discountPercent > 0">
                                         Discount: <strong x-text="discountPercent + '% OFF'"></strong>
                                     </span>
                                     <span class="text-emerald-800 font-bold" x-show="savings > 0">
-                                        (Save $<span x-text="savings"></span>)
+                                        (Save ৳<span x-text="savings"></span>)
                                     </span>
                                 </div>
                             </div>

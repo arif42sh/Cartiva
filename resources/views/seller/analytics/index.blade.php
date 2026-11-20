@@ -61,7 +61,7 @@
                                 <span class="w-2.5 h-2.5 rounded-full bg-purple-600"></span>
                                 <span>Team Buy Revenue</span>
                             </span>
-                            <span class="text-purple-700 font-black">${{ number_format($groupRevenue, 2) }}</span>
+                            <span class="text-purple-700 font-black">৳{{ number_format($groupRevenue) }}</span>
                         </div>
                         @php
                             $groupPct = $totalRevenue > 0 ? round(($groupRevenue / $totalRevenue) * 100) : 0;
@@ -79,7 +79,7 @@
                                 <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
                                 <span>Solo Direct Buy Revenue</span>
                             </span>
-                            <span class="text-slate-700 font-black">${{ number_format($soloRevenue, 2) }}</span>
+                            <span class="text-slate-700 font-black">৳{{ number_format($soloRevenue) }}</span>
                         </div>
                         @php
                             $soloPct = $totalRevenue > 0 ? round(($soloRevenue / $totalRevenue) * 100) : 0;
@@ -117,15 +117,15 @@
                             <div>
                                 <h4 class="text-xs font-extrabold text-slate-900 line-clamp-1">{{ $prod->title }}</h4>
                                 <div class="flex items-center space-x-2 text-[11px] text-slate-500 mt-0.5">
-                                    <span>Solo: ${{ number_format($prod->single_price, 2) }}</span>
+                                    <span>Solo: ৳{{ number_format($prod->single_price) }}</span>
                                     <span>•</span>
-                                    <span class="text-emerald-600 font-bold">Group: ${{ number_format($prod->group_price, 2) }}</span>
+                                    <span class="text-emerald-600 font-bold">Group: ৳{{ number_format($prod->group_price) }}</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="text-right">
-                            <span class="text-sm font-black text-slate-900 block">${{ number_format($prod->gross_sales ?? 0, 2) }}</span>
+                            <span class="text-sm font-black text-slate-900 block">৳{{ number_format($prod->gross_sales ?? 0) }}</span>
                             <span class="text-[10px] text-slate-400 font-semibold">{{ $prod->total_orders ?? 0 }} Orders</span>
                         </div>
                     </div>

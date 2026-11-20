@@ -452,14 +452,10 @@
                     <div class="p-3.5 sm:p-4 rounded-xl bg-slate-50/70 border border-slate-200 space-y-2.5">
                         <div class="flex items-center justify-between text-xs">
                             <div class="flex items-center space-x-1.5 font-bold text-slate-800">
-                                <svg class="w-4 h-4 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                </svg>
-                                <span>ধাপভিত্তিক ডিসকাউন্ট অফার (Dynamic Tiers)</span>
+                                
+                                <span>Dynamic Tiers</span>
                             </div>
-                            <span class="text-[10px] font-bold text-[#53a318] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                                নিরাপদ ডেলিভারি
-                            </span>
+                           
                         </div>
 
                         <div class="grid grid-cols-2 sm:grid-cols-{{ min(4, count($tiersList)) }} gap-2 pt-1">
@@ -1034,20 +1030,16 @@
                         <span class="px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 text-[10px] font-black uppercase tracking-wider">
                             Sponsored &amp; Related
                         </span>
-                        <h3 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">
-                            Related Product Deals &amp; Recommendations
-                        </h3>
+                        
                     </div>
-                    <p class="text-xs text-slate-500 mt-0.5">
-                        Customers who viewed this item also checked these deals in {{ $cleanCat }}
-                    </p>
+                    
                 </div>
 
                 <div class="flex items-center space-x-2">
                     <a href="{{ route('category.show', $product->category->slug) }}" 
                        class="text-xs font-bold text-blue-700 hover:text-blue-900 hover:underline flex items-center space-x-1">
-                        <span>View All in {{ $cleanCat }}</span>
-                        <span>&rarr;</span>
+                        <span>View {{ $cleanCat }}</span>
+                        
                     </a>
                 </div>
             </div>
@@ -1109,40 +1101,14 @@
                             <a href="{{ route('products.show', $rel->slug) }}" 
                                class="w-full py-2 px-3 rounded-xl bg-slate-900 group-hover:bg-blue-600 text-white font-bold text-xs text-center transition-colors flex items-center justify-center space-x-1 shadow-2xs">
                                 <span>View Deal</span>
-                                <span>&rarr;</span>
+                                
                             </a>
                         </div>
                     </div>
                 @endforeach
             </div>
 
-            <!-- Pickaboo-Style Promotional Banner Ad Strip -->
-            <div class="rounded-2xl p-4 sm:p-5 border border-blue-200 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div class="flex items-center space-x-3.5">
-                    <div class="w-12 h-12 rounded-2xl bg-white/10 text-amber-300 border border-white/20 flex items-center justify-center font-bold text-2xl shrink-0">
-                        ⚡
-                    </div>
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-[10px] uppercase font-black tracking-wider text-amber-300 bg-amber-400/20 px-2 py-0.5 rounded border border-amber-300/30">
-                                Cartiva Protection Guarantee
-                            </span>
-                            <span class="text-xs text-blue-200">• 100% Verified Deals</span>
-                        </div>
-                        <h4 class="text-sm sm:text-base font-bold text-white mt-1">
-                            Invite friends to unlock maximum wholesale discount on any order!
-                        </h4>
-                        <p class="text-xs text-slate-300 mt-0.5">
-                            If team pool doesn't complete in time, enjoy guaranteed 100% instant automated refund. Zero risk.
-                        </p>
-                    </div>
-                </div>
-
-                <a href="{{ route('home') }}#active-deals" 
-                   class="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs shadow-md transition-all text-center shrink-0 self-start sm:self-auto cursor-pointer">
-                    Browse Trending Pools &rarr;
-                </a>
-            </div>
+           
 
         </div>
     @endif

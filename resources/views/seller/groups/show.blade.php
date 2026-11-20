@@ -55,16 +55,16 @@
                 <div class="flex items-center space-x-3 mt-2.5">
                     <div>
                         <span class="text-[10px] text-slate-400 block font-semibold">Solo Price</span>
-                        <span class="text-xs font-bold text-slate-700">${{ number_format($session->product->single_price, 2) }}</span>
+                        <span class="text-xs font-bold text-slate-700">৳{{ number_format($session->product->single_price) }}</span>
                     </div>
                     <div>
                         <span class="text-[10px] text-emerald-700 block font-bold">Team Discount Price</span>
-                        <span class="text-sm font-black text-emerald-600">${{ number_format($session->product->group_price, 2) }}</span>
+                        <span class="text-sm font-black text-emerald-600">৳{{ number_format($session->product->group_price) }}</span>
                     </div>
                     <div>
                         <span class="text-[10px] text-slate-400 block font-semibold">Total Savings</span>
                         <span class="text-xs font-black text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md">
-                            ${{ number_format($session->product->savings, 2) }} / buyer
+                            ৳{{ number_format($session->product->savings) }} / buyer
                         </span>
                     </div>
                 </div>
