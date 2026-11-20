@@ -27,10 +27,7 @@
                     Expired
                 </span>
             @else
-                <span class="text-xs font-bold px-2.5 py-1 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 flex items-center space-x-1.5">
-                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                    <span>Active Group</span>
-                </span>
+                
             @endif
         </div>
     </div>
@@ -45,8 +42,7 @@
                     <span class="text-[11px] font-bold uppercase tracking-wider text-[#53a318]">
                         Wholesale Group Deal
                     </span>
-                    <span class="text-slate-300">•</span>
-                    <span class="text-xs text-slate-500 font-medium">Target: {{ $session->required_members }} Members</span>
+                   
                 </div>
                 <h1 class="text-lg sm:text-xl font-bold text-slate-900 leading-snug">
                     @if($isCompleted)
@@ -120,7 +116,7 @@
 
                     <a href="{{ route('products.show', $session->product->slug) }}" 
                        class="inline-flex items-center justify-center w-full text-center text-xs font-bold text-slate-700 hover:text-[#53a318] bg-white border border-slate-200 hover:border-[#53a318] py-2 rounded-xl transition-colors shadow-2xs">
-                        <span>View Product Specifications</span>
+                        <span>View Product</span>
                         <svg class="w-3.5 h-3.5 ml-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </a>
                 </div>
@@ -134,7 +130,7 @@
                     
                     <!-- Progress Bar Header -->
                     <div class="flex items-center justify-between text-xs font-bold text-slate-800">
-                        <span>Group Formation Progress</span>
+                        <span>Group</span>
                         <span class="text-[#53a318]">
                             {{ $session->current_members }} of {{ $session->required_members }} Joined
                         </span>
@@ -199,7 +195,7 @@
                             <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                             </svg>
-                            <span>View All Members</span>
+                            <span>View Members</span>
                         </button>
 
                     </div>
@@ -218,16 +214,14 @@
                                     <svg class="w-4 h-4 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                     </svg>
-                                    <span>টিয়ারড ডিসকাউন্ট রোডম্যাপ (Tier Milestones)</span>
+                                    <span>Tier Milestones</span>
                                 </div>
                                 @if($achievedTier)
                                     <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200">
                                         {{ $achievedTier['discount_percent'] }}% ছাড় আনলকড ✓
                                     </span>
                                 @else
-                                    <span class="text-[10px] font-medium px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200">
-                                        ন্যূনতম {{ $session->effective_min_quota }} জন প্রয়োজন
-                                    </span>
+                                   
                                 @endif
                             </div>
 
@@ -292,9 +286,7 @@
                                         <span class="font-bold block text-amber-950">
                                             নিরাপদ শিপিং কোটা: ন্যূনতম {{ $session->effective_min_quota }} জন সদস্য প্রয়োজন!
                                         </span>
-                                        <p class="text-amber-800">
-                                            আর মাত্র <strong>{{ max(1, $session->effective_min_quota - $session->current_members) }} জন</strong> যুক্ত হলেই গ্রুপটির ডেলিভারি নিশ্চিত হবে এবং বাতিল হওয়ার কোনো ঝুঁকি থাকবে না!
-                                        </p>
+                                        
                                     @endif
                                 </div>
                             </div>
@@ -322,7 +314,7 @@
                         @if($userAlreadyJoined)
                             <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-center space-y-1">
                                 <span class="text-xs font-bold text-emerald-800 block">
-                                    আপনি এই গ্রুপে যুক্ত আছেন (পেমেন্ট সম্পন্ন)
+                                    আপনি এই গ্রুপে যুক্ত আছেন
                                 </span>
                                 <p class="text-[11px] text-emerald-700">
                                     বাকি স্লট পূরণ করতে নিচের লিংকটি বন্ধুদের সাথে শেয়ার করুন।
@@ -382,11 +374,9 @@
                                     <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
                                     </svg>
-                                    <span class="font-bold text-slate-800">ইনভাইট ও টিম শেয়ার করুন:</span>
+                                    <span class="font-bold text-slate-800"> Invite & Share:</span>
                                 </div>
-                                <span class="text-[10px] font-bold text-[#53a318] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                                    ১০০% সেফ রিফান্ড
-                                </span>
+                                
                             </div>
 
                             <!-- Official Social Share Circles -->
@@ -460,21 +450,7 @@
                     </div>
                 @endif
 
-                <!-- Classic Trust Guarantees -->
-                <div class="grid grid-cols-3 gap-2 pt-1 text-[11px] text-slate-500 font-medium">
-                    <div class="flex items-center space-x-1.5">
-                        <svg class="w-3.5 h-3.5 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        <span>100% Refundable</span>
-                    </div>
-                    <div class="flex items-center space-x-1.5">
-                        <svg class="w-3.5 h-3.5 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        <span>Genuine Product</span>
-                    </div>
-                    <div class="flex items-center space-x-1.5">
-                        <svg class="w-3.5 h-3.5 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        <span>Direct Dispatch</span>
-                    </div>
-                </div>
+                
 
             </div>
 
@@ -585,17 +561,15 @@
                                 </div>
                                 <div>
                                     <span class="font-bold text-amber-950 block">
-                                        {{ $session->remainingSlots() }}টি স্লট এখনও খালি আছে
+                                         Empty slot
                                     </span>
-                                    <span class="text-[11px] text-amber-800">
-                                        গ্রুপ পূরণ করতে বন্ধুদের সাথে লিংকটি শেয়ার করুন!
-                                    </span>
+                                    
                                 </div>
                             </div>
                         </div>
                     @else
                         <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-center text-xs font-bold text-emerald-800">
-                            🎉 সকল {{ $session->required_members }}টি স্লট পূরণ হয়ে গেছে!
+                            সকল {{ $session->required_members }}টি স্লট পূরণ হয়ে গেছে!
                         </div>
                     @endif
 
@@ -606,14 +580,14 @@
                     <button type="button" 
                             @click="openMembersModal = false"
                             class="px-4 py-2 text-xs font-bold text-slate-700 hover:text-slate-900 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer shadow-2xs">
-                        বন্ধ করুন (Close)
+                        Close
                     </button>
 
                     @if(!$isCompleted && !$isExpired && !$userAlreadyJoined)
                         <button type="button"
                                 @click="openMembersModal = false; document.querySelector('form[action*=\'group-buy.join\']')?.scrollIntoView({ behavior: 'smooth' })"
                                 class="px-4 py-2 text-xs font-bold text-white bg-[#53a318] hover:bg-[#468c13] rounded-xl shadow-xs transition-colors cursor-pointer">
-                            গ্রুপে যোগ দিন &rarr;
+                            Join Group;
                         </button>
                     @endif
                 </div>

@@ -121,7 +121,7 @@
                                         <span class="font-extrabold text-slate-900 block text-xs leading-snug line-clamp-2" title="{{ $item->product->title }}">
                                             {{ $item->product->title }}
                                         </span>
-                                        <span class="text-[10px] text-slate-400 font-semibold mt-0.5 block">Qty: {{ $item->quantity }} × ${{ number_format($item->unit_price, 2) }}</span>
+                                        <span class="text-[10px] text-slate-400 font-semibold mt-0.5 block">Qty: {{ $item->quantity }} × ৳{{ number_format($item->unit_price) }}</span>
                                     </div>
                                 </div>
                             </td>
@@ -149,7 +149,7 @@
 
                             <!-- Subtotal -->
                             <td class="py-3 px-3.5 font-black text-emerald-600 whitespace-nowrap text-xs">
-                                ${{ number_format($item->subtotal, 2) }}
+                                ৳{{ number_format($item->subtotal) }}
                             </td>
 
                             <!-- Order Type -->

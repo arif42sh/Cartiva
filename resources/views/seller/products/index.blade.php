@@ -128,15 +128,15 @@
                                 <div class="space-y-0.5">
                                     <div class="flex items-center space-x-1.5">
                                         <span class="text-slate-400 font-medium">Solo:</span>
-                                        <span class="font-bold text-slate-700">${{ number_format($product->single_price, 2) }}</span>
+                                        <span class="font-bold text-slate-700">৳{{ number_format($product->single_price) }}</span>
                                     </div>
                                     <div class="flex items-center space-x-1.5">
                                         <span class="text-teal-700 font-bold">Team:</span>
-                                        <span class="font-black text-emerald-600">${{ number_format($product->group_price, 2) }}</span>
+                                        <span class="font-black text-emerald-600">৳{{ number_format($product->group_price) }}</span>
                                         <span class="text-[9px] bg-emerald-100 text-emerald-800 px-1 py-0.2 rounded font-black">-{{ $product->discount_percent }}%</span>
                                     </div>
                                     @if($product->tier2_group_price)
-                                        <span class="block text-[10px] text-purple-600 font-semibold">Tier 2: ${{ number_format($product->tier2_group_price, 2) }}</span>
+                                        <span class="block text-[10px] text-purple-600 font-semibold">Tier 2: ৳{{ number_format($product->tier2_group_price) }}</span>
                                     @endif
                                 </div>
                             </td>

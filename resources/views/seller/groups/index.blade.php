@@ -131,8 +131,8 @@
                         <div class="flex-1 min-w-0">
                             <h4 class="text-xs font-black text-slate-900 line-clamp-2">{{ $group->product->title }}</h4>
                             <div class="flex items-center space-x-2 mt-1 text-[11px]">
-                                <span class="text-slate-400 line-through">${{ number_format($group->product->single_price, 2) }}</span>
-                                <span class="font-black text-emerald-600">${{ number_format($group->product->group_price, 2) }}</span>
+                                <span class="text-slate-400 line-through">৳{{ number_format($group->product->single_price) }}</span>
+                                <span class="font-black text-emerald-600">৳{{ number_format($group->product->group_price) }}</span>
                                 <span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded">-{{ $group->product->discount_percent }}%</span>
                             </div>
                         </div>
@@ -306,7 +306,7 @@
                                 class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500">
                             <option value="">-- Choose an active product --</option>
                             @foreach($sellerProducts as $sp)
-                                <option value="{{ $sp->id }}">{{ $sp->title }} (${{ number_format($sp->group_price, 2) }})</option>
+                                <option value="{{ $sp->id }}">{{ $sp->title }} (৳{{ number_format($sp->group_price) }})</option>
                             @endforeach
                         </select>
                     </div>
@@ -318,8 +318,8 @@
                             <div class="flex-1 min-w-0">
                                 <h4 class="text-xs font-black text-slate-900 truncate" x-text="selectedProduct.title"></h4>
                                 <div class="flex items-center space-x-2 mt-0.5 text-xs">
-                                    <span class="text-slate-400 line-through text-[11px]" x-text="'$' + parseFloat(selectedProduct.single_price).toFixed(2)"></span>
-                                    <span class="font-black text-emerald-700" x-text="'Group Price: $' + parseFloat(selectedProduct.group_price).toFixed(2)"></span>
+                                    <span class="text-slate-400 line-through text-[11px]" x-text="'৳' + Math.round(selectedProduct.single_price).toLocaleString()"></span>
+                                    <span class="font-black text-emerald-700" x-text="'Group Price: ৳' + Math.round(selectedProduct.group_price).toLocaleString()"></span>
                                 </div>
                             </div>
                         </div>

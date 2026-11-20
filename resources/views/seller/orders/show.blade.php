@@ -71,14 +71,14 @@
                                     <h4 class="text-xs font-extrabold text-slate-900 line-clamp-1">{{ $item->product->title }}</h4>
                                     <span class="text-[10px] text-slate-400 mt-0.5 block">Category: {{ $item->product->category->name ?? 'General' }}</span>
                                     <div class="text-[11px] text-slate-600 mt-1 font-semibold">
-                                        Qty: <strong class="text-slate-900">{{ $item->quantity }}</strong> × ${{ number_format($item->unit_price, 2) }}
+                                        Qty: <strong class="text-slate-900">{{ $item->quantity }}</strong> × ৳{{ number_format($item->unit_price) }}
                                     </div>
                                 </div>
                             </div>
 
                             <div class="text-right">
                                 <span class="text-xs text-slate-400 block font-semibold">Subtotal</span>
-                                <span class="text-sm font-black text-emerald-600">${{ number_format($item->subtotal, 2) }}</span>
+                                <span class="text-sm font-black text-emerald-600">৳{{ number_format($item->subtotal) }}</span>
                             </div>
                         </div>
                     @endforeach
@@ -86,7 +86,7 @@
 
                 <div class="p-5 bg-slate-50/70 border-t border-slate-100 flex items-center justify-between text-xs">
                     <span class="font-bold text-slate-700">Total Order Value:</span>
-                    <span class="text-base font-black text-slate-900">${{ number_format($order->total_amount, 2) }}</span>
+                    <span class="text-base font-black text-slate-900">৳{{ number_format($order->total_amount) }}</span>
                 </div>
             </div>
 
