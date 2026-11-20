@@ -17,6 +17,95 @@
 
     <!-- Scripts and Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Global Cart Engine (Reliable, Independent, Syncs with LocalStorage & Custom Events) -->
+    <script>
+    window.CartivaCart = {
+        getCart() {
+            try {
+                const raw = localStorage.getItem('cartiva_cart');
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                console.error('Failed to parse cartiva_cart:', e);
+                return [];
+            }
+        },
+        saveCart(items) {
+            try {
+                localStorage.setItem('cartiva_cart', JSON.stringify(items));
+                window.dispatchEvent(new CustomEvent('cart-updated', { detail: items }));
+            } catch (e) {
+                console.error('Failed to save cartiva_cart:', e);
+            }
+        },
+        addItem(item, qty = 1) {
+            if (!item || !item.id) return;
+            let items = this.getCart();
+            const quantityToAdd = Math.max(1, parseInt(qty) || 1);
+            const existing = items.find(i => String(i.id) === String(item.id));
+            
+            if (existing) {
+                existing.quantity = (parseInt(existing.quantity) || 1) + quantityToAdd;
+                if (item.price) existing.price = parseFloat(item.price);
+            } else {
+                items.push({
+                    id: item.id,
+                    title: item.title || 'Cartiva Product',
+                    price: parseFloat(item.price) || 0,
+                    original_price: parseFloat(item.original_price) || (parseFloat(item.price) ? Math.round(parseFloat(item.price) * 1.15) : 0),
+                    quantity: quantityToAdd,
+                    image: item.image || '',
+                    slug: item.slug || '',
+                    seller: item.seller || 'Cartiva Official Store',
+                    code: item.code || ''
+                });
+            }
+            this.saveCart(items);
+
+            // Dispatch global cart events for reactive navbar & toast
+            window.dispatchEvent(new CustomEvent('cart-toast', { detail: { title: item.title || 'পণ্য' } }));
+            if (typeof window.showGlobalCartToast === 'function') {
+                window.showGlobalCartToast(item.title || 'পণ্য');
+            }
+        },
+        removeItem(id) {
+            let items = this.getCart();
+            items = items.filter(i => String(i.id) !== String(id));
+            this.saveCart(items);
+            return items;
+        },
+        updateQuantity(id, delta) {
+            let items = this.getCart();
+            const item = items.find(i => String(i.id) === String(id));
+            if (item) {
+                const newQty = (parseInt(item.quantity) || 1) + delta;
+                if (newQty <= 0) {
+                    return this.removeItem(id);
+                } else {
+                    item.quantity = newQty;
+                    this.saveCart(items);
+                }
+            }
+            return items;
+        },
+        setQuantity(id, qty) {
+            let items = this.getCart();
+            const item = items.find(i => String(i.id) === String(id));
+            if (item) {
+                const newQty = Math.max(1, parseInt(qty) || 1);
+                item.quantity = newQty;
+                this.saveCart(items);
+            }
+            return items;
+        },
+        clear() {
+            this.saveCart([]);
+        }
+    };
+
+    window.addToCart = function(item, qty = 1) {
+        window.CartivaCart.addItem(item, qty);
+    };
+    </script>
     @stack('styles')
 </head>
 <body class="min-h-full flex flex-col font-sans bg-[#f8f9fa] text-slate-800 selection:bg-[#53a318] selection:text-white overflow-x-hidden" 
@@ -24,10 +113,17 @@
 
     <!-- Main High-Density Header (Full Width & Professional) -->
     <header class="sticky top-0 z-40 bg-white border-b border-gray-200/90 shadow-xs"
+            @cart-toast.window="
+                toastMessage = '🛍️ ' + ($event.detail?.title || 'পণ্য') + ' কার্টে যোগ করা হয়েছে!';
+                showCartToast = true;
+                if (toastTimer) clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => showCartToast = false, 3500);
+            "
             x-data="{ 
                 searchOpen: false, 
                 searchQuery: '{{ request('q') }}',
                 categoriesDropdownOpen: false,
+                notifCount: 2,
                 wishlistItems: JSON.parse(localStorage.getItem('cartiva_wishlist') || JSON.stringify([
                     { id: 1, title: 'Premium Fleece Winter Hoodie', group_price: 750, original_price: 1000, code: 'GRP-HOODIE05' },
                     { id: 2, title: 'SoundCore ANC Headphones', group_price: 3150, original_price: 4500, code: 'GRP-SOUND99' }
@@ -39,37 +135,35 @@
                     this.wishlistItems = this.wishlistItems.filter(i => i.id != id);
                     localStorage.setItem('cartiva_wishlist', JSON.stringify(this.wishlistItems));
                 },
-                cartItems: JSON.parse(localStorage.getItem('cartiva_cart') || '[]'),
+                cartItems: window.CartivaCart ? window.CartivaCart.getCart() : JSON.parse(localStorage.getItem('cartiva_cart') || '[]'),
                 get cartCount() {
-                    return this.cartItems.reduce((acc, i) => acc + (i.quantity || 1), 0);
+                    return this.cartItems.reduce((acc, i) => acc + (parseInt(i.quantity) || 1), 0);
                 },
                 get cartTotal() {
-                    return this.cartItems.reduce((acc, i) => acc + ((i.price || 0) * (i.quantity || 1)), 0);
+                    return this.cartItems.reduce((acc, i) => acc + ((parseFloat(i.price) || 0) * (parseInt(i.quantity) || 1)), 0);
                 },
                 cartModalOpen: false,
                 wishlistModalOpen: false,
                 toastMessage: '',
                 showCartToast: false,
+                toastTimer: null,
                 init() {
-                    window.addToCart = (item) => {
-                        const existing = this.cartItems.find(i => i.id == item.id);
-                        if (existing) {
-                            existing.quantity = (existing.quantity || 1) + 1;
-                        } else {
-                            this.cartItems.push({
-                                id: item.id,
-                                title: item.title,
-                                price: item.price,
-                                quantity: 1,
-                                image: item.image || '',
-                                slug: item.slug || ''
-                            });
-                        }
-                        localStorage.setItem('cartiva_cart', JSON.stringify(this.cartItems));
-                        this.toastMessage = '🛍️ ' + item.title + ' কার্টে যোগ করা হয়েছে!';
+                    window.showGlobalCartToast = (title) => {
+                        this.toastMessage = '🛍️ ' + title + ' কার্টে যোগ করা হয়েছে!';
                         this.showCartToast = true;
-                        setTimeout(() => this.showCartToast = false, 3500);
+                        if (this.toastTimer) clearTimeout(this.toastTimer);
+                        this.toastTimer = setTimeout(() => this.showCartToast = false, 3500);
                     };
+
+                    window.addEventListener('storage', (e) => {
+                        if (e.key === 'cartiva_cart') {
+                            this.cartItems = window.CartivaCart.getCart();
+                        }
+                    });
+                    window.addEventListener('cart-updated', (e) => {
+                        this.cartItems = e.detail || (window.CartivaCart ? window.CartivaCart.getCart() : []);
+                    });
+
                     window.addToWishlist = (item) => {
                         const exists = this.wishlistItems.find(i => i.id == item.id || (item.code && i.code == item.code));
                         if (!exists) {
@@ -84,23 +178,18 @@
                         }
                         this.toastMessage = '❤️ ' + item.title + ' উইশলিস্টে যোগ করা হয়েছে!';
                         this.showCartToast = true;
-                        setTimeout(() => this.showCartToast = false, 3500);
+                        if (this.toastTimer) clearTimeout(this.toastTimer);
+                        this.toastTimer = setTimeout(() => this.showCartToast = false, 3500);
                     };
                 },
                 removeFromCart(id) {
-                    this.cartItems = this.cartItems.filter(i => i.id != id);
-                    localStorage.setItem('cartiva_cart', JSON.stringify(this.cartItems));
+                    if (window.CartivaCart) {
+                        this.cartItems = window.CartivaCart.removeItem(id);
+                    }
                 },
                 updateQty(id, delta) {
-                    const item = this.cartItems.find(i => i.id == id);
-                    if (item) {
-                        const newQ = (item.quantity || 1) + delta;
-                        if (newQ <= 0) {
-                            this.removeFromCart(id);
-                        } else {
-                            item.quantity = newQ;
-                            localStorage.setItem('cartiva_cart', JSON.stringify(this.cartItems));
-                        }
+                    if (window.CartivaCart) {
+                        this.cartItems = window.CartivaCart.updateQuantity(id, delta);
                     }
                 }
             }">
@@ -327,7 +416,8 @@
                                     class="p-2.5 text-slate-600 hover:text-[#53a318] rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer"
                                     title="Live Deal Notifications">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                                <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white animate-pulse"></span>
+                                <span class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
+                                      x-text="notifCount">2</span>
                             </button>
 
                             <div x-show="open" x-cloak class="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-100 py-3 z-50">
@@ -366,7 +456,7 @@
                                 title="My Wishlist">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                             <span class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
-                                  x-text="wishlistCount"></span>
+                                  x-text="wishlistCount">2</span>
                         </button>
 
                         <!-- Wishlist Popover Dropdown Card (Anchored to Right, Compact) -->
@@ -435,102 +525,15 @@
                         </div>
                     </div>
 
-                    <!-- Cart Dropdown with Dynamic Count -->
+                    <!-- Dedicated Cart Link with Dynamic Count -->
                     <div class="relative">
-                        <button type="button" 
-                                @click="cartModalOpen = !cartModalOpen; wishlistModalOpen = false; if(typeof groupsOpen !== 'undefined') groupsOpen = false" 
-                                class="p-2.5 text-slate-600 hover:text-[#53a318] rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer group"
-                                :class="cartModalOpen ? 'text-[#53a318] bg-emerald-50 ring-2 ring-emerald-200' : ''"
-                                title="My Shopping Cart">
+                        <a href="{{ route('cart.index') }}" 
+                           class="p-2.5 text-slate-600 hover:text-[#53a318] rounded-xl hover:bg-slate-100 transition-colors relative cursor-pointer inline-block {{ request()->routeIs('cart.index') ? 'text-[#53a318] bg-emerald-50 ring-2 ring-emerald-200' : '' }}"
+                           title="My Shopping Cart">
                             <svg class="w-5 h-5 group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                             <span class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-[#53a318] text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white" 
-                                  x-text="cartCount"></span>
-                        </button>
-
-                        <!-- Cart Popover Dropdown Card (Anchored to Right, Compact, Overflow Safe) -->
-                        <div x-show="cartModalOpen" 
-                             x-cloak 
-                             @click.outside="cartModalOpen = false"
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="opacity-0 translate-y-2 scale-95"
-                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                             x-transition:leave="transition ease-in duration-150"
-                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                             x-transition:leave-end="opacity-0 translate-y-2 scale-95"
-                             class="fixed inset-x-3 top-[68px] sm:absolute sm:top-full sm:mt-2.5 sm:left-auto sm:right-0 w-auto sm:w-84 md:w-88 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 z-50 overflow-hidden transform origin-top-right divide-y divide-slate-100"
-                             style="left: auto; right: 0;">
-                            
-                            <!-- Little Caret Arrow on Top -->
-                            <div class="hidden sm:block absolute -top-1.5 right-3.5 w-3 h-3 bg-white border-t border-l border-slate-200/90 rotate-45 z-10"></div>
-
-                            <!-- Header -->
-                            <div class="px-3.5 py-2.5 bg-slate-50/90 flex items-center justify-between relative z-20">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm">🛍️</span>
-                                    <h3 class="text-xs font-black text-slate-800 tracking-tight">
-                                        Shopping Cart (<span x-text="cartCount"></span>)
-                                    </h3>
-                                </div>
-                                <button type="button" @click="cartModalOpen = false" class="text-slate-400 hover:text-slate-600 font-bold text-lg leading-none cursor-pointer">&times;</button>
-                            </div>
-
-                            <!-- Cart Item List with Safe Boundaries -->
-                            <div class="space-y-2 p-3 text-xs max-h-72 overflow-y-auto" style="scrollbar-width: thin;">
-                                <template x-for="item in cartItems" :key="item.id">
-                                    <div class="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100/70 border border-slate-200/70 text-xs flex items-center justify-between gap-2 transition-colors">
-                                        <div class="flex items-center space-x-2.5 min-w-0 flex-1">
-                                            <template x-if="item.image">
-                                                <img :src="item.image" :alt="item.title" class="w-9 h-9 rounded-lg object-cover bg-white border border-slate-200 shrink-0">
-                                            </template>
-                                            <template x-if="!item.image">
-                                                <div class="w-9 h-9 rounded-lg bg-emerald-50 text-[#53a318] flex items-center justify-center font-bold text-xs shrink-0">
-                                                    🛒
-                                                </div>
-                                            </template>
-                                            <div class="min-w-0 flex-1">
-                                                <h4 class="font-bold text-slate-800 truncate text-xs" :title="item.title" x-text="item.title"></h4>
-                                                <span class="font-extrabold text-[#53a318] text-xs">৳<span x-text="Number(item.price * item.quantity).toLocaleString()"></span></span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="flex items-center space-x-1.5 shrink-0">
-                                            <!-- Quantity buttons -->
-                                            <div class="flex items-center border border-slate-200 rounded-lg bg-white overflow-hidden shadow-2xs">
-                                                <button type="button" @click="updateQty(item.id, -1)" class="px-1.5 py-0.5 text-slate-600 hover:bg-slate-100 font-bold text-xs cursor-pointer">-</button>
-                                                <span class="px-1.5 text-xs font-bold text-slate-800" x-text="item.quantity"></span>
-                                                <button type="button" @click="updateQty(item.id, 1)" class="px-1.5 py-0.5 text-slate-600 hover:bg-slate-100 font-bold text-xs cursor-pointer">+</button>
-                                            </div>
-                                            <!-- Remove button -->
-                                            <button type="button" @click="removeFromCart(item.id)" title="Remove item" class="p-1 text-slate-400 hover:text-rose-600 cursor-pointer">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </template>
-
-                                <div x-show="cartItems.length === 0" class="py-6 text-center text-slate-400 space-y-1.5">
-                                    <span class="text-2xl block">🛒</span>
-                                    <p class="text-xs font-bold text-slate-600">Your Cart is Empty</p>
-                                    <p class="text-[10px] text-slate-400">Add products to your cart to checkout</p>
-                                </div>
-                            </div>
-
-                            <!-- Cart Footer / Total & Checkout -->
-                            <div class="p-3 bg-slate-50/70 space-y-2.5">
-                                <div class="flex items-center justify-between text-xs font-bold px-0.5">
-                                    <span class="text-slate-600">Subtotal:</span>
-                                    <span class="text-base font-black text-[#53a318]">৳<span x-text="Number(cartTotal).toLocaleString()"></span></span>
-                                </div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <button type="button" @click="cartModalOpen = false" class="py-2 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold rounded-xl text-xs cursor-pointer transition-colors shadow-2xs">Keep Shopping</button>
-                                    <a :href="cartItems.length > 0 ? '{{ route('checkout') }}?product_id=' + cartItems[0].id + '&quantity=' + cartItems[0].quantity : '{{ route('home') }}'" 
-                                       class="py-2 text-center bg-[#53a318] hover:bg-[#468c13] text-white font-bold rounded-xl text-xs cursor-pointer shadow-xs transition-colors">
-                                        Checkout &rarr;
-                                    </a>
-                                </div>
-                            </div>
-
-                        </div>
+                                  x-text="cartCount">0</span>
+                        </a>
                     </div>
 
                     <!-- User Account Dropdown / Sign In -->
@@ -933,14 +936,14 @@
                 </a>
 
                 <!-- 4. Cart -->
-                <button type="button" @click="cartModalOpen = !cartModalOpen; wishlistModalOpen = false; mobileMenuOpen = false" 
-                        class="flex flex-col items-center justify-center py-1 rounded-xl transition-all relative text-slate-500 hover:text-[#53a318] cursor-pointer">
+                <a href="{{ route('cart.index') }}" 
+                   class="flex flex-col items-center justify-center py-1 rounded-xl transition-all relative cursor-pointer {{ request()->routeIs('cart.index') ? 'text-[#53a318] font-bold' : 'text-slate-500 hover:text-[#53a318]' }}">
                     <div class="relative">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                         <span class="absolute -top-1.5 -right-2 min-w-[15px] h-3.5 px-1 rounded-full bg-[#53a318] text-white text-[8px] font-black flex items-center justify-center ring-1 ring-white" x-text="cartCount"></span>
                     </div>
                     <span class="text-[10px] mt-0.5">Cart</span>
-                </button>
+                </a>
 
                 <!-- 5. Account / Profile -->
                 @auth
@@ -984,7 +987,7 @@
                     <span class="text-xs sm:text-sm font-semibold tracking-tight truncate" x-text="toastMessage"></span>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <button type="button" @click="cartModalOpen = true; showCartToast = false" class="text-xs font-bold text-emerald-400 hover:underline cursor-pointer">কার্ট দেখুন</button>
+                    <a href="{{ route('cart.index') }}" @click="showCartToast = false" class="text-xs font-bold text-emerald-400 hover:underline cursor-pointer">কার্ট দেখুন</a>
                     <button type="button" @click="showCartToast = false" class="text-slate-400 hover:text-white transition-colors ml-1 text-base leading-none font-bold flex-shrink-0 cursor-pointer">&times;</button>
                 </div>
             </div>

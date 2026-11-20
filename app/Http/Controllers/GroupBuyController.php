@@ -24,12 +24,12 @@ class GroupBuyController extends Controller
         // Calculate seconds remaining for Alpine countdown timer
         $secondsRemaining = max(0, (int) round(now()->diffInSeconds($session->expires_at, false)));
 
-        // Can the leader dismiss this session? (Only if no other members have joined/paid)
+        // Can the seller/leader dismiss this session? (Only if no members have joined yet)
         $canLeaderDismiss = Auth::check() 
-            && Auth::id() === $session->leader_user_id 
+            && (Auth::id() === $session->leader_user_id || Auth::id() === $session->product->seller_id)
             && !$isCompleted 
             && !$isExpired 
-            && $session->orders()->where('user_id', '!=', Auth::id())->count() === 0;
+            && $session->current_members === 0;
 
         return view('group-buy.show', compact('session', 'userAlreadyJoined', 'isExpired', 'isCompleted', 'secondsRemaining', 'canLeaderDismiss'));
     }
@@ -37,7 +37,7 @@ class GroupBuyController extends Controller
     public function start(Request $request, Product $product)
     {
         if (!Auth::check()) {
-            return redirect()->route('login')->with('info', 'গ্রুপ শুরু করতে অনুগ্রহ করে লগইন করুন।');
+            return redirect()->route('login')->with('info', 'গ্রুপে যুক্ত হতে অনুগ্রহ করে লগইন করুন।');
         }
 
         // Global Anti-Fraud Rule: Sellers cannot start or buy their own listings
@@ -46,25 +46,36 @@ class GroupBuyController extends Controller
                 ->with('error', '⚠️ আপনি এই প্রোডাক্টের সেলার। সেলাররা নিজের প্রোডাক্টের টিম-বাই শুরু করতে পারেন না।');
         }
 
-        // Check if user already has an active, running group for this product
-        $existingActiveSession = GroupBuySession::where('product_id', $product->id)
-            ->where('leader_user_id', Auth::id())
+        // Auto-expire outdated sessions in real-time
+        GroupBuySession::checkAndExpireSessions();
+
+        // Rule: Customers NEVER create a group session.
+        // Always find or auto-spawn the seller's active official campaign pool for this product.
+        $activeSession = GroupBuySession::where('product_id', $product->id)
             ->where('status', 'active')
             ->where('expires_at', '>', now())
+            ->whereColumn('current_members', '<', 'required_members')
+            ->oldest()
             ->first();
 
-        if ($existingActiveSession) {
-            return redirect()->route('group-buy.show', $existingActiveSession->group_code)
-                ->with('info', 'আপনার এই প্রোডাক্টের জন্য ইতোমধ্যে একটি সক্রিয় টিম রয়েছে। লিংক শেয়ার করে বন্ধুদের আমন্ত্রণ জানান!');
+        if (!$activeSession) {
+            $activeSession = GroupBuySession::autoSpawnNextPool($product);
         }
 
-        $quantity = max(1, min((int) $request->input('quantity', 1), max(1, $product->stock)));
+        if (!$activeSession) {
+            return redirect()->route('products.show', $product->slug)
+                ->with('error', 'বর্তমানে এই প্রোডাক্টের জন্য কোনো সক্রিয় গ্রুপ নেই অথবা পণ্যটির স্টক শেষ।');
+        }
 
-        // Redirect to checkout with order_type = group_buy, start_new = 1, and quantity
+        $remaining = $activeSession->remainingSlots();
+        $quantity = max(1, min((int) $request->input('quantity', 1), max(1, $remaining)));
+
+        // Always redirect to checkout to JOIN the seller's active official pool
         return redirect()->route('checkout', [
             'product_id' => $product->id,
             'type' => 'group_buy',
-            'action' => 'start_new',
+            'session_id' => $activeSession->id,
+            'action' => 'join_existing',
             'quantity' => $quantity,
         ]);
     }

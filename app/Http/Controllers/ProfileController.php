@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 
@@ -50,6 +52,9 @@ class ProfileController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:25'],
             'address' => ['nullable', 'string', 'max:500'],
+            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
+            'address_tag' => ['nullable', 'string', 'max:50'],
             'shop_name' => ['nullable', 'string', 'max:255'],
             'business_category' => ['nullable', 'string', 'max:100'],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:4096'],
@@ -80,6 +85,16 @@ class ProfileController extends Controller
         $user->name = $validated['name'];
         $user->phone = $validated['phone'] ?? null;
         $user->address = $validated['address'] ?? null;
+
+        if ($request->filled('latitude')) {
+            $user->latitude = $request->input('latitude');
+        }
+        if ($request->filled('longitude')) {
+            $user->longitude = $request->input('longitude');
+        }
+        if ($request->filled('address_tag')) {
+            $user->address_tag = $request->input('address_tag');
+        }
 
         if ($user->isSeller() || $request->filled('shop_name')) {
             $user->shop_name = $validated['shop_name'] ?? $user->shop_name;
@@ -122,5 +137,166 @@ class ProfileController extends Controller
         ]);
 
         return back()->with('success', 'Password updated');
+    }
+
+    /**
+     * Search location autocomplete via backend proxy (avoids CORS & rate limits).
+     */
+    public function searchLocation(Request $request)
+    {
+        $query = trim($request->input('q', ''));
+        if (strlen($query) < 2) {
+            return response()->json(['results' => []]);
+        }
+
+        $results = Cache::remember('geo_search_' . md5(strtolower($query)), 3600, function () use ($query) {
+            // First try Photon Komoot (biased to Bangladesh)
+            try {
+                $response = Http::timeout(3)
+                    ->withUserAgent('Cartiva/1.0')
+                    ->get('https://photon.komoot.io/api/', [
+                        'q' => $query,
+                        'lat' => 23.8103,
+                        'lon' => 90.4125,
+                        'limit' => 6,
+                    ]);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    if (!empty($data['features'])) {
+                        $items = [];
+                        foreach ($data['features'] as $f) {
+                            $props = $f['properties'] ?? [];
+                            $coords = $f['geometry']['coordinates'] ?? [90.4125, 23.8103];
+                            $items[] = [
+                                'lat' => (float)$coords[1],
+                                'lng' => (float)$coords[0],
+                                'title' => $props['name'] ?? $props['street'] ?? $props['locality'] ?? $props['district'] ?? 'Location',
+                                'subtitle' => implode(', ', array_filter([
+                                    $props['street'] ?? null,
+                                    $props['locality'] ?? null,
+                                    $props['district'] ?? null,
+                                    $props['city'] ?? $props['state'] ?? null,
+                                ])),
+                                'house' => $props['housenumber'] ?? '',
+                                'road' => $props['street'] ?? '',
+                                'area' => $props['locality'] ?? $props['district'] ?? '',
+                                'city' => $props['city'] ?? $props['state'] ?? 'Dhaka',
+                            ];
+                        }
+                        return $items;
+                    }
+                }
+            } catch (\Throwable $e) {}
+
+            // Fallback to Nominatim
+            try {
+                $response = Http::timeout(3)
+                    ->withUserAgent('CartivaECommerce/1.0 (contact@cartiva.com)')
+                    ->get('https://nominatim.openstreetmap.org/search', [
+                        'format' => 'jsonv2',
+                        'q' => $query,
+                        'countrycodes' => 'bd',
+                        'limit' => 5,
+                        'accept-language' => 'en',
+                    ]);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $items = [];
+                    foreach ($data as $item) {
+                        $items[] = [
+                            'lat' => (float)$item['lat'],
+                            'lng' => (float)$item['lon'],
+                            'title' => $item['name'] ?? explode(',', $item['display_name'])[0],
+                            'subtitle' => $item['display_name'],
+                            'house' => '',
+                            'road' => '',
+                            'area' => explode(',', $item['display_name'])[0] ?? '',
+                            'city' => 'Dhaka',
+                        ];
+                    }
+                    return $items;
+                }
+            } catch (\Throwable $e) {}
+
+            return [];
+        });
+
+        return response()->json(['results' => $results]);
+    }
+
+    /**
+     * Reverse geocode coordinates to structured address.
+     */
+    public function reverseGeocode(Request $request)
+    {
+        $lat = round((float)$request->input('lat', 23.8103), 4);
+        $lng = round((float)$request->input('lng', 90.4125), 4);
+
+        $result = Cache::remember("geo_rev_{$lat}_{$lng}", 86400, function () use ($lat, $lng) {
+            try {
+                $response = Http::timeout(3)
+                    ->withUserAgent('CartivaECommerce/1.0 (contact@cartiva.com)')
+                    ->get('https://nominatim.openstreetmap.org/reverse', [
+                        'format' => 'jsonv2',
+                        'lat' => $lat,
+                        'lon' => $lng,
+                        'accept-language' => 'en',
+                    ]);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $addr = $data['address'] ?? [];
+                    return [
+                        'lat' => $lat,
+                        'lng' => $lng,
+                        'house' => $addr['house_number'] ?? $addr['building'] ?? '',
+                        'road' => $addr['road'] ?? $addr['residential'] ?? $addr['street'] ?? '',
+                        'area' => $addr['quarter'] ?? $addr['suburb'] ?? $addr['neighbourhood'] ?? $addr['city_district'] ?? '',
+                        'city' => $addr['city'] ?? $addr['town'] ?? $addr['municipality'] ?? $addr['state_district'] ?? 'Dhaka',
+                        'display_name' => $data['display_name'] ?? '',
+                    ];
+                }
+            } catch (\Throwable $e) {}
+
+            // Fallback to Photon reverse
+            try {
+                $response = Http::timeout(3)
+                    ->withUserAgent('Cartiva/1.0')
+                    ->get('https://photon.komoot.io/reverse', [
+                        'lat' => $lat,
+                        'lon' => $lng,
+                    ]);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    if (!empty($data['features'])) {
+                        $p = $data['features'][0]['properties'] ?? [];
+                        return [
+                            'lat' => $lat,
+                            'lng' => $lng,
+                            'house' => $p['housenumber'] ?? '',
+                            'road' => $p['street'] ?? '',
+                            'area' => $p['locality'] ?? $p['district'] ?? '',
+                            'city' => $p['city'] ?? $p['state'] ?? 'Dhaka',
+                            'display_name' => implode(', ', array_filter([$p['name'] ?? null, $p['street'] ?? null, $p['locality'] ?? null, $p['district'] ?? null, $p['city'] ?? null])),
+                        ];
+                    }
+                }
+            } catch (\Throwable $e) {}
+
+            return [
+                'lat' => $lat,
+                'lng' => $lng,
+                'house' => '',
+                'road' => '',
+                'area' => '',
+                'city' => 'Dhaka',
+                'display_name' => "Location at {$lat}, {$lng}",
+            ];
+        });
+
+        return response()->json($result);
     }
 }

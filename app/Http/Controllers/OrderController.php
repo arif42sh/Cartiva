@@ -26,16 +26,27 @@ class OrderController extends Controller
         }
 
         $orderType = $request->input('type', 'single'); // single or group_buy
-        $action = $request->input('action', 'buy_single'); // buy_single, start_new, join_existing
+        $action = $request->input('action', 'buy_single'); // buy_single, join_existing
         $sessionId = $request->input('session_id');
 
         $session = null;
-        if ($sessionId) {
-            $session = GroupBuySession::findOrFail($sessionId);
-            if ($session->isExpired() || $session->isCompleted()) {
-                return redirect()->route('products.show', $product->slug)
-                    ->with('error', 'এই গ্রুপটির সময় শেষ হয়ে গেছে অথবা ইতোমধ্যে সম্পূর্ণ হয়ে গেছে।');
+        if ($orderType === 'group_buy') {
+            if ($sessionId) {
+                $session = GroupBuySession::find($sessionId);
             }
+            if (!$session || $session->isExpired() || $session->isCompleted()) {
+                // Find or auto-spawn the seller's active official campaign pool
+                $session = GroupBuySession::where('product_id', $product->id)
+                    ->where('status', 'active')
+                    ->where('expires_at', '>', now())
+                    ->whereColumn('current_members', '<', 'required_members')
+                    ->oldest()
+                    ->first();
+                if (!$session) {
+                    $session = GroupBuySession::autoSpawnNextPool($product);
+                }
+            }
+            $action = 'join_existing';
         }
 
         $quantity = max(1, min((int) $request->input('quantity', 1), max(1, $product->stock)));
@@ -107,81 +118,69 @@ class OrderController extends Controller
             $orderStatus = 'processing';
 
             if ($orderType === 'group_buy') {
-                if ($action === 'start_new') {
-                    $targetUnits = (int) $product->group_size_required;
-                    // If the user's quantity already meets or exceeds target quota, instant complete!
-                    $isInstantComplete = ($quantity >= $targetUnits);
+                // Rule: Customers NEVER create a group session.
+                // Always join the seller's active official campaign pool.
+                $existingSession = null;
+                if ($request->session_id) {
+                    $existingSession = GroupBuySession::lockForUpdate()->find($request->session_id);
+                }
 
-                    $createdSession = GroupBuySession::create([
-                        'product_id' => $product->id,
-                        'leader_user_id' => $user->id,
-                        'group_code' => 'GRP-' . strtoupper(Str::random(6)),
-                        'required_members' => $targetUnits,
-                        'discount_tiers' => $product->discount_tiers,
-                        'min_quota_to_ship' => $product->min_quota_to_ship,
-                        'max_buyers_limit' => $product->max_buyers_limit,
-                        'current_members' => $quantity, // Unit/Quantity-based quota
-                        'status' => $isInstantComplete ? 'completed' : 'active',
-                        'expires_at' => now()->addHours($product->group_duration_hours),
-                    ]);
+                if (!$existingSession || $existingSession->isExpired() || $existingSession->isCompleted()) {
+                    $existingSession = GroupBuySession::lockForUpdate()
+                        ->where('product_id', $product->id)
+                        ->where('status', 'active')
+                        ->where('expires_at', '>', now())
+                        ->whereColumn('current_members', '<', 'required_members')
+                        ->oldest()
+                        ->first();
+                }
 
-                    $sessionId = $createdSession->id;
-                    $orderStatus = $isInstantComplete ? 'processing' : 'pending_group';
+                if (!$existingSession) {
+                    $existingSession = GroupBuySession::autoSpawnNextPool($product);
+                }
 
-                    GroupBuyMember::create([
-                        'group_buy_session_id' => $createdSession->id,
-                        'user_id' => $user->id,
-                        'is_leader' => true,
-                        'joined_at' => now(),
-                    ]);
-                } elseif ($action === 'join_existing') {
-                    $existingSession = GroupBuySession::lockForUpdate()->findOrFail($request->session_id);
+                if (!$existingSession || $existingSession->isExpired() || $existingSession->isCompleted()) {
+                    throw new \Exception('বর্তমানে এই গ্রুপের সময় শেষ হয়ে গেছে অথবা সম্পূর্ণ হয়ে গেছে।');
+                }
 
-                    if ($existingSession->isExpired() || $existingSession->isCompleted()) {
-                        throw new \Exception('এই গ্রুপটির সময় শেষ হয়ে গেছে অথবা ইতোমধ্যে সম্পূর্ণ হয়ে গেছে।');
-                    }
+                $remaining = $existingSession->remainingSlots();
+                if ($quantity > $remaining) {
+                    throw new \Exception('এই গ্রুপটি সম্পন্ন করতে আর মাত্র ' . $remaining . 'টি স্লট বাকি আছে।');
+                }
 
-                    $remaining = $existingSession->remainingSlots();
-                    if ($quantity > $remaining) {
-                        throw new \Exception('এই গ্রুপটি সম্পন্ন করতে আর মাত্র ' . $remaining . 'টি স্লট বাকি আছে।');
-                    }
+                $newTotalUnits = $existingSession->current_members + $quantity;
+                $isCompleted = ($newTotalUnits >= $existingSession->required_members);
 
-                    $isFirstBuyer = ($existingSession->current_members == 0 || $existingSession->leader_user_id === null);
+                // Note: Customer NEVER becomes leader of the seller pool.
+                // leader_user_id remains null or seller_id, representing the store's pool.
+                $existingSession->update([
+                    'current_members' => $newTotalUnits,
+                    'status' => $isCompleted ? 'completed' : 'active',
+                ]);
 
-                    $newTotalUnits = $existingSession->current_members + $quantity;
-                    $isCompleted = ($newTotalUnits >= $existingSession->required_members);
+                $sessionId = $existingSession->id;
+                $createdSession = $existingSession;
 
-                    $updateData = [
-                        'current_members' => $newTotalUnits,
-                        'status' => $isCompleted ? 'completed' : 'active',
-                    ];
-                    if ($isFirstBuyer) {
-                        $updateData['leader_user_id'] = $user->id;
-                    }
+                // Support multiple contributions by existing members without unique key conflict
+                GroupBuyMember::firstOrCreate([
+                    'group_buy_session_id' => $existingSession->id,
+                    'user_id' => $user->id,
+                ], [
+                    'is_leader' => false,
+                    'joined_at' => now(),
+                ]);
 
-                    $existingSession->update($updateData);
+                if ($isCompleted) {
+                    $orderStatus = 'processing';
+                    // Transition all previous members' orders in this session to processing
+                    Order::where('group_buy_session_id', $existingSession->id)
+                        ->where('order_status', 'pending_group')
+                        ->update(['order_status' => 'processing']);
 
-                    $sessionId = $existingSession->id;
-                    $createdSession = $existingSession;
-
-                    // Support multiple contributions by existing members without unique key conflict
-                    GroupBuyMember::firstOrCreate([
-                        'group_buy_session_id' => $existingSession->id,
-                        'user_id' => $user->id,
-                    ], [
-                        'is_leader' => $isFirstBuyer,
-                        'joined_at' => now(),
-                    ]);
-
-                    if ($isCompleted) {
-                        $orderStatus = 'processing';
-                        // Transition all previous members' orders in this session to processing
-                        Order::where('group_buy_session_id', $existingSession->id)
-                            ->where('order_status', 'pending_group')
-                            ->update(['order_status' => 'processing']);
-                    } else {
-                        $orderStatus = 'pending_group';
-                    }
+                    // Auto-open 2nd group (Round 2 / Next Group Pool) for this product
+                    GroupBuySession::autoSpawnNextPool($product);
+                } else {
+                    $orderStatus = 'pending_group';
                 }
             }
 

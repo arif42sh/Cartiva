@@ -186,21 +186,39 @@ class Product extends Model
 
     /**
      * Calculate tiered unit price for Solo / Direct Buy
-     * Tier 1 (1 unit): Full Retail Single Price
-     * Tier 2 (2 units): Mini Bulk (80% towards wholesale group price)
-     * Tier 3 (3+ units): Direct Wholesale Group Price
+     * Uses seller's dynamic custom discount tiers (formatted_tiers) based on quantity.
+     * E.g. If seller sets Tier 1 at 5 units (2%), Tier 2 at 7 units (5%), Tier 3 at 9 units (15%), Target at 10 units:
+     * - Quantity 1-4: Base Single Price
+     * - Quantity 5-6: Tier 1 (2% off)
+     * - Quantity 7-8: Tier 2 (5% off)
+     * - Quantity 9: Tier 3 (15% off)
+     * - Quantity 10+: Full Wholesale Team Price
      */
     public function getSoloUnitPrice(int $quantity = 1): float
     {
         $single = (float) $this->single_price;
         $group = (float) $this->group_price;
 
-        if ($quantity >= 3) {
+        $tiers = $this->formatted_tiers;
+        if (!empty($tiers)) {
+            $achieved = null;
+            foreach ($tiers as $tier) {
+                if ($quantity >= (int) $tier['min_members']) {
+                    $achieved = $tier;
+                }
+            }
+
+            if ($achieved) {
+                return (float) $achieved['price'];
+            }
+
+            return $single;
+        }
+
+        // Fallback when no custom tiers defined:
+        // Unlock wholesale price if solo quantity meets or exceeds required group size
+        if ($quantity >= (int) $this->group_size_required) {
             return $group;
-        } elseif ($quantity === 2) {
-            $diff = $single - $group;
-            $tier2 = $single - ($diff * 0.8);
-            return (float) round($tier2, -1);
         }
 
         return $single;

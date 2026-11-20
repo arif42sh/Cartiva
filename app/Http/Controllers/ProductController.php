@@ -22,7 +22,7 @@ class ProductController extends Controller
             ? $product->reviews->where('user_id', auth()->id())->first() 
             : null;
 
-        // Active groups for this specific product that have slots available
+        // Active official group for this specific product that has slots available
         $activeGroups = GroupBuySession::with(['leader', 'members.user'])
             ->where('product_id', $product->id)
             ->where('status', 'active')
@@ -30,6 +30,14 @@ class ProductController extends Controller
             ->whereColumn('current_members', '<', 'required_members')
             ->latest()
             ->get();
+
+        // If no active pool exists and product has stock, ensure official seller pool is live
+        if ($activeGroups->isEmpty() && $product->stock > 0 && ($product->group_price > 0)) {
+            $spawnedPool = GroupBuySession::autoSpawnNextPool($product);
+            if ($spawnedPool) {
+                $activeGroups = collect([$spawnedPool->load(['leader', 'members.user'])]);
+            }
+        }
 
         // Related products in the same category, with fallback to popular products
         $relatedProducts = Product::where('category_id', $product->category_id)

@@ -621,6 +621,54 @@ class SellerController extends Controller
     }
 
     /**
+     * One-Click Extension for Running or Expired Group Session
+     * Sellers can extend time (+12h, +24h, +48h) and/or expand member slots (+5, +10, etc.)
+     */
+    public function extendGroup(Request $request, GroupBuySession $session)
+    {
+        if ($session->product->seller_id !== Auth::id() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $validated = $request->validate([
+            'add_hours' => 'nullable|integer|min:1|max:720',
+            'add_slots' => 'nullable|integer|min:1|max:100',
+        ]);
+
+        $updates = [];
+        $feedback = [];
+
+        if (!empty($validated['add_hours'])) {
+            $baseTime = ($session->expires_at && $session->expires_at->isFuture()) 
+                ? $session->expires_at 
+                : Carbon::now();
+            $newExpiry = $baseTime->copy()->addHours((int) $validated['add_hours']);
+            $session->expires_at = $newExpiry;
+            if ($session->status === 'expired') {
+                $session->status = 'active';
+            }
+            $feedback[] = "+{$validated['add_hours']}h Added";
+        }
+
+        if (!empty($validated['add_slots'])) {
+            $session->required_members = (int) $session->required_members + (int) $validated['add_slots'];
+            if ($session->max_buyers_limit && $session->required_members > $session->max_buyers_limit) {
+                $session->max_buyers_limit = $session->required_members;
+            }
+            // If completed, expanding slots reactivates the group for additional buyers!
+            if ($session->current_members < $session->required_members) {
+                $session->status = 'active';
+            }
+            $feedback[] = "+{$validated['add_slots']} Slots Expanded";
+        }
+
+        $session->save();
+
+        $info = !empty($feedback) ? implode(', ', $feedback) : 'Updated';
+        return back()->with('success', "⚡ Group {$session->group_code} successfully extended! ({$info})");
+    }
+
+    /**
      * Show Specific Group Buy Session & Participating Buyers
      */
     public function showGroup(GroupBuySession $session)
