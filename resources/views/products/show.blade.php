@@ -26,14 +26,64 @@
         savePerUnit: {{ (float) $savePerUnit }},
         emiModalOpen: false,
         deliveryZone: 'dhaka',
+        allTiers: {{ json_encode($product->formatted_tiers) }},
         get currentSingleUnitPrice() {
-            if (this.qty >= 3) {
+            if (this.allTiers && this.allTiers.length > 0) {
+                let achieved = null;
+                for (const t of this.allTiers) {
+                    if (this.qty >= parseInt(t.min_members)) {
+                        achieved = t;
+                    }
+                }
+                if (achieved) {
+                    return parseFloat(achieved.price);
+                }
+                return this.baseSinglePrice;
+            }
+
+            if (this.qty >= this.groupSizeRequired) {
                 return this.groupUnitPrice;
-            } else if (this.qty === 2) {
-                const diff = this.baseSinglePrice - this.groupUnitPrice;
-                return Math.round((this.baseSinglePrice - (diff * 0.8)) / 10) * 10;
             }
             return this.baseSinglePrice;
+        },
+        get currentTierInfo() {
+            if (this.allTiers && this.allTiers.length > 0) {
+                let achieved = null;
+                let next = null;
+                for (const t of this.allTiers) {
+                    if (this.qty >= parseInt(t.min_members)) {
+                        achieved = t;
+                    } else if (!next) {
+                        next = t;
+                    }
+                }
+                return { achieved, next };
+            }
+            return { achieved: null, next: null };
+        },
+        get currentTierBadge() {
+            const { achieved } = this.currentTierInfo;
+            if (achieved) {
+                if (achieved.is_target) {
+                    return 'Team Wholesale Rate (' + achieved.min_members + '+ units)';
+                }
+                const tierNum = this.allTiers.indexOf(achieved) + 1;
+                return 'Tier ' + tierNum + ': ' + achieved.discount_percent + '% OFF (' + achieved.min_members + '+ units)';
+            }
+            if (this.qty >= this.groupSizeRequired) {
+                return 'Team Wholesale Rate (' + this.groupSizeRequired + '+ units)';
+            }
+            return 'Single Retail Rate';
+        },
+        get nextTierHint() {
+            const { next } = this.currentTierInfo;
+            if (next) {
+                return 'Buy ' + next.min_members + '+ units for ' + next.discount_percent + '% discount';
+            }
+            if (this.qty < this.groupSizeRequired && (!this.allTiers || this.allTiers.length === 0)) {
+                return 'Buy ' + this.groupSizeRequired + '+ units for wholesale price';
+            }
+            return '';
         },
         get soloSavingsPerUnit() {
             return Math.max(0, this.baseSinglePrice - this.currentSingleUnitPrice);
@@ -111,41 +161,27 @@
                         </svg>
                         <span>Shop with Confidence</span>
                     </h3>
-                    <span class="text-[10px] font-bold text-blue-700 bg-white px-2 py-0.5 rounded-full border border-blue-200 shadow-2xs">
-                        Official Warranty
-                    </span>
+                     
                 </div>
 
-                <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-white border border-blue-100 shadow-2xs">
-                    <div class="w-8 h-8 rounded-lg bg-blue-100/80 text-blue-700 flex items-center justify-center shrink-0">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                        </svg>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <div class="text-xs font-bold text-slate-900 leading-tight">
-                            (Official) 1–3 Years Brand / Importer Warranty
-                        </div>
-                        <p class="text-[10px] text-slate-500">Panel, Spare Parts & Dedicated After-Sales Service Covered</p>
-                    </div>
-                </div>
+            
 
                 <!-- 3 Pillars Trust Grid -->
                 <div class="grid grid-cols-3 gap-2 text-center text-[10px] pt-0.5">
                     <div class="p-2 rounded-xl bg-white border border-slate-100 flex flex-col items-center justify-center space-y-0.5">
                         <span class="text-blue-600 font-black text-xs">🛡️</span>
                         <span class="font-bold text-slate-800">100% Authentic</span>
-                        <span class="text-[9px] text-slate-400">Direct Importer</span>
+                        
                     </div>
                     <div class="p-2 rounded-xl bg-white border border-slate-100 flex flex-col items-center justify-center space-y-0.5">
                         <span class="text-emerald-600 font-black text-xs">🚚</span>
                         <span class="font-bold text-slate-800">Express Delivery</span>
-                        <span class="text-[9px] text-slate-400">Door-to-Door</span>
+            
                     </div>
                     <div class="p-2 rounded-xl bg-white border border-slate-100 flex flex-col items-center justify-center space-y-0.5">
                         <span class="text-amber-600 font-black text-xs">🔄</span>
                         <span class="font-bold text-slate-800">7 Days Replace</span>
-                        <span class="text-[9px] text-slate-400">Defect Protection</span>
+                        
                     </div>
                 </div>
             </div>
@@ -173,12 +209,12 @@
                         <span class="ml-1 text-slate-900">{{ number_format($product->rating, 1) }}</span>
                         <span class="ml-1 text-[11px] text-slate-500 font-medium">({{ $product->reviews->count() }} {{ Str::plural('review', $product->reviews->count()) }})</span>
                     </button>
-                    <span class="text-slate-300">•</span>
-                    <span class="text-slate-600 font-semibold">{{ $product->sales_count }}+ orders fulfilled</span>
+                
+                    
                     <span class="text-slate-300">•</span>
                     <span class="text-emerald-700 font-bold flex items-center space-x-1">
                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        <span>In Stock ({{ $product->stock }} units ready)</span>
+                        <span>In Stock ({{ $product->stock }} units)</span>
                     </span>
                 </div>
             </div>
@@ -188,36 +224,6 @@
                 {{ $product->description }}
             </p>
 
-            <!-- Pickaboo-Style Club Points & EMI Promo Strip -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                <!-- Club Points Earn -->
-                <div class="flex items-center space-x-2.5 p-2.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-xs">
-                    <div class="w-7 h-7 rounded-lg bg-amber-400 text-slate-950 font-black text-xs flex items-center justify-center shrink-0">
-                        🪙
-                    </div>
-                    <div class="min-w-0">
-                        <span class="font-bold text-amber-950 block">Earn ৳{{ number_format($clubPointsEarned) }} Club Points</span>
-                        <span class="text-[10px] text-amber-800">Redeemable as instant cash discount</span>
-                    </div>
-                </div>
-
-                <!-- 0% EMI Facility Card -->
-                <div class="flex items-center justify-between p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/80 text-xs">
-                    <div class="flex items-center space-x-2 min-w-0">
-                        <div class="w-7 h-7 rounded-lg bg-blue-600 text-white font-black text-xs flex items-center justify-center shrink-0">
-                            %
-                        </div>
-                        <div class="min-w-0">
-                            <span class="font-bold text-blue-950 block">0% EMI Available</span>
-                            <span class="text-[10px] text-blue-800 truncate block">From ৳{{ number_format($monthlyEmiStarting) }}/mo (30+ Banks)</span>
-                        </div>
-                    </div>
-                    <button type="button" @click="emiModalOpen = true" 
-                            class="px-2 py-1 rounded-md bg-white border border-blue-300 text-blue-700 hover:bg-blue-600 hover:text-white font-bold text-[10px] transition-colors shrink-0 shadow-2xs cursor-pointer">
-                        Plans &rarr;
-                    </button>
-                </div>
-            </div>
 
             <!-- Delivery Location & Estimated Timing Selector -->
             <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200/90 text-xs space-y-2">
@@ -389,10 +395,8 @@
                         <div class="space-y-2">
                             <div class="flex items-center justify-between">
                                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-md"
-                                      :class="qty >= 3 ? 'bg-emerald-100 text-emerald-800' : (qty === 2 ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600')">
-                                    <span x-show="qty === 1">Single Unit Price</span>
-                                    <span x-show="qty === 2">Mini Bulk Rate</span>
-                                    <span x-show="qty >= 3">Wholesale Rate</span>
+                                      :class="soloSavingsPerUnit > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'">
+                                    <span x-text="currentTierBadge"></span>
                                 </span>
                                 <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Direct Buy</span>
                             </div>
@@ -401,16 +405,16 @@
                                 <span class="text-[10px] uppercase font-bold text-slate-500 block">Unit Price</span>
                                 <div class="flex items-baseline space-x-2 mt-0.5">
                                     <span class="text-xl sm:text-2xl font-black text-slate-900">৳<span x-text="Number(currentSingleUnitPrice).toLocaleString()"></span></span>
-                                    <template x-if="qty > 1">
+                                    <template x-if="soloSavingsPerUnit > 0">
                                         <span class="text-xs text-slate-400 line-through">৳{{ number_format($product->single_price) }}</span>
                                     </template>
                                 </div>
                                 <div class="mt-0.5">
-                                    <template x-if="qty > 1">
+                                    <template x-if="soloSavingsPerUnit > 0">
                                         <span class="text-[10px] font-bold text-emerald-700 block">Save ৳<span x-text="Number(soloSavingsPerUnit).toLocaleString()"></span> per unit</span>
                                     </template>
-                                    <template x-if="qty === 1">
-                                        <span class="text-[10px] text-slate-400 font-medium block">Buy 2+ for bulk discount</span>
+                                    <template x-if="soloSavingsPerUnit === 0 && nextTierHint">
+                                        <span class="text-[10px] text-slate-500 font-medium block" x-text="nextTierHint"></span>
                                     </template>
                                 </div>
                             </div>
@@ -440,35 +444,37 @@
 
                 </div>
 
-                <!-- Tiered Milestone Discount Roadmap -->
+                <!-- Tiered Milestone Discount Roadmap (Classic Clean UI) -->
                 @php
                     $tiersList = $product->formatted_tiers;
                 @endphp
                 @if(count($tiersList) > 1)
-                    <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-purple-50/80 via-white to-indigo-50/60 border border-purple-200/90 shadow-2xs space-y-2.5">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <span class="w-6 h-6 rounded-lg bg-purple-600 text-white font-black text-xs flex items-center justify-center">👥</span>
-                                <span class="text-xs font-black text-purple-950 uppercase tracking-wide">ধাপভিত্তিক ডিসকাউন্ট অফার (Dynamic Tiers)</span>
+                    <div class="p-3.5 sm:p-4 rounded-xl bg-slate-50/70 border border-slate-200 space-y-2.5">
+                        <div class="flex items-center justify-between text-xs">
+                            <div class="flex items-center space-x-1.5 font-bold text-slate-800">
+                                <svg class="w-4 h-4 text-[#53a318]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                                <span>ধাপভিত্তিক ডিসকাউন্ট অফার (Dynamic Tiers)</span>
                             </div>
-                            <span class="text-[10px] font-bold text-purple-800 bg-purple-100 px-2 py-0.5 rounded-full">
-                                বাতিল হওয়ার ভয় নেই
+                            <span class="text-[10px] font-bold text-[#53a318] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                                নিরাপদ ডেলিভারি
                             </span>
                         </div>
 
                         <div class="grid grid-cols-2 sm:grid-cols-{{ min(4, count($tiersList)) }} gap-2 pt-1">
                             @foreach($tiersList as $t)
-                                <div class="p-2.5 rounded-xl bg-white border {{ $t['is_target'] ? 'border-[#53a318] ring-2 ring-[#53a318]/20 bg-emerald-50/30' : 'border-purple-200/80' }} shadow-2xs flex flex-col justify-between text-center space-y-1">
+                                <div class="p-2.5 rounded-lg bg-white border {{ $t['is_target'] ? 'border-[#53a318] ring-1 ring-[#53a318]/20 bg-emerald-50/20' : 'border-slate-200' }} shadow-2xs flex flex-col justify-between text-center space-y-1">
                                     <div class="flex items-center justify-center space-x-1">
-                                        <span class="text-xs font-black text-slate-800">{{ $t['min_members'] }}+ জন</span>
+                                        <span class="text-xs font-bold text-slate-800">{{ $t['min_members'] }}+ জন</span>
                                         @if($t['is_target'])
-                                            <span class="text-[9px] font-black uppercase px-1 rounded bg-[#53a318] text-white">Target</span>
+                                            <span class="text-[9px] font-bold uppercase px-1 rounded bg-[#53a318] text-white">Target</span>
                                         @endif
                                     </div>
-                                    <div class="text-xs font-black text-purple-900">
+                                    <div class="text-xs font-bold text-[#53a318]">
                                         -{{ $t['discount_percent'] }}% ছাড়
                                     </div>
-                                    <div class="text-[11px] font-extrabold text-[#53a318]">
+                                    <div class="text-[11px] font-extrabold text-slate-800">
                                         ৳{{ number_format($t['price']) }}
                                     </div>
                                     <span class="text-[9px] text-slate-400">সাশ্রয় ৳{{ number_format($t['savings']) }}</span>
@@ -476,9 +482,10 @@
                             @endforeach
                         </div>
 
-                        <p class="text-[11px] text-purple-950/90 leading-relaxed bg-purple-100/50 p-2 rounded-xl border border-purple-200/60">
-                            🛡️ <strong>নিরাপদ শিপিং:</strong> সময় শেষ হলেও অন্তত <strong>{{ $tiersList[0]['min_members'] }} জন</strong> হলেই গ্রুপ বাতিল হবে না; অর্জিত ধাপ অনুযায়ী ডিসকাউন্টে সরাসরি ডেলিভারি হবে!
-                        </p>
+                        <div class="p-2.5 rounded-lg bg-white border border-slate-200 text-[11px] text-slate-600 leading-relaxed flex items-center space-x-2">
+                            <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span><strong>নিরাপদ শিপিং:</strong> সময় শেষ হলেও অন্তত <strong>{{ $tiersList[0]['min_members'] }} জন</strong> হলেই গ্রুপ বাতিল হবে না; অর্জিত ধাপ অনুযায়ী ডিসকাউন্টে সরাসরি ডেলিভারি হবে!</span>
+                        </div>
                     </div>
                 @endif
             @endif
@@ -523,26 +530,30 @@
                         $sec = max(0, (int) now()->diffInSeconds($group->expires_at, false));
                         $needed = max(1, $group->required_members - $group->current_members);
                         $pct = min(100, round(($group->current_members / $group->required_members) * 100));
+                        $groupMembers = $group->members->where('user_id', '!=', $group->product->seller_id ?? 0);
                     @endphp
                     <div class="p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50/40 border border-slate-200 hover:border-emerald-300 transition-all flex flex-col justify-between space-y-3"
-                         x-data="groupCountdown({{ $sec }})" x-init="start()">
+                         x-data="{ ...groupCountdown({{ $sec }}), showMembers: false }" x-init="start()">
                         
                         <div class="flex items-center justify-between gap-3">
                             <div class="flex items-center space-x-3 min-w-0">
-                                <div class="w-10 h-10 rounded-xl bg-slate-900 text-white font-black flex items-center justify-center text-sm shadow-xs shrink-0">
-                                    {{ strtoupper(substr($group->leader->name ?? ($group->current_members > 0 ? 'Buyer' : 'Team'), 0, 1)) }}
+                                <div class="w-10 h-10 rounded-xl bg-slate-900 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0 overflow-hidden ring-1 ring-slate-200">
+                                    @if($product->seller && $product->seller->avatar)
+                                        <img src="{{ $product->seller->avatar }}" alt="{{ $product->seller->name }}" class="w-full h-full object-cover">
+                                    @else
+                                        <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                        </svg>
+                                    @endif
                                 </div>
                                 <div class="min-w-0 space-y-0.5">
-                                    <span class="text-xs font-bold text-slate-900 truncate block">
-                                        @if($group->leader)
-                                            {{ $group->leader->name }}'s Team
-                                        @elseif($group->current_members > 0)
-                                            Customer Team
-                                        @else
-                                            Open Sponsored Pool
-                                        @endif
-                                    </span>
-                                    <span class="font-mono text-[10px] font-bold text-slate-500 bg-white px-1.5 py-0.2 rounded border border-slate-200">{{ $group->group_code }}</span>
+                                    <div class="flex items-center space-x-1.5">
+                                        <span class="text-xs font-bold text-slate-900 truncate block">
+                                            {{ $product->seller->store_name ?? $product->seller->shop_name ?? $product->seller->name ?? 'Store' }} Official Pool
+                                        </span>
+                                        <span class="text-[9px] font-bold uppercase px-1.5 py-0.2 bg-emerald-50 text-emerald-700 rounded border border-emerald-200 shrink-0">Official</span>
+                                    </div>
+                                    <span class="font-mono text-[10px] font-medium text-slate-500 bg-white px-1.5 py-0.2 rounded border border-slate-200">{{ $group->group_code }}</span>
                                 </div>
                             </div>
 
@@ -561,6 +572,85 @@
                             </div>
                             <div class="w-full h-1.5 rounded-full bg-slate-200 overflow-hidden">
                                 <div class="h-full bg-gradient-to-r from-amber-400 to-[#53a318] rounded-full" style="width: {{ $pct }}%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Joined Members Social Proof Row -->
+                        <div class="flex items-center justify-between pt-0.5">
+                            <div class="flex items-center space-x-2">
+                                <div class="flex -space-x-2 overflow-hidden items-center">
+                                    @forelse($groupMembers->take(4) as $gm)
+                                        <div class="w-6 h-6 rounded-full ring-2 ring-white overflow-hidden bg-gradient-to-tr from-[#53a318] to-emerald-400 text-white flex items-center justify-center text-[9px] font-black shadow-2xs shrink-0"
+                                             title="{{ $gm->user->name ?? 'Member' }}">
+                                            @if($gm->user && $gm->user->avatar)
+                                                <img src="{{ $gm->user->avatar }}" alt="{{ $gm->user->name }}" class="w-full h-full object-cover">
+                                            @else
+                                                {{ strtoupper(substr($gm->user->name ?? 'M', 0, 1)) }}
+                                            @endif
+                                        </div>
+                                    @empty
+                                        <div class="w-6 h-6 rounded-full ring-2 ring-white bg-slate-200 text-slate-500 flex items-center justify-center text-[9px] font-bold">
+                                            👥
+                                        </div>
+                                    @endforelse
+
+                                    @if($groupMembers->count() > 4)
+                                        <div class="w-6 h-6 rounded-full ring-2 ring-white bg-slate-800 text-white flex items-center justify-center text-[8px] font-black shrink-0">
+                                            +{{ $groupMembers->count() - 4 }}
+                                        </div>
+                                    @endif
+                                </div>
+                                <span class="text-[11px] font-bold text-slate-600">
+                                    {{ $groupMembers->count() > 0 ? $groupMembers->count() . ' buyer' . ($groupMembers->count() > 1 ? 's' : '') . ' joined' : 'Open slot' }}
+                                </span>
+                            </div>
+
+                            @if($groupMembers->count() > 0)
+                                <button type="button" @click="showMembers = !showMembers"
+                                        class="text-[10px] font-extrabold text-teal-700 hover:text-teal-900 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-2 py-0.5 rounded-lg transition-colors flex items-center space-x-1 cursor-pointer">
+                                    <svg class="w-3 h-3 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                    <span x-text="showMembers ? 'Hide Members' : 'View Members'">View Members</span>
+                                </button>
+                            @endif
+                        </div>
+
+                        <!-- Expandable Members List (Just Image & Name) -->
+                        <div x-show="showMembers" x-cloak 
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 -translate-y-2"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             class="p-2.5 rounded-xl bg-white border border-teal-200/80 shadow-2xs space-y-2">
+                            <div class="flex items-center justify-between text-[10px] font-black uppercase text-teal-800 border-b border-teal-100 pb-1.5">
+                                <span>👥 Group Members ({{ $groupMembers->count() }})</span>
+                                <span class="text-slate-400 font-normal">Only Name & Photo</span>
+                            </div>
+                            <div class="space-y-1.5 max-h-48 overflow-y-auto" style="scrollbar-width: thin;">
+                                @foreach($groupMembers as $gm)
+                                    <div class="flex items-center justify-between p-1.5 rounded-lg hover:bg-slate-50 transition-colors">
+                                        <div class="flex items-center space-x-2 min-w-0">
+                                            <div class="w-7 h-7 rounded-full overflow-hidden bg-gradient-to-tr from-[#53a318] to-emerald-400 text-white font-black text-xs flex items-center justify-center shrink-0 ring-1 ring-slate-200">
+                                                @if($gm->user && $gm->user->avatar)
+                                                    <img src="{{ $gm->user->avatar }}" alt="{{ $gm->user->name }}" class="w-full h-full object-cover">
+                                                @else
+                                                    {{ strtoupper(substr($gm->user->name ?? 'Buyer', 0, 1)) }}
+                                                @endif
+                                            </div>
+                                            <div class="min-w-0">
+                                                <span class="text-xs font-bold text-slate-900 truncate block">{{ $gm->user->name ?? 'Verified Buyer' }}</span>
+                                                <span class="text-[9px] text-slate-400">Joined {{ $gm->joined_at ? $gm->joined_at->diffForHumans() : 'recently' }}</span>
+                                            </div>
+                                        </div>
+                                        @if($gm->is_leader)
+                                            <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[9px] font-black shrink-0 border border-amber-200">
+                                                👑 Leader
+                                            </span>
+                                        @else
+                                            <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[9px] font-extrabold shrink-0 border border-emerald-200">
+                                                ✓ Member
+                                            </span>
+                                        @endif
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
 

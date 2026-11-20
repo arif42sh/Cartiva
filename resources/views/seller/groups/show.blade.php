@@ -143,6 +143,94 @@
 
     </div>
 
+    <!-- ⚡ One-Click Seller Group Extension Panel -->
+    <div class="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 rounded-3xl p-6 text-white shadow-lg border border-emerald-500/30">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/10 pb-4 mb-4">
+            <div>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 mb-1">
+                    ⚡ Seller Live Control
+                </span>
+                <h3 class="text-base font-black text-white">One-Click Group Extension (সময় ও কোটা বাড়ানো)</h3>
+                <p class="text-xs text-slate-300 mt-0.5">রানিং গ্রুপের সময় শেষ হওয়ার আগে সময় বাড়িয়ে দিন অথবা অতিরিক্ত ক্রেতা যুক্ত করতে কোটা সম্প্রসারণ করুন।</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-mono bg-white/10 px-3 py-1.5 rounded-xl border border-white/10 text-emerald-300">
+                    Target: <strong>{{ $session->required_members }}</strong> | Joined: <strong>{{ $session->current_members }}</strong>
+                </span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- 1. Extend Duration (Time) -->
+            <div class="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                        <span>⏱️</span>
+                        <span>Extend Campaign Time (সময় যোগ করুন)</span>
+                    </span>
+                    <span class="text-[10px] text-slate-400">Current: {{ $session->expires_at ? $session->expires_at->diffForHumans() : 'N/A' }}</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <form action="{{ route('seller.groups.extend', $session) }}" method="POST" class="inline">
+                        @csrf
+                        <input type="hidden" name="add_hours" value="12">
+                        <button type="submit" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-emerald-600 text-white font-extrabold text-xs transition-all border border-white/10 cursor-pointer">
+                            +12 Hours
+                        </button>
+                    </form>
+                    <form action="{{ route('seller.groups.extend', $session) }}" method="POST" class="inline">
+                        @csrf
+                        <input type="hidden" name="add_hours" value="24">
+                        <button type="submit" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition-all shadow-xs cursor-pointer">
+                            +24 Hours (1 Day)
+                        </button>
+                    </form>
+                    <form action="{{ route('seller.groups.extend', $session) }}" method="POST" class="inline">
+                        @csrf
+                        <input type="hidden" name="add_hours" value="48">
+                        <button type="submit" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-emerald-600 text-white font-extrabold text-xs transition-all border border-white/10 cursor-pointer">
+                            +48 Hours (2 Days)
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 2. Expand Buyer Slots (Members) -->
+            <div class="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                        <span>👥</span>
+                        <span>Expand Member Slots (স্লট বৃদ্ধি করুন)</span>
+                    </span>
+                    <span class="text-[10px] text-slate-400">Current: {{ $session->required_members }} slots</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <form action="{{ route('seller.groups.extend', $session) }}" method="POST" class="inline">
+                        @csrf
+                        <input type="hidden" name="add_slots" value="5">
+                        <button type="submit" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-teal-600 text-white font-extrabold text-xs transition-all border border-white/10 cursor-pointer">
+                            +5 Slots
+                        </button>
+                    </form>
+                    <form action="{{ route('seller.groups.extend', $session) }}" method="POST" class="inline">
+                        @csrf
+                        <input type="hidden" name="add_slots" value="10">
+                        <button type="submit" class="px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-xs transition-all shadow-xs cursor-pointer">
+                            +10 Slots (Mega Pool)
+                        </button>
+                    </form>
+                    <form action="{{ route('seller.groups.extend', $session) }}" method="POST" class="inline">
+                        @csrf
+                        <input type="hidden" name="add_slots" value="20">
+                        <button type="submit" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-teal-600 text-white font-extrabold text-xs transition-all border border-white/10 cursor-pointer">
+                            +20 Slots
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @php
         $validMembers = $session->members->where('user_id', '!=', $session->product->seller_id ?? 0);
     @endphp

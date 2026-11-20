@@ -205,11 +205,45 @@
                         </form>
                     </div>
                 @else
-                    <a href="{{ route('seller.groups.show', $group) }}" 
-                       class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-600 text-white font-extrabold text-xs text-center transition-all flex items-center justify-center space-x-1.5 shadow-2xs mt-auto">
-                        <span>Inspect Circle & Buyers</span>
-                        <span>&rarr;</span>
-                    </a>
+                    <div class="grid grid-cols-2 gap-2 mt-auto" x-data="{ extendOpen: false }">
+                        <a href="{{ route('seller.groups.show', $group) }}" 
+                           class="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs text-center transition-all flex items-center justify-center space-x-1">
+                            <span>Inspect</span>
+                        </a>
+                        <button type="button" @click="extendOpen = !extendOpen"
+                                class="py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#53a318] border border-emerald-200 font-extrabold text-xs text-center transition-all flex items-center justify-center space-x-1 cursor-pointer">
+                            <span>⚡ Extend</span>
+                        </button>
+
+                        <!-- Mini Extend Dropdown -->
+                        <div x-show="extendOpen" x-cloak @click.outside="extendOpen = false" 
+                             class="col-span-2 p-3 bg-slate-900 text-white rounded-2xl shadow-xl space-y-2 mt-1 border border-slate-700">
+                            <div class="text-[10px] font-black uppercase text-emerald-400">⚡ One-Click Extend</div>
+                            <div class="flex items-center justify-between gap-1.5">
+                                <form action="{{ route('seller.groups.extend', $group) }}" method="POST" class="inline flex-1">
+                                    @csrf
+                                    <input type="hidden" name="add_hours" value="24">
+                                    <button type="submit" class="w-full py-1.5 px-2 bg-white/10 hover:bg-emerald-600 rounded-lg text-[10px] font-extrabold text-center transition-colors cursor-pointer">
+                                        +24h Time
+                                    </button>
+                                </form>
+                                <form action="{{ route('seller.groups.extend', $group) }}" method="POST" class="inline flex-1">
+                                    @csrf
+                                    <input type="hidden" name="add_slots" value="5">
+                                    <button type="submit" class="w-full py-1.5 px-2 bg-white/10 hover:bg-teal-600 rounded-lg text-[10px] font-extrabold text-center transition-colors cursor-pointer">
+                                        +5 Slots
+                                    </button>
+                                </form>
+                                <form action="{{ route('seller.groups.extend', $group) }}" method="POST" class="inline flex-1">
+                                    @csrf
+                                    <input type="hidden" name="add_slots" value="10">
+                                    <button type="submit" class="w-full py-1.5 px-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-[10px] font-extrabold text-center transition-colors cursor-pointer">
+                                        +10 Slots
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 @endif
 
             </div>

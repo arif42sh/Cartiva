@@ -235,10 +235,6 @@
                             </svg>
                             <span>My Orders ({{ $totalOrdersCount }})</span>
                         </button>
-
-                       
-
-                    
                     </nav>
 
                     <!-- Section: Merchant Center (for Sellers / Admin) -->

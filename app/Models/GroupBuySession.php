@@ -157,6 +157,39 @@ class GroupBuySession extends Model
     }
 
     /**
+     * Auto-open next round pool (Round 2 / Group 2) for this product
+     * if no other active group currently exists.
+     */
+    public static function autoSpawnNextPool(Product $product): ?self
+    {
+        if (!$product || !$product->is_active || $product->stock <= 0) {
+            return null;
+        }
+
+        $hasActive = self::where('product_id', $product->id)
+            ->where('status', 'active')
+            ->where('expires_at', '>', now())
+            ->exists();
+
+        if ($hasActive) {
+            return null;
+        }
+
+        return self::create([
+            'product_id' => $product->id,
+            'leader_user_id' => null, // Open pool ready for first buyer
+            'group_code' => 'GRP-' . strtoupper(\Illuminate\Support\Str::random(6)),
+            'required_members' => (int) ($product->group_size_required ?: 10),
+            'discount_tiers' => $product->discount_tiers,
+            'min_quota_to_ship' => $product->min_quota_to_ship,
+            'max_buyers_limit' => $product->max_buyers_limit,
+            'current_members' => 0,
+            'status' => 'active',
+            'expires_at' => now()->addHours((int) ($product->group_duration_hours ?: 48)),
+        ]);
+    }
+
+    /**
      * Check and expire inactive/timed-out sessions.
      * Implements "Tiered Quota / Soft Threshold Closing":
      * - If current_members >= effective_min_quota, deal successfully locks in & ships!
@@ -188,6 +221,11 @@ class GroupBuySession extends Model
                 Order::where('group_buy_session_id', $session->id)
                     ->where('order_status', 'pending_group')
                     ->update(['order_status' => 'processing']);
+
+                // Auto-open next pool for this product
+                if ($session->product) {
+                    self::autoSpawnNextPool($session->product);
+                }
             } else {
                 // HARD FAILURE: Below minimum quota. Cancel and refund.
                 $session->update(['status' => 'expired']);
