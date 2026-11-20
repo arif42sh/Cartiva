@@ -603,7 +603,7 @@
                                     <div class="mt-2.5 grid grid-cols-2 gap-1.5 bg-white/5 rounded-lg py-1.5 px-2 border border-white/10 text-center">
                                         <div class="border-r border-white/10 pr-1.5">
                                             <span class="text-[8px] uppercase tracking-wider text-slate-400 font-semibold block leading-none">Group Savings</span>
-                                            <span class="text-[11px] font-bold text-emerald-400 block mt-0.5 leading-tight">৳1,450 Saved</span>
+                                            <span class="text-[11px] font-bold text-emerald-400 block mt-0.5 leading-tight">৳{{ number_format(auth()->user()->total_savings) }} Saved</span>
                                         </div>
                                         <div class="pl-1.5">
                                             <span class="text-[8px] uppercase tracking-wider text-slate-400 font-semibold block leading-none">Wallet Balance</span>
@@ -635,7 +635,7 @@
                                             <div class="w-6 h-6 rounded-md bg-slate-100 text-slate-500 group-hover:bg-emerald-50 group-hover:text-[#53a318] flex items-center justify-center transition-colors flex-shrink-0">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                                             </div>
-                                            <span class="text-xs font-semibold text-slate-800 group-hover:text-[#53a318] transition-colors">My Purchases</span>
+                                            <span class="text-xs font-semibold text-slate-800 group-hover:text-[#53a318] transition-colors">My Orders</span>
                                         </div>
                                         <span class="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600 group-hover:bg-emerald-100 group-hover:text-emerald-800 transition-colors">
                                             {{ auth()->user()->orders()->count() }}
