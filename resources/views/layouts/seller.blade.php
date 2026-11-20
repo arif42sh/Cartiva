@@ -63,12 +63,13 @@
                 <div class="relative" @click.outside="userMenuOpen = false">
                     <button type="button" @click="userMenuOpen = !userMenuOpen"
                             class="flex items-center space-x-2.5 p-1 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer">
-                        <div class="w-8 h-8 rounded-lg overflow-hidden bg-slate-800 border border-slate-200 flex items-center justify-center text-xs font-black text-white flex-shrink-0"
-                             style="background: linear-gradient(135deg, #53a318 0%, #10b981 100%);">
+                        <div class="w-8 h-8 rounded-lg overflow-hidden bg-slate-900 border border-slate-200 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
                             @if(auth()->user()->avatar)
                                 <img src="{{ auth()->user()->avatar }}" alt="{{ auth()->user()->shop_name ?? auth()->user()->name }}" class="w-full h-full object-cover">
                             @else
-                                {{ strtoupper(substr(auth()->user()->shop_name ?? auth()->user()->name, 0, 1)) }}
+                                <span class="text-[#53a318] font-black">
+                                    {{ strtoupper(substr(auth()->user()->shop_name ?? auth()->user()->name, 0, 1)) }}
+                                </span>
                             @endif
                         </div>
                         <div class="hidden sm:block text-left">

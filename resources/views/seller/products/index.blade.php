@@ -70,7 +70,7 @@
     </div>
 
     <!-- Products Table Card -->
-    <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead class="bg-slate-50 text-slate-400 uppercase tracking-wider text-[10px]">
@@ -143,12 +143,12 @@
 
                             <!-- Group Rules -->
                             <td class="py-4 px-6">
-                                <div class="text-[11px] font-semibold text-slate-700">
-                                    <div>👥 Min: <strong class="text-slate-900">{{ $product->group_size_required }}</strong> buyers</div>
+                                <div class="text-[11px] font-semibold text-slate-700 space-y-0.5">
+                                    <div>Quota: <strong class="text-slate-900">{{ $product->group_size_required }}</strong> buyers</div>
                                     @if($product->max_buyers_limit)
                                         <div class="text-[10px] text-slate-500">Max limit: {{ $product->max_buyers_limit }}</div>
                                     @endif
-                                    <div class="text-[10px] text-amber-600 font-bold mt-0.5">⏱ {{ $product->group_duration_hours }}h campaign</div>
+                                    <div class="text-[10px] text-slate-500 font-medium">Timer: {{ $product->group_duration_hours }}h campaign</div>
                                 </div>
                             </td>
 
@@ -219,11 +219,12 @@
                     @empty
                         <tr>
                             <td colspan="7" class="py-12 text-center text-slate-400">
-                                <span class="text-3xl block mb-2">📦</span>
+                                <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-400 mx-auto mb-2 flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                                </div>
                                 <p class="text-xs font-bold text-slate-600">No products found matching your criteria.</p>
                                 <a href="{{ route('seller.products.create') }}" 
-                                   class="mt-3 inline-block px-4.5 py-2.5 rounded-xl text-white font-extrabold text-xs transition-all shadow-md hover:brightness-110"
-                                   style="background-color: #53a318; box-shadow: 0 4px 12px rgba(83, 163, 24, 0.35);">
+                                   class="mt-3 inline-block px-4 py-2 rounded-xl text-white font-bold text-xs transition-all shadow-xs bg-[#53a318] hover:bg-[#468c13]">
                                     + Add Your First Product
                                 </a>
                             </td>
@@ -241,7 +242,7 @@
     <!-- Quick Stock Update Modal -->
     <div x-show="quickStockModal" x-cloak 
          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-        <div @click.outside="quickStockModal = false" class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100">
+        <div @click.outside="quickStockModal = false" class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-slate-100">
             <h4 class="text-base font-extrabold text-slate-900 mb-1">Quick Stock Restock</h4>
             <p class="text-xs text-slate-500 mb-4" x-text="selectedProduct ? selectedProduct.title : ''"></p>
 

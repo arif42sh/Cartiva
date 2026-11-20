@@ -45,7 +45,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         
         <!-- Product Card (2 cols) -->
-        <div class="md:col-span-2 bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs flex flex-col sm:flex-row gap-5 items-start">
+        <div class="md:col-span-2 bg-white rounded-2xl border border-slate-200/90 p-6 shadow-xs flex flex-col sm:flex-row gap-5 items-start">
             <img src="{{ $session->product->image_url }}" alt="{{ $session->product->title }}" class="w-28 h-28 rounded-2xl object-cover bg-slate-100 border border-slate-200 flex-shrink-0">
             
             <div class="flex-1">
@@ -114,7 +114,7 @@
         </div>
 
         <!-- Session Status Metric (1 col) -->
-        <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-6 text-white shadow-md flex flex-col justify-between">
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 text-white shadow-md flex flex-col justify-between">
             <div>
                 <span class="text-[10px] font-black uppercase tracking-wider text-teal-400">Campaign Timing</span>
                 <h4 class="text-sm font-bold text-slate-200 mt-1">Circle Expiration Countdown</h4>
@@ -144,7 +144,7 @@
     </div>
 
     <!-- ⚡ One-Click Seller Group Extension Panel -->
-    <div class="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 rounded-3xl p-6 text-white shadow-lg border border-emerald-500/30">
+    <div class="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 rounded-2xl p-6 text-white shadow-lg border border-emerald-500/30">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/10 pb-4 mb-4">
             <div>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 mb-1">
@@ -236,7 +236,7 @@
     @endphp
 
     <!-- Participating Buyers Roster (xi) -->
-    <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
         <div class="p-6 border-b border-slate-100 flex items-center justify-between">
             <div>
                 <h3 class="text-base font-extrabold text-slate-900 tracking-tight">Participating Buyers ({{ $validMembers->count() }})</h3>

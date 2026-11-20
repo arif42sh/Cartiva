@@ -56,7 +56,7 @@
         <div class="lg:col-span-2 space-y-6">
             
             <!-- Items Purchased Table Card -->
-            <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
                 <div class="p-5 border-b border-slate-100 flex items-center justify-between">
                     <h3 class="text-sm font-extrabold uppercase tracking-wider text-slate-900">Your Products in This Order</h3>
                     <span class="text-xs font-bold text-slate-500">{{ $sellerItems->count() }} Item(s)</span>
@@ -91,7 +91,7 @@
             </div>
 
             <!-- Customer & Shipping Information Card -->
-            <div class="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs">
+            <div class="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-xs">
                 <h3 class="text-sm font-extrabold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 mb-4">
                     Delivery & Customer Information
                 </h3>
@@ -150,7 +150,7 @@
         <!-- Right: Fulfillment Status Update (1 col) -->
         <div class="space-y-6">
             
-            <div class="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs">
+            <div class="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-xs">
                 <div class="flex items-center space-x-2 border-b border-slate-100 pb-3 mb-5">
                     <span class="w-6 h-6 rounded-full bg-teal-100 text-teal-800 font-black text-xs flex items-center justify-center">📦</span>
                     <h3 class="text-sm font-extrabold uppercase tracking-wider text-slate-900">

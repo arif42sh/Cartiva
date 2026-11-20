@@ -57,7 +57,7 @@
     </div>
 
     <!-- Search & Type Filter Bar -->
-    <div class="bg-white rounded-3xl border border-slate-200/90 p-5 shadow-xs mb-6">
+    <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs mb-6">
         <form action="{{ route('seller.orders') }}" method="GET" class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             @if(request('status'))
                 <input type="hidden" name="status" value="{{ request('status') }}">
@@ -91,7 +91,7 @@
     </div>
 
     <!-- Orders Table Card -->
-    <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead class="bg-slate-50 text-slate-400 uppercase tracking-wider text-[10px]">
@@ -193,8 +193,8 @@
                                 </span>
 
                                 @if($order->courier_name || $order->tracking_number)
-                                    <span class="text-[9px] text-slate-500 mt-1 block">
-                                        🚚 {{ $order->courier_name ?? 'Courier' }}: <strong class="font-mono text-slate-700">{{ $order->tracking_number ?? 'N/A' }}</strong>
+                                    <span class="text-[10px] text-slate-500 mt-1 block">
+                                        <span class="font-semibold text-slate-700">{{ $order->courier_name ?? 'Courier' }}:</span> <strong class="font-mono text-slate-700">{{ $order->tracking_number ?? 'N/A' }}</strong>
                                     </span>
                                 @endif
                             </td>
@@ -238,7 +238,7 @@
     <!-- Quick Status Update Modal -->
     <div x-show="quickStatusModal" x-cloak 
          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-        <div @click.outside="quickStatusModal = false" class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-100">
+        <div @click.outside="quickStatusModal = false" class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-100">
             <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
                 <h4 class="text-base font-extrabold text-slate-900">Update Order Status</h4>
                 <button type="button" @click="quickStatusModal = false" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>

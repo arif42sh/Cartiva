@@ -1,17 +1,16 @@
 <div class="space-y-6">
 
     <!-- 1. Storefront Header & Hero Banner -->
-    <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
         
         <!-- Top Banner (Custom uploaded or Classic Gradient) -->
         <div class="relative w-full h-44 sm:h-56 md:h-64 bg-gradient-to-r from-slate-950 via-slate-900 to-teal-950 overflow-hidden">
             @if($seller->banner_url)
                 <img src="{{ $seller->banner_url }}" alt="Store Banner" class="w-full h-full object-cover">
             @else
-                <!-- Classic Decorative Mesh -->
-                <div class="absolute inset-0 bg-[radial-gradient(#14b8a6_1px,transparent_1px)] [background-size:24px_24px] opacity-20"></div>
-                <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-teal-500/15 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="absolute left-1/3 top-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                <!-- Classic Subtle Pattern -->
+                <div class="absolute inset-0 bg-slate-900 opacity-90"></div>
+                <div class="absolute inset-0 bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:20px_20px] opacity-40"></div>
             @endif
 
             
@@ -32,7 +31,7 @@
                 <!-- Store Logo & Information -->
                 <div class="flex flex-col sm:flex-row sm:items-end space-y-3 sm:space-y-0 sm:space-x-4">
                     <!-- Logo (Only logo overlaps the banner) -->
-                    <div class="-mt-10 sm:-mt-14 w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white p-1.5 shadow-xl border border-slate-200/80 flex-shrink-0 z-10 relative">
+                    <div class="-mt-10 sm:-mt-14 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white p-1.5 shadow-xl border border-slate-200/80 flex-shrink-0 z-10 relative">
                         <div class="w-full h-full rounded-2xl overflow-hidden bg-gradient-to-tr from-slate-900 to-teal-800 text-white flex items-center justify-center text-2xl font-black">
                             @if($seller->avatar_url)
                                 <img src="{{ $seller->avatar_url }}" alt="{{ $seller->shop_name ?? $seller->name }}" class="w-full h-full object-cover">
@@ -158,7 +157,7 @@
 
     <!-- 2. Active Ongoing Group Buy Pools by this Merchant -->
     @if($activeCircles->isNotEmpty())
-        <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-3xl border border-amber-200 p-5 shadow-xs">
+        <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-5 shadow-xs">
             <div class="flex items-center justify-between mb-3.5 flex-wrap gap-2">
                 <div class="flex items-center space-x-2">
         
@@ -201,7 +200,7 @@
     <div class="space-y-5">
         
         <!-- Search and Filter Bar -->
-        <div class="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h3 class="text-base font-black text-slate-900 tracking-tight">Available Products</h3>
                
@@ -234,7 +233,7 @@
         <!-- Products Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
             @forelse($products as $product)
-                <div class="bg-white rounded-3xl border border-slate-200/90 hover:border-emerald-300 p-4 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group">
+                <div class="bg-white rounded-2xl border border-slate-200/90 hover:border-emerald-300 p-4 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group">
                     <div>
                         <!-- Thumbnail Box -->
                         <div class="relative w-full h-44 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 p-3 mb-3 flex items-center justify-center">
@@ -281,7 +280,7 @@
                     </div>
                 </div>
             @empty
-                <div class="col-span-full py-16 text-center bg-white rounded-3xl border border-slate-200/90 p-8">
+                <div class="col-span-full py-16 text-center bg-white rounded-2xl border border-slate-200/90 p-8">
                     <span class="text-4xl block mb-2">🛍️</span>
                     <h3 class="text-base font-extrabold text-slate-800">No Products in This View</h3>
                     <p class="text-xs text-slate-400 mt-1">Add products or adjust filters to view items in your live storefront.</p>
