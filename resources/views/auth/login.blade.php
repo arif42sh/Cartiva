@@ -4,13 +4,7 @@
 
 @section('content')
 <div class="max-w-5xl mx-auto px-4 py-3 sm:py-5 flex items-center justify-center min-h-[calc(100vh-120px)]"
-     x-data="{
-        showPass: false,
-        fillDemo(email, pass) {
-            document.getElementById('email').value = email;
-            document.getElementById('password').value = pass;
-        }
-     }">
+     x-data="{ showPass: false }">
     
     <!-- Split-Screen Container (50-50 Screen Ratio, Viewport Fit) -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-stretch w-full">
@@ -99,53 +93,6 @@
                     <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                         Welcome Back to Cartiva
                     </h1>
-                   
-                </div>
-
-                @if(auth()->check())
-                    <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
-                        <div>
-                            <span class="font-black block">Signed in: {{ auth()->user()->name }} ({{ ucfirst(auth()->user()->role) }})</span>
-                            <span class="text-[11px] text-amber-700">Want to test as another user? Click below:</span>
-                        </div>
-                        <div class="flex items-center space-x-1.5">
-                            @if(auth()->user()->isSeller())
-                                <a href="{{ route('switch-user', 'customer') }}" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[11px] shadow-2xs">
-                                    Switch to Customer 
-                                </a>
-                            @else
-                                <a href="{{ route('switch-user', 'seller') }}" class="px-3 py-1 rounded-lg bg-[#53a318] hover:bg-[#468c13] text-white font-extrabold text-[11px] shadow-2xs">
-                                    Switch to Seller
-                                </a>
-                            @endif
-                        </div>
-                    </div>
-                @endif
-
-                <!-- 1-Click Quick Demo Login Switchers -->
-                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
-                    <div class="flex items-center justify-between">
-                        
-                    </div>
-                    <div class="grid grid-cols-3 gap-1.5 text-xs font-bold">
-                        <a href="{{ route('switch-user', 'admin') }}" 
-                           class="py-1.5 px-2 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-200/60 transition-all flex items-center justify-center space-x-1 text-[11px] font-extrabold shadow-2xs">
-                            
-                            <span>Admin</span>
-                        </a>
-
-                        <a href="{{ route('switch-user', 'seller') }}" 
-                           class="py-1.5 px-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-900 border border-teal-200/60 transition-all flex items-center justify-center space-x-1 text-[11px] font-extrabold shadow-2xs">
-                            
-                            <span>Seller</span>
-                        </a>
-
-                        <a href="{{ route('switch-user', 'customer') }}" 
-                           class="py-1.5 px-2 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-200/60 transition-all flex items-center justify-center space-x-1 text-[11px] font-extrabold shadow-2xs">
-                           
-                            <span>Customer</span>
-                        </a>
-                    </div>
                 </div>
 
                 <!-- Login Form -->
