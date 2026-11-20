@@ -88,43 +88,7 @@ class HomeController extends Controller
             ->take(12)
             ->get();
 
-        // Resilient auto-refresh for sample data so the Hot Deals section remains vibrant and active
-        if ($urgentGroups->count() < 3) {
-            $pastSessions = GroupBuySession::where('expires_at', '<=', now())
-                ->whereColumn('current_members', '<', 'required_members')
-                ->take(8)
-                ->get();
-            foreach ($pastSessions as $idx => $s) {
-                $s->update([
-                    'status' => 'active',
-                    'expires_at' => now()->addHours(($idx % 6) + 1)->addMinutes(rand(10, 55)),
-                ]);
-            }
-            $urgentGroups = GroupBuySession::with(['product.category', 'leader', 'members.user'])
-                ->where('status', 'active')
-                ->where('expires_at', '>', now())
-                ->whereColumn('current_members', '<', 'required_members')
-                ->orderByRaw('(SELECT COALESCE(is_hot_deal, 0) FROM products WHERE products.id = group_buy_sessions.product_id) DESC')
-                ->orderByRaw('(current_members / required_members) DESC')
-                ->orderBy('expires_at', 'asc')
-                ->take(12)
-                ->get();
-        }
-
         // 3. Active Groups List (Group Pools Core Section)
-        if (GroupBuySession::where('status', 'active')->where('expires_at', '>', now())->whereColumn('current_members', '<', 'required_members')->count() < 6) {
-            $pastSessions = GroupBuySession::where('expires_at', '<=', now())
-                ->whereColumn('current_members', '<', 'required_members')
-                ->take(12)
-                ->get();
-            foreach ($pastSessions as $idx => $s) {
-                $s->update([
-                    'status' => 'active',
-                    'expires_at' => now()->addHours(($idx % 8) + 2)->addMinutes(rand(10, 55)),
-                ]);
-            }
-        }
-
         $activeGroupsQuery = GroupBuySession::with(['product.category', 'leader', 'members.user'])
             ->where('status', 'active')
             ->where('expires_at', '>', now())
@@ -532,20 +496,6 @@ class HomeController extends Controller
         $categories = Category::withCount(['products' => function ($q) {
             $q->where('is_active', true);
         }])->get();
-
-        // Ensure active sessions are available
-        if (GroupBuySession::where('status', 'active')->where('expires_at', '>', now())->whereColumn('current_members', '<', 'required_members')->count() < 8) {
-            $pastSessions = GroupBuySession::where('expires_at', '<=', now())
-                ->whereColumn('current_members', '<', 'required_members')
-                ->take(12)
-                ->get();
-            foreach ($pastSessions as $idx => $s) {
-                $s->update([
-                    'status' => 'active',
-                    'expires_at' => now()->addHours(($idx % 8) + 2)->addMinutes(rand(10, 55)),
-                ]);
-            }
-        }
 
         $query = GroupBuySession::with(['product.category', 'leader', 'members.user'])
             ->where('status', 'active')

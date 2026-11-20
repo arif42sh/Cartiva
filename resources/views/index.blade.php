@@ -1842,7 +1842,7 @@
 
             <!-- CTA Button Box -->
             <div class="lg:col-span-4 lg:text-right space-y-3">
-                <a href="{{ route('register') }}" 
+                <a href="{{ route('register', ['role' => 'seller']) }}" 
                    class="inline-block w-full sm:w-auto px-8 py-4 rounded-2xl bg-[#53a318] hover:bg-[#468c13] text-white font-black text-xs sm:text-sm shadow-xl shadow-green-950/60 hover:scale-105 active:scale-95 transition-all text-center">
                     Register as a Seller / Merchant &rarr;
                 </a>

@@ -234,9 +234,9 @@
 
                 <!-- Social Logins (Google & Facebook Circular Buttons) -->
                 <div class="flex items-center justify-center space-x-3.5 pt-0.5">
-                    <a href="{{ route('login') }}" 
-                       class="w-10 h-10 rounded-full border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 shadow-2xs transition-all hover:scale-105 active:scale-95 flex items-center justify-center"
-                       title="Sign in with Google">
+                    <a href="{{ route('auth.social', 'google') }}" 
+                       class="w-10 h-10 rounded-full border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 shadow-2xs transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer group"
+                       title="Sign in directly with Google">
                         <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -245,9 +245,9 @@
                         </svg>
                     </a>
 
-                    <a href="{{ route('login') }}" 
-                       class="w-10 h-10 rounded-full border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 shadow-2xs transition-all hover:scale-105 active:scale-95 flex items-center justify-center"
-                       title="Sign in with Facebook">
+                    <a href="{{ route('auth.social', 'facebook') }}" 
+                       class="w-10 h-10 rounded-full border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 shadow-2xs transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer group"
+                       title="Sign in directly with Facebook">
                         <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none">
                             <circle cx="12" cy="12" r="12" fill="#1877F2"/>
                             <path fill="#FFFFFF" d="M15.12 12.03l.44-2.87h-2.75V7.3c0-.79.39-1.56 1.63-1.56h1.26V3.29c-.73-.1-1.63-.16-2.48-.16-2.53 0-4.18 1.53-4.18 4.3v2.73H6.5v2.87h2.52V20.2c.51.08 1.03.12 1.56.12s1.05-.04 1.56-.12v-7.17h2.98z"/>

@@ -36,6 +36,8 @@ Route::get('/track-order', [OrderController::class, 'trackOrder'])->name('orders
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/switch-user/{role}', [AuthController::class, 'switchUser'])->name('switch-user');
+Route::get('/auth/{provider}', [AuthController::class, 'socialLogin'])->name('auth.social');
+Route::get('/auth/{provider}/callback', [AuthController::class, 'socialCallback'])->name('auth.social.callback');
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
