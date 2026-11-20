@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartiva — Final Project Report (CSE 3200)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-accent: #53a318;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-600: #475569;
+            --slate-500: #64748b;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50: #f8fafc;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--slate-800);
+            background: #f8fafc;
+            line-height: 1.65;
+            font-size: 14px;
+        }
+        .page-container {
+            max-width: 860px;
+            margin: 30px auto;
+            background: #ffffff;
+            padding: 60px 75px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+            border-radius: 16px;
+            border: 1px solid var(--slate-200);
+        }
+        .cover-page {
+            text-align: center;
+            padding-bottom: 50px;
+            border-bottom: 2px solid var(--slate-200);
+            margin-bottom: 50px;
+        }
+        .inst-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--slate-900);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .dept-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--slate-600);
+            margin-bottom: 30px;
+        }
+        .project-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1.25;
+            margin-bottom: 8px;
+        }
+        .project-subtitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--slate-500);
+            margin-bottom: 35px;
+        }
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            text-align: left;
+            background: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 25px;
+        }
+        .meta-box h4 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary);
+            font-weight: 800;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--slate-200);
+            padding-bottom: 4px;
+        }
+        .meta-box p {
+            font-size: 12px;
+            color: var(--slate-700);
+            line-height: 1.5;
+        }
+        .meta-box strong {
+            color: var(--slate-900);
+        }
+        h1, h2, h3, h4 { color: var(--slate-900); font-weight: 800; }
+        h1 {
+            font-size: 20px;
+            border-bottom: 2px solid var(--primary-accent);
+            padding-bottom: 6px;
+            margin-top: 40px;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        h2 {
+            font-size: 16px;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+        h3 {
+            font-size: 14px;
+            margin-top: 18px;
+            margin-bottom: 8px;
+        }
+        p { margin-bottom: 14px; text-align: justify; }
+        ul, ol { margin-left: 20px; margin-bottom: 16px; font-size: 13.5px; }
+        li { margin-bottom: 6px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 12px;
+        }
+        th, td {
+            padding: 10px 12px;
+            border: 1px solid var(--slate-200);
+            text-align: left;
+        }
+        th {
+            background: var(--slate-100);
+            font-weight: 700;
+            color: var(--slate-900);
+        }
+        tr:nth-child(even) { background: var(--slate-50); }
+        pre {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 16px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            line-height: 1.5;
+            margin: 15px 0;
+        }
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            background: var(--slate-100);
+            color: var(--primary);
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .badge-green { background: #dcfce7; color: #166534; }
+        .callout {
+            background: #f0fdf4;
+            border-left: 4px solid var(--primary-accent);
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+            margin: 18px 0;
+            font-size: 13px;
+        }
+        @media print {
+            body { background: #ffffff; }
+            .page-container {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                margin: 0;
+                max-width: 100%;
+            }
+            .cover-page { page-break-after: always; }
+            h1 { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-container">
+
+    <!-- COVER PAGE -->
+    <div class="cover-page">
+        <div class="inst-title">Bangladesh Army University of Science and Technology (BAUST)</div>
+        <div class="dept-title">Department of Computer Science and Engineering</div>
+
+        <div style="margin: 40px 0;">
+            <div class="project-title">CARTIVA — GROUP BUYING PLATFORM</div>
+            <div class="project-subtitle">A Full-Stack Web-Based Collective Shopping Platform</div>
+            <span class="badge badge-green" style="font-size: 12px; padding: 5px 12px;">CSE 3200: Web Engineering Project Report</span>
+        </div>
+
+        <div class="meta-grid">
+            <div class="meta-box">
+                <h4>Submitted To:</h4>
+                <p><strong>Gourab Chandra Biswas</strong><br>Lecturer, Dept. of CSE, BAUST</p>
+                <p style="margin-top: 8px;"><strong>Md. Rabby Hossain</strong><br>Lecturer, Dept. of CSE, BAUST</p>
+            </div>
+            <div class="meta-box">
+                <h4>Submitted By (Group 10):</h4>
+                <p><strong>Arif Shahriar</strong> (Lead) — <code>0802410205101062</code></p>
+                <p><strong>Ashikur Rahman</strong> — <code>0802410205101063</code></p>
+                <p><strong>Fuad Hossain</strong> — <code>0802410205101070</code></p>
+            </div>
+        </div>
+
+        <div style="margin-top: 25px; font-size: 11.5px; color: var(--slate-500);">
+            <strong>Live URL:</strong> <a href="https://cartiva-theta.vercel.app" target="_blank" style="color: var(--primary);">https://cartiva-theta.vercel.app</a> &nbsp;|&nbsp; 
+            <strong>Repository:</strong> <a href="https://github.com/arif42sh/Cartiva" target="_blank" style="color: var(--primary);">github.com/arif42sh/Cartiva</a>
+        </div>
+    </div>
+
+    <!-- 1. INTRODUCTION -->
+    <h1>1. Introduction</h1>
+
+    <h2>1.1 Project Overview & Purpose</h2>
+    <p>
+        <strong>Cartiva</strong> is an innovative, full-stack collective e-commerce platform designed to overcome the fundamental inefficiency of traditional retail pricing. In conventional web shopping, individual customers purchase goods in isolation, paying standard retail markup regardless of how many other individuals in the market desire the same product. 
+    </p>
+    <p>
+        Cartiva transforms this dynamic by empowering customers to pool their demand into time-bounded <strong>Group Buying Sessions</strong>. By aggregating individual orders into collective batches, customers unlock pre-negotiated wholesale price tiers—effectively democratizing factory-rate pricing for retail consumers.
+    </p>
+
+    <h2>1.2 Problem Statements & Practical Motivation</h2>
+    <ul>
+        <li><strong>High Retail Penalties for Individuals:</strong> Solo shoppers pay excessive retail markups that fail to reflect the economies of scale that sellers could offer on high-volume transactions.</li>
+        <li><strong>Coordination Friction:</strong> Informal bulk purchasing organized through chat applications suffers from high cancellation rates, lack of payment security, and complex logistics.</li>
+        <li><strong>Static Pricing Models:</strong> Existing platforms in Bangladesh (such as Daraz or Chaldal) use rigid prices that never adjust dynamically to real-time collective demand.</li>
+    </ul>
+
+    <div class="callout">
+        <strong>The Cartiva Value Proposition:</strong> Buyers save up to 40% on electronics, lifestyle, and grocery products by sharing deals with friends and peers, while merchants move large inventory batches with zero additional customer acquisition cost.
+    </div>
+
+    <!-- 2. DESCRIPTION -->
+    <h1>2. System Description & Feature Walkthrough</h1>
+
+    <h2>2.1 Multi-Role User Architecture</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>User Role</th>
+                <th>Primary Workspace</th>
+                <th>Core Responsibilities & Capabilities</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Customer</strong></td>
+                <td><code>Storefront (/)</code></td>
+                <td>Browse catalog, initiate/join group buys, real-time countdown tracking, shopping cart, escrow checkout, and 4-step order tracking.</td>
+            </tr>
+            <tr>
+                <td><strong>Seller (Merchant)</strong></td>
+                <td><code>/seller/dashboard</code></td>
+                <td>Manage vendor profile, add products with custom multi-tier discount pricing, monitor campaign quotas, and update dispatch/delivery status.</td>
+            </tr>
+            <tr>
+                <td><strong>Administrator</strong></td>
+                <td><code>/admin/dashboard</code></td>
+                <td>Overall platform governance, approve/reject merchants, manage product categories, supervise escrow disbursements, and monitor live audit trail logs.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>2.2 Core Group Buying & Dynamic Tier Engine</h2>
+    <p>
+        Every product on Cartiva supports configurable volume discounts. When a buyer initiates or joins a group:
+    </p>
+    <ul>
+        <li>A unique alpha-numeric code is assigned (e.g., <code>GRP-HOODIE05</code>) alongside a 24-hour expiration window.</li>
+        <li>The interface displays a real-time slot progress bar (e.g., <em>4 of 5 joined • 1 slot left</em>) and calculates the precise financial savings.</li>
+        <li>If the member quota is reached before the deadline, the session transitions to <code>completed</code>, and the wholesale price is locked.</li>
+        <li>If the campaign expires without meeting the required quota, the session transitions to <code>expired</code>, and payments are automatically marked for refund.</li>
+    </ul>
+
+    <!-- 3. IMPLEMENTATION -->
+    <h1>3. Implementation & Technical Architecture</h1>
+
+    <h2>3.1 Technology Stack</h2>
+    <ul>
+        <li><strong>Backend Engine:</strong> Laravel 12 (MVC), PHP 8.3, Eloquent ORM, Session & Cookie Security.</li>
+        <li><strong>Frontend Framework:</strong> Laravel Blade Templates, Tailwind CSS (Utility-First Responsive UI), Alpine.js (Reactive Timers & Data-binding).</li>
+        <li><strong>Asset Bundler:</strong> Vite 7 with automated manifest caching and minification.</li>
+        <li><strong>Database:</strong> Clever Cloud Managed MySQL 8 (20 normalized tables with foreign key cascades).</li>
+        <li><strong>Cloud Serverless Hosting:</strong> Vercel Edge Serverless Function runtime with continuous integration (CI/CD) via GitHub <code>main</code> branch.</li>
+    </ul>
+
+    <h2>3.2 Key Code Highlights</h2>
+    <h3>Mathematical Discount Calculation (<code>Product.php</code>)</h3>
+    <pre><code>public function getDiscountPercentAttribute(): int
+{
+    if ($this->single_price > 0 && $this->single_price > $this->group_price) {
+        return (int) round((($this->single_price - $this->group_price) / $this->single_price) * 100);
+    }
+    return 0;
+}</code></pre>
+
+    <h3>Serverless Reverse-Proxy Bridge (<code>api/index.php</code>)</h3>
+    <pre><code>// Prepare writable framework directories inside Vercel's ephemeral /tmp filesystem
+$tmpDirs = [
+    '/tmp/storage/framework/views',
+    '/tmp/storage/framework/cache',
+    '/tmp/storage/framework/sessions',
+    '/tmp/storage/logs',
+];
+foreach ($tmpDirs as $dir) {
+    if (!is_dir($dir)) { @mkdir($dir, 0755, true); }
+}
+$_SERVER['HTTPS'] = 'on'; // Enforce secure HTTPS scheme across reverse proxy</code></pre>
+
+    <!-- 4. DISCUSSION -->
+    <h1>4. Discussion, Evaluation & Future Scope</h1>
+
+    <h2>4.1 Comparative Evaluation</h2>
+    <p>
+        Compared to domestic platforms like BDSHOP GroupBuy or ShareDeal, Cartiva introduces automated multi-level tiered discounts rather than a binary flat discount. Compared to Pinduoduo, Cartiva is tailored to the local socio-economic environment with bilingual typography (Inter + Hind Siliguri) and simulated Bangladeshi MFS workflows (bKash/Nagad).
+    </p>
+
+    <h2>4.2 Engineering Challenges Overcome</h2>
+    <ul>
+        <li><strong>MySQL 8 Cloud Migration:</strong> Resolved legacy MariaDB client authentication incompatibilities by scripting native PHP PDO data transfer scripts to Clever Cloud.</li>
+        <li><strong>Vercel Serverless File System Isolation:</strong> Solved read-only filesystem restrictions by redirecting Blade compilations and session handles to Linux <code>/tmp</code>.</li>
+        <li><strong>Mixed Content Asset Blocking:</strong> Eliminated HTTP/HTTPS browser security blocking by configuring trusted proxies and forcing SSL URL schemes globally.</li>
+        <li><strong>Connection Pool Optimization:</strong> Handled Clever Cloud's 5-connection limit by disabling persistent PDO sockets and triggering explicit disconnection cycles.</li>
+    </ul>
+
+    <h2>4.3 Future Scope</h2>
+    <p>
+        Future development milestones include integrating live commercial MFS payment gateway APIs (SSLCommerz/bKash), deploying WebSockets via Laravel Reverb for instantaneous multi-peer synchronization, and developing native Android/iOS mobile clients using Flutter.
+    </p>
+
+    <h2>4.4 Conclusion</h2>
+    <p>
+        Cartiva successfully realizes the academic and functional specifications set forth for <strong>CSE 3200: Web Engineering Project</strong>. Operating live on modern cloud infrastructure, it serves as a robust proof-of-concept for scalable, community-oriented social commerce.
+    </p>
+
+</div>
+
+</body>
+</html>
