@@ -172,15 +172,20 @@
                         </div>
                     </div>
 
-                    <!-- VIP Club Rewards Ribbon (Classic Gold & Navy) -->
-                    <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs relative z-10">
-                        <div class="flex items-center space-x-1.5">
-                            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                            <span class="text-slate-300 font-medium text-[11px]">Club Points:</span>
+                    <!-- Group Savings & Wallet Balance Ribbon (Matching Header Dropdown) -->
+                    <div class="mt-4 pt-3 border-t border-slate-700/60 grid grid-cols-2 gap-2 relative z-10 text-center">
+                        <div class="border-r border-slate-700/60 pr-2">
+                            <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold block leading-none">Group Savings</span>
+                            <span class="text-xs sm:text-sm font-bold text-emerald-400 block mt-1 leading-tight">
+                                ৳{{ number_format($user->total_savings) }} Saved
+                            </span>
                         </div>
-                        <span class="font-bold text-amber-300 text-sm tracking-wide">
-                            ৳{{ number_format($estimatedSavings > 0 ? $estimatedSavings : 1450) }}
-                        </span>
+                        <div class="pl-2">
+                            <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold block leading-none">Wallet Balance</span>
+                            <span class="text-xs sm:text-sm font-bold text-cyan-400 block mt-1 leading-tight">
+                                ৳0.00 Credits
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -238,17 +243,17 @@
                             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                             </svg>
-                            <span>My Orders ({{ $orders->count() }})</span>
+                            <span>My Orders ({{ $totalOrdersCount }})</span>
                         </button>
 
-                        <!-- Tab 5: Group Buy Circles -->
+                        <!-- Tab 5: Active Team Pools -->
                         <button @click="activeTab = 'pools'" 
                                 :class="activeTab === 'pools' ? 'classic-tab-active' : 'classic-tab-inactive'"
                                 class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-left cursor-pointer">
                             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                             </svg>
-                            <span>Group Buy Circles ({{ $activeGroups->count() }})</span>
+                            <span>Active Team Pools ({{ $activeGroupsCount }})</span>
                         </button>
                     </nav>
 
@@ -292,7 +297,7 @@
                         <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                         </svg>
-                        <span>Club Invite Bonus</span>
+                        <span>Team Pool Referral Bonus</span>
                     </div>
                     <p class="text-[11px] text-slate-600 mb-3 leading-relaxed">
                         Share your circle referral link to unlock higher discount tiers automatically.
@@ -320,12 +325,13 @@
                             <h2 class="text-base sm:text-lg font-bold text-slate-900">Personal Profile</h2>
                             <p class="text-xs text-slate-500 mt-0.5">Manage your personal identification, contact info, and profile photo.</p>
                         </div>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        <span class="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-[#009966]">
+                            <svg class="w-4 h-4 text-[#009966] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
-                            Verified Member
+                            <span>Verified</span>
                         </span>
+                        
                     </div>
 
                     <!-- Classic Executive Overview Row -->
@@ -717,12 +723,12 @@
                 </div>
 
                 <!-- ========================================== -->
-                <!-- TAB 5: GROUP BUY CIRCLES                   -->
+                <!-- TAB 5: ACTIVE TEAM POOLS                   -->
                 <!-- ========================================== -->
                 <div x-show="activeTab === 'pools'" class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
                     <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
                         <div>
-                            <h2 class="text-base sm:text-lg font-bold text-slate-900">My Group Buy Circles</h2>
+                            <h2 class="text-base sm:text-lg font-bold text-slate-900">Active Team Pools</h2>
                             <p class="text-xs text-slate-500 mt-0.5">Ongoing group deals you have joined or initiated.</p>
                         </div>
                         <a href="{{ route('home') }}#active-deals" class="text-xs font-bold text-blue-700 hover:underline">

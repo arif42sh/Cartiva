@@ -17,6 +17,9 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         
+        $totalOrdersCount = $user->orders()->count();
+        $activeGroupsCount = $user->orders()->where('order_type', 'group_buy')->count();
+
         $orders = $user->orders()
             ->with(['items.product', 'groupSession.product'])
             ->latest()
@@ -29,12 +32,11 @@ class ProfileController extends Controller
             ->take(8)
             ->get();
 
-        // Calculate actual or estimated group savings
-        $totalSpent = $user->orders()->where('order_status', '!=', 'cancelled')->sum('total_amount');
-        $groupOrders = $user->orders()->where('order_type', 'group_buy')->where('order_status', '!=', 'cancelled')->get();
-        $estimatedSavings = $groupOrders->sum('total_amount') * 0.25;
+        // Calculate actual group savings
+        $totalSpent = $user->total_spent;
+        $estimatedSavings = $user->total_savings;
 
-        return view('profile.index', compact('user', 'orders', 'activeGroups', 'totalSpent', 'estimatedSavings'));
+        return view('profile.index', compact('user', 'orders', 'activeGroups', 'totalSpent', 'estimatedSavings', 'totalOrdersCount', 'activeGroupsCount'));
     }
 
     /**
