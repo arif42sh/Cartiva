@@ -235,8 +235,20 @@ class SellerController extends Controller
 
         $imageUrl = $validated['image_url'] ?? '';
         if ($request->hasFile('image_file')) {
-            $path = $request->file('image_file')->store('products', 'public');
-            $imageUrl = asset('storage/' . $path);
+            try {
+                $path = $request->file('image_file')->store('products', 'public');
+                $imageUrl = asset('storage/' . $path);
+            } catch (\Throwable $e) {
+                // Serverless read-only filesystem fallback: convert to base64 Data URI
+                try {
+                    $file = $request->file('image_file');
+                    $mime = $file->getClientMimeType() ?: 'image/jpeg';
+                    $data = base64_encode(file_get_contents($file->getRealPath()));
+                    $imageUrl = "data:{$mime};base64,{$data}";
+                } catch (\Throwable $ex) {
+                    $imageUrl = asset('images/cartiva-logo.png');
+                }
+            }
         }
 
         // Parse & sanitize custom tiered discounts
@@ -384,8 +396,20 @@ class SellerController extends Controller
 
         $imageUrl = $product->image_url;
         if ($request->hasFile('image_file')) {
-            $path = $request->file('image_file')->store('products', 'public');
-            $imageUrl = asset('storage/' . $path);
+            try {
+                $path = $request->file('image_file')->store('products', 'public');
+                $imageUrl = asset('storage/' . $path);
+            } catch (\Throwable $e) {
+                // Serverless read-only filesystem fallback: convert to base64 Data URI
+                try {
+                    $file = $request->file('image_file');
+                    $mime = $file->getClientMimeType() ?: 'image/jpeg';
+                    $data = base64_encode(file_get_contents($file->getRealPath()));
+                    $imageUrl = "data:{$mime};base64,{$data}";
+                } catch (\Throwable $ex) {
+                    // Retain existing image
+                }
+            }
         } elseif ($request->filled('image_url')) {
             $imageUrl = $validated['image_url'];
         }
@@ -630,6 +654,9 @@ class SellerController extends Controller
             'leader_user_id' => null,
             'group_code' => $code,
             'required_members' => $requiredMembers,
+            'discount_tiers' => $product->discount_tiers,
+            'min_quota_to_ship' => $product->min_quota_to_ship,
+            'max_buyers_limit' => $product->max_buyers_limit,
             'current_members' => 0,
             'status' => 'active',
             'expires_at' => Carbon::now()->addHours($durationHours),
@@ -1008,12 +1035,21 @@ class SellerController extends Controller
 
         // Handle Avatar File Upload / Removal
         if ($request->hasFile('avatar_file')) {
-            if ($user->avatar && str_contains($user->avatar, 'sellers/avatars/')) {
-                $oldRel = substr($user->avatar, strpos($user->avatar, 'sellers/avatars/'));
-                Storage::disk('public')->delete($oldRel);
+            try {
+                if ($user->avatar && str_contains($user->avatar, 'sellers/avatars/')) {
+                    $oldRel = substr($user->avatar, strpos($user->avatar, 'sellers/avatars/'));
+                    Storage::disk('public')->delete($oldRel);
+                }
+                $path = $request->file('avatar_file')->store('sellers/avatars', 'public');
+                $updateData['avatar'] = 'sellers/avatars/' . basename($path);
+            } catch (\Throwable $e) {
+                try {
+                    $file = $request->file('avatar_file');
+                    $mime = $file->getClientMimeType() ?: 'image/jpeg';
+                    $data = base64_encode(file_get_contents($file->getRealPath()));
+                    $updateData['avatar'] = "data:{$mime};base64,{$data}";
+                } catch (\Throwable $ex) {}
             }
-            $path = $request->file('avatar_file')->store('sellers/avatars', 'public');
-            $updateData['avatar'] = 'sellers/avatars/' . basename($path);
         } elseif ($request->boolean('remove_avatar')) {
             if ($user->avatar && str_contains($user->avatar, 'sellers/avatars/')) {
                 $oldRel = substr($user->avatar, strpos($user->avatar, 'sellers/avatars/'));
@@ -1024,12 +1060,21 @@ class SellerController extends Controller
 
         // Handle Banner File Upload / Removal
         if ($request->hasFile('banner_file')) {
-            if ($user->shop_banner && str_contains($user->shop_banner, 'sellers/banners/')) {
-                $oldRel = substr($user->shop_banner, strpos($user->shop_banner, 'sellers/banners/'));
-                Storage::disk('public')->delete($oldRel);
+            try {
+                if ($user->shop_banner && str_contains($user->shop_banner, 'sellers/banners/')) {
+                    $oldRel = substr($user->shop_banner, strpos($user->shop_banner, 'sellers/banners/'));
+                    Storage::disk('public')->delete($oldRel);
+                }
+                $path = $request->file('banner_file')->store('sellers/banners', 'public');
+                $updateData['shop_banner'] = 'sellers/banners/' . basename($path);
+            } catch (\Throwable $e) {
+                try {
+                    $file = $request->file('banner_file');
+                    $mime = $file->getClientMimeType() ?: 'image/jpeg';
+                    $data = base64_encode(file_get_contents($file->getRealPath()));
+                    $updateData['shop_banner'] = "data:{$mime};base64,{$data}";
+                } catch (\Throwable $ex) {}
             }
-            $path = $request->file('banner_file')->store('sellers/banners', 'public');
-            $updateData['shop_banner'] = 'sellers/banners/' . basename($path);
         } elseif ($request->boolean('remove_banner')) {
             if ($user->shop_banner && str_contains($user->shop_banner, 'sellers/banners/')) {
                 $oldRel = substr($user->shop_banner, strpos($user->shop_banner, 'sellers/banners/'));

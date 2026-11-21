@@ -474,7 +474,7 @@ CREATE TABLE `products` (
   `title` varchar(255) NOT NULL,
   `slug` varchar(255) NOT NULL,
   `description` text NOT NULL,
-  `image_url` varchar(255) NOT NULL,
+  `image_url` longtext NOT NULL,
   `gallery` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`gallery`)),
   `single_price` decimal(10,2) NOT NULL,
   `group_price` decimal(10,2) NOT NULL,

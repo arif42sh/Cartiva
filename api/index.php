@@ -7,6 +7,8 @@ $tmpDirs = [
     '/tmp/storage/framework/cache',
     '/tmp/storage/framework/cache/data',
     '/tmp/storage/framework/sessions',
+    '/tmp/storage/app',
+    '/tmp/storage/app/public',
     '/tmp/storage/logs',
 ];
 
