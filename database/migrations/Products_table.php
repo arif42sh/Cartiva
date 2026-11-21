@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('description');
-            $table->string('image_url');
+            $table->longText('image_url');
             $table->json('gallery')->nullable();
             $table->decimal('single_price', 10, 2);
             $table->decimal('group_price', 10, 2);
