@@ -433,6 +433,45 @@ class SellerController extends Controller
             'is_hot_deal' => $isHotDeal,
         ]);
 
+        // Synchronize or launch active group-buy session for this product
+        if ($product->is_active && $product->stock > 0 && $product->group_price > 0) {
+            $durationHours = (int) ($validated['group_duration_hours'] ?? 48);
+            if ($durationHours <= 0) $durationHours = 48;
+
+            $activeSession = GroupBuySession::where('product_id', $product->id)
+                ->where('status', 'active')
+                ->where('expires_at', '>', now())
+                ->latest()
+                ->first();
+
+            if ($activeSession) {
+                // If the session has no buyers yet, sync its configuration with updated product details
+                if ($activeSession->current_members === 0) {
+                    $activeSession->update([
+                        'required_members' => $product->group_size_required ?: 2,
+                        'discount_tiers' => !empty($discountTiers) ? $discountTiers : null,
+                        'min_quota_to_ship' => $minQuotaToShip,
+                        'max_buyers_limit' => $product->max_buyers_limit,
+                        'expires_at' => Carbon::now()->addHours($durationHours),
+                    ]);
+                }
+            } else {
+                // If all previous sessions were expired, automatically spawn a fresh active session!
+                GroupBuySession::create([
+                    'product_id' => $product->id,
+                    'leader_user_id' => null,
+                    'group_code' => 'GRP-' . strtoupper(Str::random(6)),
+                    'required_members' => $product->group_size_required ?: 2,
+                    'discount_tiers' => !empty($discountTiers) ? $discountTiers : null,
+                    'min_quota_to_ship' => $minQuotaToShip,
+                    'max_buyers_limit' => $product->max_buyers_limit,
+                    'current_members' => 0,
+                    'status' => 'active',
+                    'expires_at' => Carbon::now()->addHours($durationHours),
+                ]);
+            }
+        }
+
         return redirect()->route('seller.products')
             ->with('success', ' Product details and group pricing updated successfully!' . ($isFlashSale ? ' (Enrolled in Flash Sales ⚡)' : ''));
     }
