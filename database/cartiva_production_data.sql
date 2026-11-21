@@ -247,7 +247,7 @@ CREATE TABLE `group_buy_sessions` (
   `max_buyers_limit` int(10) unsigned DEFAULT NULL,
   `current_members` int(10) unsigned NOT NULL DEFAULT 1,
   `status` enum('active','completed','expired') NOT NULL DEFAULT 'active',
-  `expires_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `expires_at` datetime NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),

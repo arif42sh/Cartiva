@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('required_members')->default(2);
             $table->unsignedInteger('current_members')->default(1);
             $table->enum('status', ['active', 'completed', 'expired'])->default('active');
-            $table->timestamp('expires_at');
+            $table->dateTime('expires_at');
             $table->timestamps();
         });
 
